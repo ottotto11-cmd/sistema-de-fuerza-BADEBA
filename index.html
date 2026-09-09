@@ -39,8 +39,9 @@
   .rm-row{display:flex;gap:14px;margin-top:10px;font-size:12px;}
   .rm-item{color:var(--muted);}
   .rm-item b{color:var(--text);font-family:'Courier New',monospace;}
-  .del-btn{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:var(--surface3);color:var(--muted);border:none;cursor:pointer;font-size:13px;line-height:1;}
-  .del-btn:hover{background:#7A1E12;color:#fff;}
+  .card-actions{position:absolute;top:8px;right:8px;display:flex;gap:4px;}
+  .action-btn{width:22px;height:22px;border-radius:50%;background:var(--surface3);color:var(--muted);border:none;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;line-height:1;}
+  .action-btn:hover{background:var(--lane);color:#fff;}
   .today-hero{background:linear-gradient(135deg, var(--surface2), var(--surface));border:1px solid var(--line);border-radius:14px;padding:22px 20px;margin-bottom:20px;}
   .today-date{font-family:'Courier New',monospace;font-size:12px;color:var(--muted);letter-spacing:0.03em;}
   .today-day{font-weight:700;font-size:26px;text-transform:uppercase;margin:4px 0 2px;}
@@ -339,6 +340,7 @@ const State = {
   selectedAthleteId: null,
   microId: 1,
   showAddForm: false,
+  editingAthleteId: null,
   logMode: false,
   logDraft: {},
   historial: {},
@@ -346,24 +348,36 @@ const State = {
 };
 
 async function initState(){
-  const raw = await stGet("athletes-roster");
-  if(raw){
+  const rawLocal = localStorage.getItem("athletes-roster-persist");
+  if(rawLocal){
     try{
-      const data = JSON.parse(raw);
+      const data = JSON.parse(rawLocal);
       State.athletes = data.athletes || [];
       State.nextId = data.nextId || (State.athletes.length+1);
     }catch(e){}
+  } else {
+    const raw = await stGet("athletes-roster");
+    if(raw){
+      try{
+        const data = JSON.parse(raw);
+        State.athletes = data.athletes || [];
+        State.nextId = data.nextId || (State.athletes.length+1);
+      }catch(e){}
+    }
   }
   const autoMicro = currentMicroFromDate(new Date());
   State.microId = autoMicro.micro;
   if(State.athletes.length) State.selectedAthleteId = State.athletes[0].id;
   render();
 }
+
 async function persistRoster(){
-  await stSet("athletes-roster", JSON.stringify({athletes:State.athletes, nextId:State.nextId}));
+  const payload = JSON.stringify({athletes:State.athletes, nextId:State.nextId});
+  localStorage.setItem("athletes-roster-persist", payload);
+  await stSet("athletes-roster", payload);
 }
 
-function setTab(tab){ State.tab = tab; State.showAddForm=false; render(); }
+function setTab(tab){ State.tab = tab; State.showAddForm=false; State.editingAthleteId=null; render(); }
 
 async function addAthlete(fields){
   const a = {
@@ -382,10 +396,32 @@ async function addAthlete(fields){
   await persistRoster();
   const hist = [{date: todayISO(), squatKg:a.squatKg, squatReps:a.squatReps, benchKg:a.benchKg, benchReps:a.benchReps}];
   State.historial[a.id] = hist;
+  localStorage.setItem(`rm-history:${a.id}`, JSON.stringify(hist));
   await stSet(`rm-history:${a.id}`, JSON.stringify(hist));
   State.selectedAthleteId = a.id;
   State.showAddForm = false;
   showToast("Atleta registrado");
+  render();
+}
+
+async function updateAthlete(id, fields){
+  const idx = State.athletes.findIndex(a=>a.id===id);
+  if(idx===-1) return;
+  State.athletes[idx] = {
+    ...State.athletes[idx],
+    name: fields.name.trim(),
+    age: Number(fields.age)||null,
+    sex: fields.sex,
+    event: fields.event.trim(),
+    bw: Number(fields.bw)||null,
+    squatKg: Number(fields.squatKg)||0,
+    squatReps: Number(fields.squatReps)||1,
+    benchKg: Number(fields.benchKg)||0,
+    benchReps: Number(fields.benchReps)||1,
+  };
+  await persistRoster();
+  State.editingAthleteId = null;
+  showToast("Atleta actualizado");
   render();
 }
 
@@ -412,6 +448,7 @@ async function importPresetRoster(){
   for(const a of State.athletes){
     const hist = [{date: PRESET_DATE, squatKg:a.squatKg, squatReps:a.squatReps, benchKg:a.benchKg, benchReps:a.benchReps}];
     State.historial[a.id] = hist;
+    localStorage.setItem(`rm-history:${a.id}`, JSON.stringify(hist));
     await stSet(`rm-history:${a.id}`, JSON.stringify(hist));
   }
   State.selectedAthleteId = State.athletes[0].id;
@@ -419,13 +456,18 @@ async function importPresetRoster(){
   render();
 }
 
-async function getCoachPin(){ return await stGet("coach-pin"); }
+async function getCoachPin(){ 
+  let pin = localStorage.getItem("coach-pin-persist");
+  if(!pin) pin = await stGet("coach-pin");
+  return pin;
+}
 async function ensurePinAndConfirm(actionLabel){
   const pin = await getCoachPin();
   if(!pin){
     const newPin = prompt(`Aún no hay PIN de entrenador configurado.\nCrea un PIN (4 a 6 dígitos) para proteger las eliminaciones de aquí en adelante:`);
     if(!newPin) return false;
     if(!/^\d{4,6}$/.test(newPin)){ alert("El PIN debe tener entre 4 y 6 dígitos numéricos."); return false; }
+    localStorage.setItem("coach-pin-persist", newPin);
     await stSet("coach-pin", newPin);
     showToast("PIN de entrenador configurado");
     return true;
@@ -445,6 +487,7 @@ async function changePin(){
   const newPin = prompt("Nuevo PIN (4 a 6 dígitos):");
   if(!newPin) return;
   if(!/^\d{4,6}$/.test(newPin)){ alert("El PIN debe tener entre 4 y 6 dígitos numéricos."); return; }
+  localStorage.setItem("coach-pin-persist", newPin);
   await stSet("coach-pin", newPin);
   showToast("PIN actualizado");
 }
@@ -467,7 +510,7 @@ async function toggleLogMode(){
   if(State.logMode){
     const a = State.athletes.find(x=>x.id===State.selectedAthleteId);
     const key = `session-log:${a.id}:${todayISO()}`;
-    const raw = await stGet(key);
+    const raw = localStorage.getItem(key) || await stGet(key);
     if(raw){
       try{
         const log = JSON.parse(raw);
@@ -490,18 +533,27 @@ async function guardarSesion(exercises, athleteId, day, micro){
     rpe: (State.logDraft[ex.nombre]&&State.logDraft[ex.nombre].rpe)||"",
   }));
   const log = {athleteId, date: todayISO(), day, micro, entries};
-  await stSet(`session-log:${athleteId}:${todayISO()}`, JSON.stringify(log));
-  const idxRaw = await stGet(`log-index:${athleteId}`);
+  const logKey = `session-log:${athleteId}:${todayISO()}`;
+  localStorage.setItem(logKey, JSON.stringify(log));
+  await stSet(logKey, JSON.stringify(log));
+
+  const idxKey = `log-index:${athleteId}`;
+  const idxRaw = localStorage.getItem(idxKey) || await stGet(idxKey);
   let idx = [];
   try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
-  if(!idx.includes(todayISO())){ idx.push(todayISO()); await stSet(`log-index:${athleteId}`, JSON.stringify(idx)); }
-  showToast("Sesión registrada");
+  if(!idx.includes(todayISO())){ 
+    idx.push(todayISO()); 
+    localStorage.setItem(idxKey, JSON.stringify(idx));
+    await stSet(idxKey, JSON.stringify(idx)); 
+  }
+  showToast("Sesión registrada permanentemente");
   render();
 }
 
 async function loadHistorialFor(athleteId){
   if(State.historial[athleteId]) return State.historial[athleteId];
-  const raw = await stGet(`rm-history:${athleteId}`);
+  const histKey = `rm-history:${athleteId}`;
+  const raw = localStorage.getItem(histKey) || await stGet(histKey);
   let hist = [];
   try{ hist = raw?JSON.parse(raw):[]; }catch(e){}
   if(!hist.length){
@@ -512,13 +564,15 @@ async function loadHistorialFor(athleteId){
   return hist;
 }
 async function loadLogsFor(athleteId){
-  const idxRaw = await stGet(`log-index:${athleteId}`);
+  const idxKey = `log-index:${athleteId}`;
+  const idxRaw = localStorage.getItem(idxKey) || await stGet(idxKey);
   let idx = [];
   try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
   const sorted = [...idx].sort().reverse().slice(0,6);
   const entries = [];
   for(const d of sorted){
-    const raw = await stGet(`session-log:${athleteId}:${d}`);
+    const logKey = `session-log:${athleteId}:${d}`;
+    const raw = localStorage.getItem(logKey) || await stGet(logKey);
     if(raw){ try{ entries.push(JSON.parse(raw)); }catch(e){} }
   }
   State.logsCache[athleteId] = entries;
@@ -528,27 +582,31 @@ async function addRMEntry(athleteId, entry){
   const hist = await loadHistorialFor(athleteId);
   const updated = [...hist, entry].sort((a,b)=>a.date.localeCompare(b.date));
   State.historial[athleteId] = updated;
-  await stSet(`rm-history:${athleteId}`, JSON.stringify(updated));
-  showToast("Test guardado");
+  const histKey = `rm-history:${athleteId}`;
+  localStorage.setItem(histKey, JSON.stringify(updated));
+  await stSet(histKey, JSON.stringify(updated));
+  showToast("Test guardado permanentemente");
   render();
 }
 
 async function exportBackup(){
-  const data = {version:1, exportedAt:new Date().toISOString(), athletes:State.athletes, nextId:State.nextId, historial:{}, logs:{}};
+  const data = {version:2, exportedAt:new Date().toISOString(), athletes:State.athletes, nextId:State.nextId, historial:{}, logs:{}};
   for(const a of State.athletes){
     data.historial[a.id] = await loadHistorialFor(a.id);
-    const idxRaw = await stGet(`log-index:${a.id}`);
+    const idxKey = `log-index:${a.id}`;
+    const idxRaw = localStorage.getItem(idxKey) || await stGet(idxKey);
     let idx=[]; try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
     data.logs[a.id] = {};
     for(const d of idx){
-      const raw = await stGet(`session-log:${a.id}:${d}`);
+      const logKey = `session-log:${a.id}:${d}`;
+      const raw = localStorage.getItem(logKey) || await stGet(logKey);
       if(raw){ try{ data.logs[a.id][d] = JSON.parse(raw); }catch(e){} }
     }
   }
   const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  link.href = url; link.download = `respaldo_fuerza_atr_${todayISO()}.json`;
+  link.href = url; link.download = `respaldo_permanente_atr_${todayISO()}.json`;
   document.body.appendChild(link); link.click(); document.body.removeChild(link);
   URL.revokeObjectURL(url);
   showToast("Respaldo descargado");
@@ -557,29 +615,32 @@ function triggerImport(){ document.getElementById("import-file").click(); }
 async function handleImportFile(input){
   const file = input.files[0];
   if(!file) return;
-  const authorized = await ensurePinAndConfirm("restaurar un respaldo (reemplaza el roster actual)");
+  const authorized = await ensurePinAndConfirm("restaurar un respaldo");
   if(!authorized){ input.value=""; return; }
   const text = await file.text();
   let data;
   try{ data = JSON.parse(text); }catch(e){ alert("Archivo inválido."); input.value=""; return; }
-  if(!confirm("Esto reemplazará el roster y el historial actuales con los del respaldo. ¿Continuar?")){ input.value=""; return; }
+  if(!confirm("Esto reemplazará los datos actuales con los del respaldo. ¿Continuar?")){ input.value=""; return; }
   State.athletes = data.athletes || [];
   State.nextId = data.nextId || (State.athletes.length+1);
   await persistRoster();
   State.historial = {}; State.logsCache = {};
   for(const idStr of Object.keys(data.historial||{})){
     State.historial[idStr] = data.historial[idStr];
+    localStorage.setItem(`rm-history:${idStr}`, JSON.stringify(data.historial[idStr]));
     await stSet(`rm-history:${idStr}`, JSON.stringify(data.historial[idStr]));
   }
   for(const idStr of Object.keys(data.logs||{})){
     const days = Object.keys(data.logs[idStr]);
+    localStorage.setItem(`log-index:${idStr}`, JSON.stringify(days));
     await stSet(`log-index:${idStr}`, JSON.stringify(days));
     for(const d of days){
+      localStorage.setItem(`session-log:${idStr}:${d}`, JSON.stringify(data.logs[idStr][d]));
       await stSet(`session-log:${idStr}:${d}`, JSON.stringify(data.logs[idStr][d]));
     }
   }
   input.value = "";
-  showToast("Respaldo restaurado");
+  showToast("Respaldo restaurado permanentemente");
   render();
 }
 
@@ -634,22 +695,46 @@ function renderPanel(){
   const cal = CALENDAR.find(c=>c.micro===autoMicro.micro);
   const color = PHASE_COLOR[cal.faseCode];
 
-  const formHTML = State.showAddForm ? `
-    <div class="athlete-form">
-      <div class="field"><label>Nombre</label><input type="text" class="wide" id="f-name" placeholder="Nombre completo"/></div>
-      <div class="field"><label>Edad</label><input type="number" id="f-age" style="width:70px"/></div>
-      <div class="field"><label>Sexo</label>
-        <select id="f-sex"><option value="M">M</option><option value="F">F</option></select>
-      </div>
-      <div class="field"><label>Prueba</label><input type="text" class="wide" id="f-event" placeholder="100m - 200m"/></div>
-      <div class="field"><label>Peso (kg)</label><input type="number" id="f-bw" style="width:80px"/></div>
-      <div class="field"><label>Sent. kg</label><input type="number" id="f-squatkg"/></div>
-      <div class="field"><label>Sent. reps</label><input type="number" id="f-squatreps" style="width:70px"/></div>
-      <div class="field"><label>Banca kg</label><input type="number" id="f-benchkg"/></div>
-      <div class="field"><label>Banca reps</label><input type="number" id="f-benchreps" style="width:70px"/></div>
-      <button class="btn" onclick="submitAddForm()">Registrar Atleta</button>
-      <button class="btn secondary" onclick="State.showAddForm=false;render();">Cancelar</button>
-    </div>` : "";
+  let formHTML = "";
+  if(State.showAddForm){
+    formHTML = `
+      <div class="athlete-form">
+        <div class="field"><label>Nombre</label><input type="text" class="wide" id="f-name" placeholder="Nombre completo"/></div>
+        <div class="field"><label>Edad</label><input type="number" id="f-age" style="width:70px"/></div>
+        <div class="field"><label>Sexo</label>
+          <select id="f-sex"><option value="M">M</option><option value="F">F</option></select>
+        </div>
+        <div class="field"><label>Prueba</label><input type="text" class="wide" id="f-event" placeholder="100m - 200m"/></div>
+        <div class="field"><label>Peso (kg)</label><input type="number" id="f-bw" style="width:80px"/></div>
+        <div class="field"><label>Sent. kg</label><input type="number" id="f-squatkg"/></div>
+        <div class="field"><label>Sent. reps</label><input type="number" id="f-squatreps" style="width:70px"/></div>
+        <div class="field"><label>Banca kg</label><input type="number" id="f-benchkg"/></div>
+        <div class="field"><label>Banca reps</label><input type="number" id="f-benchreps" style="width:70px"/></div>
+        <button class="btn" onclick="submitAddForm()">Registrar Atleta</button>
+        <button class="btn secondary" onclick="State.showAddForm=false;render();">Cancelar</button>
+      </div>`;
+  } else if(State.editingAthleteId!==null){
+    const a = State.athletes.find(x=>x.id===State.editingAthleteId);
+    if(a){
+      formHTML = `
+        <div class="athlete-form" style="border-color:var(--real)">
+          <div style="width:100%;font-weight:700;font-size:13px;color:var(--real);margin-bottom:2px">Editando Atleta: #${a.id} ${esc(a.name)}</div>
+          <div class="field"><label>Nombre</label><input type="text" class="wide" id="e-name" value="${esc(a.name)}"/></div>
+          <div class="field"><label>Edad</label><input type="number" id="e-age" style="width:70px" value="${a.age||""}"/></div>
+          <div class="field"><label>Sexo</label>
+            <select id="e-sex"><option value="M" ${a.sex==="M"?"selected":""}>M</option><option value="F" ${a.sex==="F"?"selected":""}>F</option></select>
+          </div>
+          <div class="field"><label>Prueba</label><input type="text" class="wide" id="e-event" value="${esc(a.event||"")}"/></div>
+          <div class="field"><label>Peso (kg)</label><input type="number" id="e-bw" style="width:80px" value="${a.bw||""}"/></div>
+          <div class="field"><label>Sent. kg</label><input type="number" id="e-squatkg" value="${a.squatKg}"/></div>
+          <div class="field"><label>Sent. reps</label><input type="number" id="e-squatreps" style="width:70px" value="${a.squatReps}"/></div>
+          <div class="field"><label>Banca kg</label><input type="number" id="e-benchkg" value="${a.benchKg}"/></div>
+          <div class="field"><label>Banca reps</label><input type="number" id="e-benchreps" style="width:70px" value="${a.benchReps}"/></div>
+          <button class="btn" onclick="submitEditForm(${a.id})">Guardar Cambios</button>
+          <button class="btn secondary" onclick="State.editingAthleteId=null;render();">Cancelar</button>
+        </div>`;
+    }
+  }
 
   const grid = State.athletes.length===0
     ? `<div class="lane-card" style="cursor:default;text-align:center;padding:36px 16px;">
@@ -658,7 +743,10 @@ function renderPanel(){
     : `<div class="grid">${State.athletes.map(a=>{
         const cAthlete = color;
         return `<div class="lane-card" onclick="goToAthleteToday(${a.id})">
-          <button class="del-btn" onclick="deleteAthlete(${a.id}, event)">×</button>
+          <div class="card-actions">
+            <button class="action-btn" onclick="startEdit(${a.id}, event)" title="Editar atleta">✎</button>
+            <button class="action-btn" onclick="deleteAthlete(${a.id}, event)" title="Eliminar atleta">×</button>
+          </div>
           <div class="lane-stripe" style="background:${cAthlete}"></div>
           <div class="lane-row">
             <div class="bib" style="color:${cAthlete}">${a.id}</div>
@@ -680,11 +768,11 @@ function renderPanel(){
   return `
     <div class="section-head">
       <div class="section-title">Panel de Equipo</div>
-      <div class="section-note">${State.athletes.length} atleta${State.athletes.length===1?"":"s"} registrado${State.athletes.length===1?"":"s"} · sin límite</div>
+      <div class="section-note">${State.athletes.length} atleta${State.athletes.length===1?"":"s"} registrado${State.athletes.length===1?"":"s"} · Almacenamiento permanente activo</div>
     </div>
-    <div style="font-size:11.5px;color:var(--ok);margin-bottom:14px;">● Guardado automático activo — los datos persisten entre sesiones.</div>
+    <div style="font-size:11.5px;color:var(--ok);margin-bottom:14px;">● Guardado permanente local y en la nube activo — los datos se conservan automáticamente en este dispositivo.</div>
     <div style="margin-bottom:14px; display:flex; gap:8px; flex-wrap:wrap;">
-      <button class="btn" onclick="State.showAddForm=!State.showAddForm;render();">${State.showAddForm?"Cerrar formulario":"+ Agregar Atleta"}</button>
+      <button class="btn" onclick="State.showAddForm=!State.showAddForm;State.editingAthleteId=null;render();">${State.showAddForm?"Cerrar formulario":"+ Agregar Atleta"}</button>
       <button class="btn secondary" style="margin-left:8px" onclick="importPresetRoster()">Importar 30 Atletas (Excel)</button>
       <button class="btn secondary" onclick="exportBackup()">⬇ Exportar respaldo</button>
       <button class="btn secondary" onclick="triggerImport()">⬆ Restaurar respaldo</button>
@@ -692,6 +780,25 @@ function renderPanel(){
     ${formHTML}
     ${grid}
   `;
+}
+
+function startEdit(id, evt){
+  if(evt) evt.stopPropagation();
+  State.editingAthleteId = id;
+  State.showAddForm = false;
+  render();
+}
+
+function submitEditForm(id){
+  const name = document.getElementById("e-name").value;
+  if(!name.trim()){ alert("El nombre es obligatorio."); return; }
+  const fields = {
+    name, age: document.getElementById("e-age").value, sex: document.getElementById("e-sex").value,
+    event: document.getElementById("e-event").value, bw: document.getElementById("e-bw").value,
+    squatKg: document.getElementById("e-squatkg").value, squatReps: document.getElementById("e-squatreps").value || 1,
+    benchKg: document.getElementById("e-benchkg").value, benchReps: document.getElementById("e-benchreps").value || 1,
+  };
+  updateAthlete(id, fields);
 }
 
 function renderHoy(){
@@ -721,7 +828,7 @@ function renderHoy(){
     <div class="day-block">
       <div class="day-head"><span>${DAY_LABEL[trainingDay]}</span><span class="mono" style="font-weight:400;color:var(--muted);font-size:11px">${esc(athlete.name)}</span></div>
       ${exerciseTableHTML(exercises, athlete, State.logMode)}
-      ${State.logMode ? `<div class="save-bar"><button class="btn" onclick='guardarSesion(${JSON.stringify(exercises).replace(/'/g,"&#39;")}, ${athlete.id}, "${trainingDay}", ${cal.micro})'>Guardar sesión</button></div>` : ""}
+      ${State.logMode ? `<div class="save-bar"><button class="btn" onclick='guardarSesion(${JSON.stringify(exercises).replace(/'/g,"&#39;")}, ${athlete.id}, "${trainingDay}", ${cal.micro})'>Guardar sesión permanentemente</button></div>` : ""}
     </div>` : `<div class="day-block"><div class="rest-msg">Hoy no corresponde sesión programada en el ciclo Lun–Vie.<br/>Usa el Selector de Microciclo para revisar cualquier día de la semana.</div></div>`;
 
   return `
