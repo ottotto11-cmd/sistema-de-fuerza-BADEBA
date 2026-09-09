@@ -120,18 +120,18 @@ const fmtDate = (iso)=>{ const [y,m,d]=iso.split("-"); return `${d}/${m}/${y}`; 
 const esc = (s)=> String(s==null?"":s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const CALENDAR = [
-  {micro:1, fase:"Acumulación", faseCode:"A", start:"2026-08-31", end:"2026-09-06", tipo:"Ajuste / Adaptación", pctSquat:0.60, pctBench:0.60, perdidaVel:"10% - 15%", volumen:"Medio (350 reps)", enfoque:"Adaptación anatómica, tendinosa, core y postura"},
-  {micro:2, fase:"Acumulación", faseCode:"A", start:"2026-09-07", end:"2026-09-13", tipo:"Carga I", pctSquat:0.70, pctBench:0.70, perdidaVel:"15% - 20%", volumen:"Alto (420 reps)", enfoque:"Hipertrofia funcional en extensores y flexores de cadera"},
-  {micro:3, fase:"Acumulación", faseCode:"A", start:"2026-09-14", end:"2026-09-20", tipo:"Carga II", pctSquat:0.75, pctBench:0.75, perdidaVel:"15% - 20%", volumen:"Muy Alto (460 reps)", enfoque:"Fuerza máxima submáxima y fijación escapular en braceo"},
-  {micro:4, fase:"Acumulación", faseCode:"A", start:"2026-09-21", end:"2026-09-27", tipo:"Impacto / F. Máx", pctSquat:0.85, pctBench:0.85, perdidaVel:"15% - 20%", volumen:"Muy Alto (480 reps)", enfoque:"Pico de activación neural y reclutamiento FTF IIx/IIb"},
-  {micro:5, fase:"Acumulación", faseCode:"A", start:"2026-09-28", end:"2026-10-04", tipo:"Recuperación", pctSquat:0.65, pctBench:0.65, perdidaVel:"< 10%", volumen:"Bajo (240 reps)", enfoque:"Consolidación neural y supercompensación ATR"},
-  {micro:6, fase:"Transformación", faseCode:"T", start:"2026-10-05", end:"2026-10-11", tipo:"Carga / Potencia I", pctSquat:0.70, pctBench:0.65, perdidaVel:"< 10-12%", volumen:"Medio (320 reps)", enfoque:"Fuerza rápida, RFD y arrancada colgante"},
-  {micro:7, fase:"Transformación", faseCode:"T", start:"2026-10-12", end:"2026-10-18", tipo:"Impacto / PAP 85%", pctSquat:0.85, pctBench:0.80, perdidaVel:"< 10%", volumen:"Medio-Alto (340 reps)", enfoque:"Pico de contraste pesado y Método Francés (Cometti)"},
-  {micro:8, fase:"Transformación", faseCode:"T", start:"2026-10-19", end:"2026-10-25", tipo:"Carga / Halterofilia", pctSquat:0.75, pctBench:0.70, perdidaVel:"< 10%", volumen:"Medio (320 reps)", enfoque:"Derivados de halterofilia y triple extensión explosiva"},
-  {micro:9, fase:"Transformación", faseCode:"T", start:"2026-10-26", end:"2026-11-01", tipo:"Específico / RFD", pctSquat:0.65, pctBench:0.65, perdidaVel:"< 8-10%", volumen:"Medio-Bajo (280 reps)", enfoque:"Tasa de desarrollo de fuerza y velocidad horizontal"},
-  {micro:10, fase:"Transformación", faseCode:"T", start:"2026-11-02", end:"2026-11-08", tipo:"Recuperación / Test", pctSquat:0.60, pctBench:0.60, perdidaVel:"< 5-8%", volumen:"Bajo (220 reps)", enfoque:"Evaluación VMP y descarga de potencia neuromuscular"},
-  {micro:11, fase:"Realización", faseCode:"R", start:"2026-11-09", end:"2026-11-15", tipo:"Puesta a Punto", pctSquat:0.50, pctBench:0.50, perdidaVel:"< 5%", volumen:"Muy Bajo (180 reps)", enfoque:"Potenciación neural y stiffness de tobillo sin fatiga"},
-  {micro:12, fase:"Realización", faseCode:"R", start:"2026-11-16", end:"2026-11-22", tipo:"Competición", pctSquat:0.40, pctBench:0.40, perdidaVel:"< 5%", volumen:"Mínimo (120 reps)", enfoque:"Tapering final, máxima frescura y velocidad pura"},
+  {micro:1, fase:"Acumulación", faseCode:"A", start:"2026-09-07", end:"2026-09-13", tipo:"Ajuste / Adaptación", pctSquat:0.60, pctBench:0.60, perdidaVel:"10% - 15%", volumen:"Medio (350 reps)", enfoque:"Adaptación anatómica, tendinosa, core y postura"},
+  {micro:2, fase:"Acumulación", faseCode:"A", start:"2026-09-14", end:"2026-09-20", tipo:"Carga I", pctSquat:0.70, pctBench:0.70, perdidaVel:"15% - 20%", volumen:"Alto (420 reps)", enfoque:"Hipertrofia funcional en extensores y flexores de cadera"},
+  {micro:3, fase:"Acumulación", faseCode:"A", start:"2026-09-21", end:"2026-09-27", tipo:"Carga II", pctSquat:0.75, pctBench:0.75, perdidaVel:"15% - 20%", volumen:"Muy Alto (460 reps)", enfoque:"Fuerza máxima submáxima y fijación escapular en braceo"},
+  {micro:4, fase:"Acumulación", faseCode:"A", start:"2026-09-28", end:"2026-10-04", tipo:"Impacto / F. Máx", pctSquat:0.85, pctBench:0.85, perdidaVel:"15% - 20%", volumen:"Muy Alto (480 reps)", enfoque:"Pico de activación neural y reclutamiento FTF IIx/IIb"},
+  {micro:5, fase:"Acumulación", faseCode:"A", start:"2026-10-05", end:"2026-10-11", tipo:"Recuperación", pctSquat:0.65, pctBench:0.65, perdidaVel:"< 10%", volumen:"Bajo (240 reps)", enfoque:"Consolidación neural y supercompensación ATR"},
+  {micro:6, fase:"Transformación", faseCode:"T", start:"2026-10-12", end:"2026-10-18", tipo:"Carga / Potencia I", pctSquat:0.70, pctBench:0.65, perdidaVel:"< 10-12%", volumen:"Medio (320 reps)", enfoque:"Fuerza rápida, RFD y arrancada colgante"},
+  {micro:7, fase:"Transformación", faseCode:"T", start:"2026-10-19", end:"2026-10-25", tipo:"Impacto / PAP 85%", pctSquat:0.85, pctBench:0.80, perdidaVel:"< 10%", volumen:"Medio-Alto (340 reps)", enfoque:"Pico de contraste pesado y Método Francés (Cometti)"},
+  {micro:8, fase:"Transformación", faseCode:"T", start:"2026-10-26", end:"2026-11-01", tipo:"Carga / Halterofilia", pctSquat:0.75, pctBench:0.70, perdidaVel:"< 10%", volumen:"Medio (320 reps)", enfoque:"Derivados de halterofilia y triple extensión explosiva"},
+  {micro:9, fase:"Transformación", faseCode:"T", start:"2026-11-02", end:"2026-11-08", tipo:"Específico / RFD", pctSquat:0.65, pctBench:0.65, perdidaVel:"< 8-10%", volumen:"Medio-Bajo (280 reps)", enfoque:"Tasa de desarrollo de fuerza y velocidad horizontal"},
+  {micro:10, fase:"Transformación", faseCode:"T", start:"2026-11-09", end:"2026-11-15", tipo:"Recuperación / Test", pctSquat:0.60, pctBench:0.60, perdidaVel:"< 5-8%", volumen:"Bajo (220 reps)", enfoque:"Evaluación VMP y descarga de potencia neuromuscular"},
+  {micro:11, fase:"Realización", faseCode:"R", start:"2026-11-16", end:"2026-11-22", tipo:"Puesta a Punto", pctSquat:0.50, pctBench:0.50, perdidaVel:"< 5%", volumen:"Muy Bajo (180 reps)", enfoque:"Potenciación neural y stiffness de tobillo sin fatiga"},
+  {micro:12, fase:"Realización", faseCode:"R", start:"2026-11-23", end:"2026-11-29", tipo:"Competición", pctSquat:0.40, pctBench:0.40, perdidaVel:"< 5%", volumen:"Mínimo (120 reps)", enfoque:"Tapering final, máxima frescura y velocidad pura"},
 ];
 const PHASE_COLOR = {A:"var(--acum)", T:"var(--trans)", R:"var(--real)"};
 const PHASE_LABEL = {A:"Acumulación", T:"Transformación", R:"Realización"};
@@ -331,7 +331,7 @@ const PRESET_ROSTER = [
   {id:29, name:"Atleta 29 (falta nombre)", age:19, sex:"M", event:"400m - 4x400m", bw:59.7, squatKg:116, squatReps:6, benchKg:80, benchReps:4},
   {id:30, name:"Atleta 30 (falta nombre)", age:17, sex:"F", event:"100m - 200m", bw:80.8, squatKg:87, squatReps:5, benchKg:59, benchReps:4},
 ];
-const PRESET_DATE = "2026-08-31";
+const PRESET_DATE = "2026-09-07";
 
 const State = {
   athletes: [],
