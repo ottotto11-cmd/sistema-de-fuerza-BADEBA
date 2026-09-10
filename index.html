@@ -39,9 +39,8 @@
   .rm-row{display:flex;gap:14px;margin-top:10px;font-size:12px;}
   .rm-item{color:var(--muted);}
   .rm-item b{color:var(--text);font-family:'Courier New',monospace;}
-  .card-actions{position:absolute;top:8px;right:8px;display:flex;gap:4px;}
-  .action-btn{width:22px;height:22px;border-radius:50%;background:var(--surface3);color:var(--muted);border:none;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;line-height:1;}
-  .action-btn:hover{background:var(--lane);color:#fff;}
+  .del-btn{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:var(--surface3);color:var(--muted);border:none;cursor:pointer;font-size:13px;line-height:1;}
+  .del-btn:hover{background:#7A1E12;color:#fff;}
   .today-hero{background:linear-gradient(135deg, var(--surface2), var(--surface));border:1px solid var(--line);border-radius:14px;padding:22px 20px;margin-bottom:20px;}
   .today-date{font-family:'Courier New',monospace;font-size:12px;color:var(--muted);letter-spacing:0.03em;}
   .today-day{font-weight:700;font-size:26px;text-transform:uppercase;margin:4px 0 2px;}
@@ -120,18 +119,18 @@ const fmtDate = (iso)=>{ const [y,m,d]=iso.split("-"); return `${d}/${m}/${y}`; 
 const esc = (s)=> String(s==null?"":s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const CALENDAR = [
-  {micro:1, fase:"Acumulación", faseCode:"A", start:"2026-09-07", end:"2026-09-13", tipo:"Ajuste / Adaptación", pctSquat:0.60, pctBench:0.60, perdidaVel:"10% - 15%", volumen:"Medio (350 reps)", enfoque:"Adaptación anatómica, tendinosa, core y postura"},
-  {micro:2, fase:"Acumulación", faseCode:"A", start:"2026-09-14", end:"2026-09-20", tipo:"Carga I", pctSquat:0.70, pctBench:0.70, perdidaVel:"15% - 20%", volumen:"Alto (420 reps)", enfoque:"Hipertrofia funcional en extensores y flexores de cadera"},
-  {micro:3, fase:"Acumulación", faseCode:"A", start:"2026-09-21", end:"2026-09-27", tipo:"Carga II", pctSquat:0.75, pctBench:0.75, perdidaVel:"15% - 20%", volumen:"Muy Alto (460 reps)", enfoque:"Fuerza máxima submáxima y fijación escapular en braceo"},
-  {micro:4, fase:"Acumulación", faseCode:"A", start:"2026-09-28", end:"2026-10-04", tipo:"Impacto / F. Máx", pctSquat:0.85, pctBench:0.85, perdidaVel:"15% - 20%", volumen:"Muy Alto (480 reps)", enfoque:"Pico de activación neural y reclutamiento FTF IIx/IIb"},
-  {micro:5, fase:"Acumulación", faseCode:"A", start:"2026-10-05", end:"2026-10-11", tipo:"Recuperación", pctSquat:0.65, pctBench:0.65, perdidaVel:"< 10%", volumen:"Bajo (240 reps)", enfoque:"Consolidación neural y supercompensación ATR"},
-  {micro:6, fase:"Transformación", faseCode:"T", start:"2026-10-12", end:"2026-10-18", tipo:"Carga / Potencia I", pctSquat:0.70, pctBench:0.65, perdidaVel:"< 10-12%", volumen:"Medio (320 reps)", enfoque:"Fuerza rápida, RFD y arrancada colgante"},
-  {micro:7, fase:"Transformación", faseCode:"T", start:"2026-10-19", end:"2026-10-25", tipo:"Impacto / PAP 85%", pctSquat:0.85, pctBench:0.80, perdidaVel:"< 10%", volumen:"Medio-Alto (340 reps)", enfoque:"Pico de contraste pesado y Método Francés (Cometti)"},
-  {micro:8, fase:"Transformación", faseCode:"T", start:"2026-10-26", end:"2026-11-01", tipo:"Carga / Halterofilia", pctSquat:0.75, pctBench:0.70, perdidaVel:"< 10%", volumen:"Medio (320 reps)", enfoque:"Derivados de halterofilia y triple extensión explosiva"},
-  {micro:9, fase:"Transformación", faseCode:"T", start:"2026-11-02", end:"2026-11-08", tipo:"Específico / RFD", pctSquat:0.65, pctBench:0.65, perdidaVel:"< 8-10%", volumen:"Medio-Bajo (280 reps)", enfoque:"Tasa de desarrollo de fuerza y velocidad horizontal"},
-  {micro:10, fase:"Transformación", faseCode:"T", start:"2026-11-09", end:"2026-11-15", tipo:"Recuperación / Test", pctSquat:0.60, pctBench:0.60, perdidaVel:"< 5-8%", volumen:"Bajo (220 reps)", enfoque:"Evaluación VMP y descarga de potencia neuromuscular"},
+  {micro:1, fase:"Acumulación", faseCode:"A", start:"2026-09-07", end:"2026-09-13", tipo:"Adaptación Anatómica / Base", pctSquat:0.65, pctBench:0.65, perdidaVel:"10% - 12%", volumen:"Alto (400 reps)", enfoque:"Preparación articular, tendinosa y puesta a tono neuromuscular"},
+  {micro:2, fase:"Acumulación", faseCode:"A", start:"2026-09-14", end:"2026-09-20", tipo:"Hipertrofia-Fuerza", pctSquat:0.72, pctBench:0.72, perdidaVel:"12% - 15%", volumen:"Muy Alto (480 reps)", enfoque:"Ganancia de volumen muscular y base de fuerza para transferencia neural"},
+  {micro:3, fase:"Acumulación", faseCode:"A", start:"2026-09-21", end:"2026-09-27", tipo:"Fuerza Máxima I", pctSquat:0.80, pctBench:0.80, perdidaVel:"15% - 18%", volumen:"Medio-Alto (360 reps)", enfoque:"Reclutamiento de FT IIx/IIb · Primeros picos de activación neural"},
+  {micro:4, fase:"Acumulación", faseCode:"A", start:"2026-09-28", end:"2026-10-04", tipo:"Fuerza Máxima II", pctSquat:0.85, pctBench:0.85, perdidaVel:"15% - 20%", volumen:"Medio (320 reps)", enfoque:"Consolidación de reclutamiento · Clusters 3×3 y parejas de impacto"},
+  {micro:5, fase:"Acumulación", faseCode:"A", start:"2026-10-05", end:"2026-10-11", tipo:"Recuperación / Consolidación", pctSquat:0.70, pctBench:0.70, perdidaVel:"< 10%", volumen:"Bajo (280 reps)", enfoque:"Supercompensación neural y recuperación articular antes del pico final"},
+  {micro:6, fase:"Acumulación", faseCode:"A", start:"2026-10-12", end:"2026-10-18", tipo:"Fuerza Máxima III / Pico Acumulación", pctSquat:0.90, pctBench:0.88, perdidaVel:"18% - 22%", volumen:"Muy Bajo (240 reps)", enfoque:"Pico máximo de Acumulación · Máxima densidad neural · Transición a Transformación"},
+  {micro:7, fase:"Transformación", faseCode:"T", start:"2026-10-19", end:"2026-10-25", tipo:"Carga / Potencia I", pctSquat:0.70, pctBench:0.65, perdidaVel:"< 10-12%", volumen:"Medio (320 reps)", enfoque:"Fuerza rápida, RFD y arrancada colgante"},
+  {micro:8, fase:"Transformación", faseCode:"T", start:"2026-10-26", end:"2026-11-01", tipo:"Impacto / PAP 85%", pctSquat:0.85, pctBench:0.80, perdidaVel:"< 10%", volumen:"Medio-Alto (340 reps)", enfoque:"Pico de contraste pesado y Método Francés (Cometti)"},
+  {micro:9, fase:"Transformación", faseCode:"T", start:"2026-11-02", end:"2026-11-08", tipo:"Carga / Halterofilia", pctSquat:0.75, pctBench:0.70, perdidaVel:"< 10%", volumen:"Medio (320 reps)", enfoque:"Derivados de halterofilia y triple extensión explosiva"},
+  {micro:10, fase:"Transformación", faseCode:"T", start:"2026-11-09", end:"2026-11-15", tipo:"Específico / RFD", pctSquat:0.65, pctBench:0.65, perdidaVel:"< 8-10%", volumen:"Medio-Bajo (280 reps)", enfoque:"Tasa de desarrollo de fuerza y velocidad horizontal"},
   {micro:11, fase:"Realización", faseCode:"R", start:"2026-11-16", end:"2026-11-22", tipo:"Puesta a Punto", pctSquat:0.50, pctBench:0.50, perdidaVel:"< 5%", volumen:"Muy Bajo (180 reps)", enfoque:"Potenciación neural y stiffness de tobillo sin fatiga"},
-  {micro:12, fase:"Realización", faseCode:"R", start:"2026-11-23", end:"2026-11-29", tipo:"Competición", pctSquat:0.40, pctBench:0.40, perdidaVel:"< 5%", volumen:"Mínimo (120 reps)", enfoque:"Tapering final, máxima frescura y velocidad pura"},
+  {micro:12, fase:"Realización", faseCode:"R", start:"2026-11-23", end:"2026-11-29", tipo:"Competición / Descarga Final", pctSquat:0.40, pctBench:0.40, perdidaVel:"< 5%", volumen:"Mínimo (120 reps)", enfoque:"Tapering final, máxima frescura y velocidad pura"},
 ];
 const PHASE_COLOR = {A:"var(--acum)", T:"var(--trans)", R:"var(--real)"};
 const PHASE_LABEL = {A:"Acumulación", T:"Transformación", R:"Realización"};
@@ -289,41 +288,14 @@ const trainingDayFromWeekday = (w)=>{
   return null; 
 };
 
-const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
-};
-
-let db = null;
-let useCloud = false;
-
-try {
-  if (firebaseConfig.apiKey && typeof firebase !== "undefined") {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-    useCloud = true;
-  }
-} catch(e) { useCloud = false; }
-
-async function cloudGet(key){
-  if(!useCloud || !db) return null;
-  try {
-    const doc = await db.collection("appData").doc(key).get();
-    return doc.exists ? doc.data().value : null;
-  } catch(e) { return null; }
+const hasStorage = ()=> typeof window!=="undefined" && window.storage && typeof window.storage.get==="function";
+async function stGet(key){
+  if(!hasStorage()) return null;
+  try{ const r = await window.storage.get(key); return r ? r.value : null; }catch(e){ return null; }
 }
-
-async function cloudSet(key, val){
-  localStorage.setItem(key, typeof val === "string" ? val : JSON.stringify(val));
-  if(!useCloud || !db) return false;
-  try {
-    await db.collection("appData").doc(key).set({ value: val });
-    return true;
-  } catch(e) { return false; }
+async function stSet(key,val){
+  if(!hasStorage()) return false;
+  try{ await window.storage.set(key,val); return true; }catch(e){ return false; }
 }
 
 const PRESET_ROSTER = [
@@ -358,7 +330,7 @@ const PRESET_ROSTER = [
   {id:29, name:"Atleta 29 (falta nombre)", age:19, sex:"M", event:"400m - 4x400m", bw:59.7, squatKg:116, squatReps:6, benchKg:80, benchReps:4},
   {id:30, name:"Atleta 30 (falta nombre)", age:17, sex:"F", event:"100m - 200m", bw:80.8, squatKg:87, squatReps:5, benchKg:59, benchReps:4},
 ];
-const PRESET_DATE = "2026-09-07";
+const PRESET_DATE = "2026-08-31";
 
 const State = {
   athletes: [],
@@ -367,7 +339,6 @@ const State = {
   selectedAthleteId: null,
   microId: 1,
   showAddForm: false,
-  editingAthleteId: null,
   logMode: false,
   logDraft: {},
   historial: {},
@@ -375,11 +346,10 @@ const State = {
 };
 
 async function initState(){
-  let raw = localStorage.getItem("athletes-roster-persist");
-  if(!raw) raw = await cloudGet("athletes-roster");
+  const raw = await stGet("athletes-roster");
   if(raw){
     try{
-      const data = typeof raw === "string" ? JSON.parse(raw) : raw;
+      const data = JSON.parse(raw);
       State.athletes = data.athletes || [];
       State.nextId = data.nextId || (State.athletes.length+1);
     }catch(e){}
@@ -389,13 +359,11 @@ async function initState(){
   if(State.athletes.length) State.selectedAthleteId = State.athletes[0].id;
   render();
 }
-
 async function persistRoster(){
-  const payload = {athletes:State.athletes, nextId:State.nextId};
-  await cloudSet("athletes-roster", payload);
+  await stSet("athletes-roster", JSON.stringify({athletes:State.athletes, nextId:State.nextId}));
 }
 
-function setTab(tab){ State.tab = tab; State.showAddForm=false; State.editingAthleteId=null; render(); }
+function setTab(tab){ State.tab = tab; State.showAddForm=false; render(); }
 
 async function addAthlete(fields){
   const a = {
@@ -414,31 +382,10 @@ async function addAthlete(fields){
   await persistRoster();
   const hist = [{date: todayISO(), squatKg:a.squatKg, squatReps:a.squatReps, benchKg:a.benchKg, benchReps:a.benchReps}];
   State.historial[a.id] = hist;
-  await cloudSet(`rm-history:${a.id}`, hist);
+  await stSet(`rm-history:${a.id}`, JSON.stringify(hist));
   State.selectedAthleteId = a.id;
   State.showAddForm = false;
-  showToast("Atleta registrado permanentemente");
-  render();
-}
-
-async function updateAthlete(id, fields){
-  const idx = State.athletes.findIndex(a=>a.id===id);
-  if(idx===-1) return;
-  State.athletes[idx] = {
-    ...State.athletes[idx],
-    name: fields.name.trim(),
-    age: Number(fields.age)||null,
-    sex: fields.sex,
-    event: fields.event.trim(),
-    bw: Number(fields.bw)||null,
-    squatKg: Number(fields.squatKg)||0,
-    squatReps: Number(fields.squatReps)||1,
-    benchKg: Number(fields.benchKg)||0,
-    benchReps: Number(fields.benchReps)||1,
-  };
-  await persistRoster();
-  State.editingAthleteId = null;
-  showToast("Atleta actualizado permanentemente");
+  showToast("Atleta registrado");
   render();
 }
 
@@ -465,26 +412,21 @@ async function importPresetRoster(){
   for(const a of State.athletes){
     const hist = [{date: PRESET_DATE, squatKg:a.squatKg, squatReps:a.squatReps, benchKg:a.benchKg, benchReps:a.benchReps}];
     State.historial[a.id] = hist;
-    await cloudSet(`rm-history:${a.id}`, hist);
+    await stSet(`rm-history:${a.id}`, JSON.stringify(hist));
   }
   State.selectedAthleteId = State.athletes[0].id;
-  showToast("30 atletas importados permanentemente");
+  showToast("30 atletas importados");
   render();
 }
 
-async function getCoachPin(){ 
-  let pin = localStorage.getItem("coach-pin-persist");
-  if(!pin) pin = await cloudGet("coach-pin");
-  return pin;
-}
+async function getCoachPin(){ return await stGet("coach-pin"); }
 async function ensurePinAndConfirm(actionLabel){
   const pin = await getCoachPin();
   if(!pin){
     const newPin = prompt(`Aún no hay PIN de entrenador configurado.\nCrea un PIN (4 a 6 dígitos) para proteger las eliminaciones de aquí en adelante:`);
     if(!newPin) return false;
     if(!/^\d{4,6}$/.test(newPin)){ alert("El PIN debe tener entre 4 y 6 dígitos numéricos."); return false; }
-    localStorage.setItem("coach-pin-persist", newPin);
-    await cloudSet("coach-pin", newPin);
+    await stSet("coach-pin", newPin);
     showToast("PIN de entrenador configurado");
     return true;
   }
@@ -503,8 +445,7 @@ async function changePin(){
   const newPin = prompt("Nuevo PIN (4 a 6 dígitos):");
   if(!newPin) return;
   if(!/^\d{4,6}$/.test(newPin)){ alert("El PIN debe tener entre 4 y 6 dígitos numéricos."); return; }
-  localStorage.setItem("coach-pin-persist", newPin);
-  await cloudSet("coach-pin", newPin);
+  await stSet("coach-pin", newPin);
   showToast("PIN actualizado");
 }
 
@@ -526,11 +467,10 @@ async function toggleLogMode(){
   if(State.logMode){
     const a = State.athletes.find(x=>x.id===State.selectedAthleteId);
     const key = `session-log:${a.id}:${todayISO()}`;
-    let raw = localStorage.getItem(key);
-    if(!raw) raw = await cloudGet(key);
+    const raw = await stGet(key);
     if(raw){
       try{
-        const log = typeof raw === "string" ? JSON.parse(raw) : raw;
+        const log = JSON.parse(raw);
         const d = {};
         log.entries.forEach(e=>{ d[e.nombre]={completado:e.completado, rpe:e.rpe}; });
         State.logDraft = d;
@@ -550,28 +490,20 @@ async function guardarSesion(exercises, athleteId, day, micro){
     rpe: (State.logDraft[ex.nombre]&&State.logDraft[ex.nombre].rpe)||"",
   }));
   const log = {athleteId, date: todayISO(), day, micro, entries};
-  const logKey = `session-log:${athleteId}:${todayISO()}`;
-  await cloudSet(logKey, log);
-
-  const idxKey = `log-index:${athleteId}`;
-  let rawIdx = localStorage.getItem(idxKey) || await cloudGet(idxKey);
+  await stSet(`session-log:${athleteId}:${todayISO()}`, JSON.stringify(log));
+  const idxRaw = await stGet(`log-index:${athleteId}`);
   let idx = [];
-  try{ idx = rawIdx ? (typeof rawIdx === "string" ? JSON.parse(rawIdx) : rawIdx) : []; }catch(e){}
-  if(!idx.includes(todayISO())){ 
-    idx.push(todayISO()); 
-    await cloudSet(idxKey, idx);
-  }
-  showToast("Sesión registrada permanentemente");
+  try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
+  if(!idx.includes(todayISO())){ idx.push(todayISO()); await stSet(`log-index:${athleteId}`, JSON.stringify(idx)); }
+  showToast("Sesión registrada");
   render();
 }
 
 async function loadHistorialFor(athleteId){
   if(State.historial[athleteId]) return State.historial[athleteId];
-  const histKey = `rm-history:${athleteId}`;
-  let raw = localStorage.getItem(histKey);
-  if(!raw) raw = await cloudGet(histKey);
+  const raw = await stGet(`rm-history:${athleteId}`);
   let hist = [];
-  try{ hist = raw ? (typeof raw === "string" ? JSON.parse(raw) : raw) : []; }catch(e){}
+  try{ hist = raw?JSON.parse(raw):[]; }catch(e){}
   if(!hist.length){
     const a = State.athletes.find(x=>x.id===athleteId);
     if(a) hist = [{date:todayISO(), squatKg:a.squatKg, squatReps:a.squatReps, benchKg:a.benchKg, benchReps:a.benchReps}];
@@ -580,17 +512,14 @@ async function loadHistorialFor(athleteId){
   return hist;
 }
 async function loadLogsFor(athleteId){
-  const idxKey = `log-index:${athleteId}`;
-  let rawIdx = localStorage.getItem(idxKey) || await cloudGet(idxKey);
+  const idxRaw = await stGet(`log-index:${athleteId}`);
   let idx = [];
-  try{ idx = rawIdx ? (typeof rawIdx === "string" ? JSON.parse(rawIdx) : rawIdx) : []; }catch(e){}
+  try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
   const sorted = [...idx].sort().reverse().slice(0,6);
   const entries = [];
   for(const d of sorted){
-    const logKey = `session-log:${athleteId}:${d}`;
-    let raw = localStorage.getItem(logKey);
-    if(!raw) raw = await cloudGet(logKey);
-    if(raw){ try{ entries.push(typeof raw === "string" ? JSON.parse(raw) : raw); }catch(e){} }
+    const raw = await stGet(`session-log:${athleteId}:${d}`);
+    if(raw){ try{ entries.push(JSON.parse(raw)); }catch(e){} }
   }
   State.logsCache[athleteId] = entries;
   return entries;
@@ -599,30 +528,27 @@ async function addRMEntry(athleteId, entry){
   const hist = await loadHistorialFor(athleteId);
   const updated = [...hist, entry].sort((a,b)=>a.date.localeCompare(b.date));
   State.historial[athleteId] = updated;
-  const histKey = `rm-history:${athleteId}`;
-  await cloudSet(histKey, updated);
-  showToast("Test guardado permanentemente");
+  await stSet(`rm-history:${athleteId}`, JSON.stringify(updated));
+  showToast("Test guardado");
   render();
 }
 
 async function exportBackup(){
-  const data = {version:3, exportedAt:new Date().toISOString(), athletes:State.athletes, nextId:State.nextId, historial:{}, logs:{}};
+  const data = {version:1, exportedAt:new Date().toISOString(), athletes:State.athletes, nextId:State.nextId, historial:{}, logs:{}};
   for(const a of State.athletes){
     data.historial[a.id] = await loadHistorialFor(a.id);
-    const idxKey = `log-index:${a.id}`;
-    let rawIdx = localStorage.getItem(idxKey) || await cloudGet(idxKey);
-    let idx=[]; try{ idx = rawIdx ? (typeof rawIdx === "string" ? JSON.parse(rawIdx) : rawIdx) : []; }catch(e){}
+    const idxRaw = await stGet(`log-index:${a.id}`);
+    let idx=[]; try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
     data.logs[a.id] = {};
     for(const d of idx){
-      const logKey = `session-log:${a.id}:${d}`;
-      let raw = localStorage.getItem(logKey) || await cloudGet(logKey);
-      if(raw){ try{ data.logs[a.id][d] = typeof raw === "string" ? JSON.parse(raw) : raw; }catch(e){} }
+      const raw = await stGet(`session-log:${a.id}:${d}`);
+      if(raw){ try{ data.logs[a.id][d] = JSON.parse(raw); }catch(e){} }
     }
   }
   const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  link.href = url; link.download = `respaldo_permanente_atr_${todayISO()}.json`;
+  link.href = url; link.download = `respaldo_fuerza_atr_${todayISO()}.json`;
   document.body.appendChild(link); link.click(); document.body.removeChild(link);
   URL.revokeObjectURL(url);
   showToast("Respaldo descargado");
@@ -631,29 +557,29 @@ function triggerImport(){ document.getElementById("import-file").click(); }
 async function handleImportFile(input){
   const file = input.files[0];
   if(!file) return;
-  const authorized = await ensurePinAndConfirm("restaurar un respaldo");
+  const authorized = await ensurePinAndConfirm("restaurar un respaldo (reemplaza el roster actual)");
   if(!authorized){ input.value=""; return; }
   const text = await file.text();
   let data;
   try{ data = JSON.parse(text); }catch(e){ alert("Archivo inválido."); input.value=""; return; }
-  if(!confirm("Esto reemplazará los datos actuales con los del respaldo. ¿Continuar?")){ input.value=""; return; }
+  if(!confirm("Esto reemplazará el roster y el historial actuales con los del respaldo. ¿Continuar?")){ input.value=""; return; }
   State.athletes = data.athletes || [];
   State.nextId = data.nextId || (State.athletes.length+1);
   await persistRoster();
   State.historial = {}; State.logsCache = {};
   for(const idStr of Object.keys(data.historial||{})){
     State.historial[idStr] = data.historial[idStr];
-    await cloudSet(`rm-history:${idStr}`, data.historial[idStr]);
+    await stSet(`rm-history:${idStr}`, JSON.stringify(data.historial[idStr]));
   }
   for(const idStr of Object.keys(data.logs||{})){
     const days = Object.keys(data.logs[idStr]);
-    await cloudSet(`log-index:${idStr}`, days);
+    await stSet(`log-index:${idStr}`, JSON.stringify(days));
     for(const d of days){
-      await cloudSet(`session-log:${idStr}:${d}`, data.logs[idStr][d]);
+      await stSet(`session-log:${idStr}:${d}`, JSON.stringify(data.logs[idStr][d]));
     }
   }
   input.value = "";
-  showToast("Respaldo restaurado permanentemente");
+  showToast("Respaldo restaurado");
   render();
 }
 
@@ -705,49 +631,25 @@ function miniChartSVG(points, color){
 
 function renderPanel(){
   const autoMicro = currentMicroFromDate(new Date());
-  const cal = CALENDAR.find(c=>c.micro===autoMicro.micro) || CALENDAR[CALENDAR.length-1];
+  const cal = CALENDAR.find(c=>c.micro===autoMicro.micro);
   const color = PHASE_COLOR[cal.faseCode];
 
-  let formHTML = "";
-  if(State.showAddForm){
-    formHTML = `
-      <div class="athlete-form">
-        <div class="field"><label>Nombre</label><input type="text" class="wide" id="f-name" placeholder="Nombre completo"/></div>
-        <div class="field"><label>Edad</label><input type="number" id="f-age" style="width:70px"/></div>
-        <div class="field"><label>Sexo</label>
-          <select id="f-sex"><option value="M">M</option><option value="F">F</option></select>
-        </div>
-        <div class="field"><label>Prueba</label><input type="text" class="wide" id="f-event" placeholder="100m - 200m"/></div>
-        <div class="field"><label>Peso (kg)</label><input type="number" id="f-bw" style="width:80px"/></div>
-        <div class="field"><label>Sent. kg</label><input type="number" id="f-squatkg"/></div>
-        <div class="field"><label>Sent. reps</label><input type="number" id="f-squatreps" style="width:70px"/></div>
-        <div class="field"><label>Banca kg</label><input type="number" id="f-benchkg"/></div>
-        <div class="field"><label>Banca reps</label><input type="number" id="f-benchreps" style="width:70px"/></div>
-        <button class="btn" onclick="submitAddForm()">Registrar Atleta</button>
-        <button class="btn secondary" onclick="State.showAddForm=false;render();">Cancelar</button>
-      </div>`;
-  } else if(State.editingAthleteId!==null){
-    const a = State.athletes.find(x=>x.id===State.editingAthleteId);
-    if(a){
-      formHTML = `
-        <div class="athlete-form" style="border-color:var(--real)">
-          <div style="width:100%;font-weight:700;font-size:13px;color:var(--real);margin-bottom:2px">Editando Atleta: #${a.id} ${esc(a.name)}</div>
-          <div class="field"><label>Nombre</label><input type="text" class="wide" id="e-name" value="${esc(a.name)}"/></div>
-          <div class="field"><label>Edad</label><input type="number" id="e-age" style="width:70px" value="${a.age||""}"/></div>
-          <div class="field"><label>Sexo</label>
-            <select id="e-sex"><option value="M" ${a.sex==="M"?"selected":""}>M</option><option value="F" ${a.sex==="F"?"selected":""}>F</option></select>
-          </div>
-          <div class="field"><label>Prueba</label><input type="text" class="wide" id="e-event" value="${esc(a.event||"")}"/></div>
-          <div class="field"><label>Peso (kg)</label><input type="number" id="e-bw" style="width:80px" value="${a.bw||""}"/></div>
-          <div class="field"><label>Sent. kg</label><input type="number" id="e-squatkg" value="${a.squatKg}"/></div>
-          <div class="field"><label>Sent. reps</label><input type="number" id="e-squatreps" style="width:70px" value="${a.squatReps}"/></div>
-          <div class="field"><label>Banca kg</label><input type="number" id="e-benchkg" value="${a.benchKg}"/></div>
-          <div class="field"><label>Banca reps</label><input type="number" id="e-benchreps" style="width:70px" value="${a.benchReps}"/></div>
-          <button class="btn" onclick="submitEditForm(${a.id})">Guardar Cambios</button>
-          <button class="btn secondary" onclick="State.editingAthleteId=null;render();">Cancelar</button>
-        </div>`;
-    }
-  }
+  const formHTML = State.showAddForm ? `
+    <div class="athlete-form">
+      <div class="field"><label>Nombre</label><input type="text" class="wide" id="f-name" placeholder="Nombre completo"/></div>
+      <div class="field"><label>Edad</label><input type="number" id="f-age" style="width:70px"/></div>
+      <div class="field"><label>Sexo</label>
+        <select id="f-sex"><option value="M">M</option><option value="F">F</option></select>
+      </div>
+      <div class="field"><label>Prueba</label><input type="text" class="wide" id="f-event" placeholder="100m - 200m"/></div>
+      <div class="field"><label>Peso (kg)</label><input type="number" id="f-bw" style="width:80px"/></div>
+      <div class="field"><label>Sent. kg</label><input type="number" id="f-squatkg"/></div>
+      <div class="field"><label>Sent. reps</label><input type="number" id="f-squatreps" style="width:70px"/></div>
+      <div class="field"><label>Banca kg</label><input type="number" id="f-benchkg"/></div>
+      <div class="field"><label>Banca reps</label><input type="number" id="f-benchreps" style="width:70px"/></div>
+      <button class="btn" onclick="submitAddForm()">Registrar Atleta</button>
+      <button class="btn secondary" onclick="State.showAddForm=false;render();">Cancelar</button>
+    </div>` : "";
 
   const grid = State.athletes.length===0
     ? `<div class="lane-card" style="cursor:default;text-align:center;padding:36px 16px;">
@@ -756,10 +658,7 @@ function renderPanel(){
     : `<div class="grid">${State.athletes.map(a=>{
         const cAthlete = color;
         return `<div class="lane-card" onclick="goToAthleteToday(${a.id})">
-          <div class="card-actions">
-            <button class="action-btn" onclick="startEdit(${a.id}, event)" title="Editar atleta">✎</button>
-            <button class="action-btn" onclick="deleteAthlete(${a.id}, event)" title="Eliminar atleta">×</button>
-          </div>
+          <button class="del-btn" onclick="deleteAthlete(${a.id}, event)">×</button>
           <div class="lane-stripe" style="background:${cAthlete}"></div>
           <div class="lane-row">
             <div class="bib" style="color:${cAthlete}">${a.id}</div>
@@ -781,11 +680,11 @@ function renderPanel(){
   return `
     <div class="section-head">
       <div class="section-title">Panel de Equipo</div>
-      <div class="section-note">${State.athletes.length} atleta${State.athletes.length===1?"":"s"} registrado${State.athletes.length===1?"":"s"} · Almacenamiento permanente activo</div>
+      <div class="section-note">${State.athletes.length} atleta${State.athletes.length===1?"":"s"} registrado${State.athletes.length===1?"":"s"} · sin límite</div>
     </div>
-    <div style="font-size:11.5px;color:var(--ok);margin-bottom:14px;">● Guardado permanente local y en la nube activo — los datos se conservan automáticamente.</div>
+    <div style="font-size:11.5px;color:var(--ok);margin-bottom:14px;">● Guardado automático activo — los datos persisten entre sesiones.</div>
     <div style="margin-bottom:14px; display:flex; gap:8px; flex-wrap:wrap;">
-      <button class="btn" onclick="State.showAddForm=!State.showAddForm;State.editingAthleteId=null;render();">${State.showAddForm?"Cerrar formulario":"+ Agregar Atleta"}</button>
+      <button class="btn" onclick="State.showAddForm=!State.showAddForm;render();">${State.showAddForm?"Cerrar formulario":"+ Agregar Atleta"}</button>
       <button class="btn secondary" style="margin-left:8px" onclick="importPresetRoster()">Importar 30 Atletas (Excel)</button>
       <button class="btn secondary" onclick="exportBackup()">⬇ Exportar respaldo</button>
       <button class="btn secondary" onclick="triggerImport()">⬆ Restaurar respaldo</button>
@@ -793,25 +692,6 @@ function renderPanel(){
     ${formHTML}
     ${grid}
   `;
-}
-
-function startEdit(id, evt){
-  if(evt) evt.stopPropagation();
-  State.editingAthleteId = id;
-  State.showAddForm = false;
-  render();
-}
-
-function submitEditForm(id){
-  const name = document.getElementById("e-name").value;
-  if(!name.trim()){ alert("El nombre es obligatorio."); return; }
-  const fields = {
-    name, age: document.getElementById("e-age").value, sex: document.getElementById("e-sex").value,
-    event: document.getElementById("e-event").value, bw: document.getElementById("e-bw").value,
-    squatKg: document.getElementById("e-squatkg").value, squatReps: document.getElementById("e-squatreps").value || 1,
-    benchKg: document.getElementById("e-benchkg").value, benchReps: document.getElementById("e-benchreps").value || 1,
-  };
-  updateAthlete(id, fields);
 }
 
 function renderHoy(){
@@ -822,7 +702,7 @@ function renderHoy(){
   const weekday = today.getDay();
   const trainingDay = trainingDayFromWeekday(weekday);
   const autoMicro = currentMicroFromDate(today);
-  const cal = CALENDAR.find(c=>c.micro===autoMicro.micro) || CALENDAR[CALENDAR.length-1];
+  const cal = CALENDAR.find(c=>c.micro===autoMicro.micro);
   const color = PHASE_COLOR[cal.faseCode];
   
   let exercises = null;
@@ -841,7 +721,7 @@ function renderHoy(){
     <div class="day-block">
       <div class="day-head"><span>${DAY_LABEL[trainingDay]}</span><span class="mono" style="font-weight:400;color:var(--muted);font-size:11px">${esc(athlete.name)}</span></div>
       ${exerciseTableHTML(exercises, athlete, State.logMode)}
-      ${State.logMode ? `<div class="save-bar"><button class="btn" onclick='guardarSesion(${JSON.stringify(exercises).replace(/'/g,"&#39;")}, ${athlete.id}, "${trainingDay}", ${cal.micro})'>Guardar sesión permanentemente</button></div>` : ""}
+      ${State.logMode ? `<div class="save-bar"><button class="btn" onclick='guardarSesion(${JSON.stringify(exercises).replace(/'/g,"&#39;")}, ${athlete.id}, "${trainingDay}", ${cal.micro})'>Guardar sesión</button></div>` : ""}
     </div>` : `<div class="day-block"><div class="rest-msg">Hoy no corresponde sesión programada en el ciclo Lun–Vie.<br/>Usa el Selector de Microciclo para revisar cualquier día de la semana.</div></div>`;
 
   return `
@@ -864,7 +744,7 @@ function renderSelector(){
   if(State.athletes.length===0) return `<div class="day-block"><div class="empty-msg">Registra al menos un atleta en <b>Panel de Equipo</b> para usar esta sección.<br/><br/><button class="btn big" onclick="setTab('panel')">Ir a Panel de Equipo</button></div></div>`;
   if(!State.selectedAthleteId) State.selectedAthleteId = State.athletes[0].id;
   const athlete = State.athletes.find(a=>a.id===State.selectedAthleteId);
-  const cal = CALENDAR.find(c=>c.micro===State.microId) || CALENDAR[0];
+  const cal = CALENDAR.find(c=>c.micro===State.microId);
   const color = PHASE_COLOR[cal.faseCode];
   const dots = CALENDAR.map(c=>`<div class="micro-dot ${c.micro===State.microId?"active":""}" style="color:${PHASE_COLOR[c.faseCode]};background:${c.micro===State.microId?PHASE_COLOR[c.faseCode]:""}" onclick="setMicro(${c.micro})">${c.micro}</div>`).join("");
   
@@ -994,7 +874,7 @@ async function render(){
       ${body}
       <div class="footer-note">
         1RM calculado por fórmula Epley: 1RM = kg × (1 + 0.0333 × reps). Cargas del microciclo activo tomadas del calendario ATR (7 sep – 29 nov 2026).
-        Programación semanal de Lunes a Viernes con bloques específicos de Core y Estabilidad Lumbopélvica para martes y jueves.
+        Programación semanal ampliada de Lunes a Viernes con bloques específicos de Core y Estabilidad Lumbopélvica para martes y jueves.
         Ritmo y velocidad de ejecución basados en las zonas carga-velocidad de González-Badillo / Sánchez-Medina.
       </div>
     </div>
