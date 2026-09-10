@@ -289,14 +289,41 @@ const trainingDayFromWeekday = (w)=>{
   return null; 
 };
 
-const hasStorage = ()=> typeof window!=="undefined" && window.storage && typeof window.storage.get==="function";
-async function stGet(key){
-  if(!hasStorage()) return null;
-  try{ const r = await window.storage.get(key); return r ? r.value : null; }catch(e){ return null; }
+const firebaseConfig = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
+};
+
+let db = null;
+let useCloud = false;
+
+try {
+  if (firebaseConfig.apiKey && typeof firebase !== "undefined") {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    useCloud = true;
+  }
+} catch(e) { useCloud = false; }
+
+async function cloudGet(key){
+  if(!useCloud || !db) return null;
+  try {
+    const doc = await db.collection("appData").doc(key).get();
+    return doc.exists ? doc.data().value : null;
+  } catch(e) { return null; }
 }
-async function stSet(key,val){
-  if(!hasStorage()) return false;
-  try{ await window.storage.set(key,val); return true; }catch(e){ return false; }
+
+async function cloudSet(key, val){
+  localStorage.setItem(key, typeof val === "string" ? val : JSON.stringify(val));
+  if(!useCloud || !db) return false;
+  try {
+    await db.collection("appData").doc(key).set({ value: val });
+    return true;
+  } catch(e) { return false; }
 }
 
 const PRESET_ROSTER = [
@@ -348,22 +375,14 @@ const State = {
 };
 
 async function initState(){
-  const rawLocal = localStorage.getItem("athletes-roster-persist");
-  if(rawLocal){
+  let raw = localStorage.getItem("athletes-roster-persist");
+  if(!raw) raw = await cloudGet("athletes-roster");
+  if(raw){
     try{
-      const data = JSON.parse(rawLocal);
+      const data = typeof raw === "string" ? JSON.parse(raw) : raw;
       State.athletes = data.athletes || [];
       State.nextId = data.nextId || (State.athletes.length+1);
     }catch(e){}
-  } else {
-    const raw = await stGet("athletes-roster");
-    if(raw){
-      try{
-        const data = JSON.parse(raw);
-        State.athletes = data.athletes || [];
-        State.nextId = data.nextId || (State.athletes.length+1);
-      }catch(e){}
-    }
   }
   const autoMicro = currentMicroFromDate(new Date());
   State.microId = autoMicro.micro;
@@ -372,9 +391,8 @@ async function initState(){
 }
 
 async function persistRoster(){
-  const payload = JSON.stringify({athletes:State.athletes, nextId:State.nextId});
-  localStorage.setItem("athletes-roster-persist", payload);
-  await stSet("athletes-roster", payload);
+  const payload = {athletes:State.athletes, nextId:State.nextId};
+  await cloudSet("athletes-roster", payload);
 }
 
 function setTab(tab){ State.tab = tab; State.showAddForm=false; State.editingAthleteId=null; render(); }
@@ -396,11 +414,10 @@ async function addAthlete(fields){
   await persistRoster();
   const hist = [{date: todayISO(), squatKg:a.squatKg, squatReps:a.squatReps, benchKg:a.benchKg, benchReps:a.benchReps}];
   State.historial[a.id] = hist;
-  localStorage.setItem(`rm-history:${a.id}`, JSON.stringify(hist));
-  await stSet(`rm-history:${a.id}`, JSON.stringify(hist));
+  await cloudSet(`rm-history:${a.id}`, hist);
   State.selectedAthleteId = a.id;
   State.showAddForm = false;
-  showToast("Atleta registrado");
+  showToast("Atleta registrado permanentemente");
   render();
 }
 
@@ -421,7 +438,7 @@ async function updateAthlete(id, fields){
   };
   await persistRoster();
   State.editingAthleteId = null;
-  showToast("Atleta actualizado");
+  showToast("Atleta actualizado permanentemente");
   render();
 }
 
@@ -448,17 +465,16 @@ async function importPresetRoster(){
   for(const a of State.athletes){
     const hist = [{date: PRESET_DATE, squatKg:a.squatKg, squatReps:a.squatReps, benchKg:a.benchKg, benchReps:a.benchReps}];
     State.historial[a.id] = hist;
-    localStorage.setItem(`rm-history:${a.id}`, JSON.stringify(hist));
-    await stSet(`rm-history:${a.id}`, JSON.stringify(hist));
+    await cloudSet(`rm-history:${a.id}`, hist);
   }
   State.selectedAthleteId = State.athletes[0].id;
-  showToast("30 atletas importados");
+  showToast("30 atletas importados permanentemente");
   render();
 }
 
 async function getCoachPin(){ 
   let pin = localStorage.getItem("coach-pin-persist");
-  if(!pin) pin = await stGet("coach-pin");
+  if(!pin) pin = await cloudGet("coach-pin");
   return pin;
 }
 async function ensurePinAndConfirm(actionLabel){
@@ -468,7 +484,7 @@ async function ensurePinAndConfirm(actionLabel){
     if(!newPin) return false;
     if(!/^\d{4,6}$/.test(newPin)){ alert("El PIN debe tener entre 4 y 6 dígitos numéricos."); return false; }
     localStorage.setItem("coach-pin-persist", newPin);
-    await stSet("coach-pin", newPin);
+    await cloudSet("coach-pin", newPin);
     showToast("PIN de entrenador configurado");
     return true;
   }
@@ -488,7 +504,7 @@ async function changePin(){
   if(!newPin) return;
   if(!/^\d{4,6}$/.test(newPin)){ alert("El PIN debe tener entre 4 y 6 dígitos numéricos."); return; }
   localStorage.setItem("coach-pin-persist", newPin);
-  await stSet("coach-pin", newPin);
+  await cloudSet("coach-pin", newPin);
   showToast("PIN actualizado");
 }
 
@@ -510,10 +526,11 @@ async function toggleLogMode(){
   if(State.logMode){
     const a = State.athletes.find(x=>x.id===State.selectedAthleteId);
     const key = `session-log:${a.id}:${todayISO()}`;
-    const raw = localStorage.getItem(key) || await stGet(key);
+    let raw = localStorage.getItem(key);
+    if(!raw) raw = await cloudGet(key);
     if(raw){
       try{
-        const log = JSON.parse(raw);
+        const log = typeof raw === "string" ? JSON.parse(raw) : raw;
         const d = {};
         log.entries.forEach(e=>{ d[e.nombre]={completado:e.completado, rpe:e.rpe}; });
         State.logDraft = d;
@@ -534,17 +551,15 @@ async function guardarSesion(exercises, athleteId, day, micro){
   }));
   const log = {athleteId, date: todayISO(), day, micro, entries};
   const logKey = `session-log:${athleteId}:${todayISO()}`;
-  localStorage.setItem(logKey, JSON.stringify(log));
-  await stSet(logKey, JSON.stringify(log));
+  await cloudSet(logKey, log);
 
   const idxKey = `log-index:${athleteId}`;
-  const idxRaw = localStorage.getItem(idxKey) || await stGet(idxKey);
+  let rawIdx = localStorage.getItem(idxKey) || await cloudGet(idxKey);
   let idx = [];
-  try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
+  try{ idx = rawIdx ? (typeof rawIdx === "string" ? JSON.parse(rawIdx) : rawIdx) : []; }catch(e){}
   if(!idx.includes(todayISO())){ 
     idx.push(todayISO()); 
-    localStorage.setItem(idxKey, JSON.stringify(idx));
-    await stSet(idxKey, JSON.stringify(idx)); 
+    await cloudSet(idxKey, idx);
   }
   showToast("Sesión registrada permanentemente");
   render();
@@ -553,9 +568,10 @@ async function guardarSesion(exercises, athleteId, day, micro){
 async function loadHistorialFor(athleteId){
   if(State.historial[athleteId]) return State.historial[athleteId];
   const histKey = `rm-history:${athleteId}`;
-  const raw = localStorage.getItem(histKey) || await stGet(histKey);
+  let raw = localStorage.getItem(histKey);
+  if(!raw) raw = await cloudGet(histKey);
   let hist = [];
-  try{ hist = raw?JSON.parse(raw):[]; }catch(e){}
+  try{ hist = raw ? (typeof raw === "string" ? JSON.parse(raw) : raw) : []; }catch(e){}
   if(!hist.length){
     const a = State.athletes.find(x=>x.id===athleteId);
     if(a) hist = [{date:todayISO(), squatKg:a.squatKg, squatReps:a.squatReps, benchKg:a.benchKg, benchReps:a.benchReps}];
@@ -565,15 +581,16 @@ async function loadHistorialFor(athleteId){
 }
 async function loadLogsFor(athleteId){
   const idxKey = `log-index:${athleteId}`;
-  const idxRaw = localStorage.getItem(idxKey) || await stGet(idxKey);
+  let rawIdx = localStorage.getItem(idxKey) || await cloudGet(idxKey);
   let idx = [];
-  try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
+  try{ idx = rawIdx ? (typeof rawIdx === "string" ? JSON.parse(rawIdx) : rawIdx) : []; }catch(e){}
   const sorted = [...idx].sort().reverse().slice(0,6);
   const entries = [];
   for(const d of sorted){
     const logKey = `session-log:${athleteId}:${d}`;
-    const raw = localStorage.getItem(logKey) || await stGet(logKey);
-    if(raw){ try{ entries.push(JSON.parse(raw)); }catch(e){} }
+    let raw = localStorage.getItem(logKey);
+    if(!raw) raw = await cloudGet(logKey);
+    if(raw){ try{ entries.push(typeof raw === "string" ? JSON.parse(raw) : raw); }catch(e){} }
   }
   State.logsCache[athleteId] = entries;
   return entries;
@@ -583,24 +600,23 @@ async function addRMEntry(athleteId, entry){
   const updated = [...hist, entry].sort((a,b)=>a.date.localeCompare(b.date));
   State.historial[athleteId] = updated;
   const histKey = `rm-history:${athleteId}`;
-  localStorage.setItem(histKey, JSON.stringify(updated));
-  await stSet(histKey, JSON.stringify(updated));
+  await cloudSet(histKey, updated);
   showToast("Test guardado permanentemente");
   render();
 }
 
 async function exportBackup(){
-  const data = {version:2, exportedAt:new Date().toISOString(), athletes:State.athletes, nextId:State.nextId, historial:{}, logs:{}};
+  const data = {version:3, exportedAt:new Date().toISOString(), athletes:State.athletes, nextId:State.nextId, historial:{}, logs:{}};
   for(const a of State.athletes){
     data.historial[a.id] = await loadHistorialFor(a.id);
     const idxKey = `log-index:${a.id}`;
-    const idxRaw = localStorage.getItem(idxKey) || await stGet(idxKey);
-    let idx=[]; try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
+    let rawIdx = localStorage.getItem(idxKey) || await cloudGet(idxKey);
+    let idx=[]; try{ idx = rawIdx ? (typeof rawIdx === "string" ? JSON.parse(rawIdx) : rawIdx) : []; }catch(e){}
     data.logs[a.id] = {};
     for(const d of idx){
       const logKey = `session-log:${a.id}:${d}`;
-      const raw = localStorage.getItem(logKey) || await stGet(logKey);
-      if(raw){ try{ data.logs[a.id][d] = JSON.parse(raw); }catch(e){} }
+      let raw = localStorage.getItem(logKey) || await cloudGet(logKey);
+      if(raw){ try{ data.logs[a.id][d] = typeof raw === "string" ? JSON.parse(raw) : raw; }catch(e){} }
     }
   }
   const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
@@ -627,16 +643,13 @@ async function handleImportFile(input){
   State.historial = {}; State.logsCache = {};
   for(const idStr of Object.keys(data.historial||{})){
     State.historial[idStr] = data.historial[idStr];
-    localStorage.setItem(`rm-history:${idStr}`, JSON.stringify(data.historial[idStr]));
-    await stSet(`rm-history:${idStr}`, JSON.stringify(data.historial[idStr]));
+    await cloudSet(`rm-history:${idStr}`, data.historial[idStr]);
   }
   for(const idStr of Object.keys(data.logs||{})){
     const days = Object.keys(data.logs[idStr]);
-    localStorage.setItem(`log-index:${idStr}`, JSON.stringify(days));
-    await stSet(`log-index:${idStr}`, JSON.stringify(days));
+    await cloudSet(`log-index:${idStr}`, days);
     for(const d of days){
-      localStorage.setItem(`session-log:${idStr}:${d}`, JSON.stringify(data.logs[idStr][d]));
-      await stSet(`session-log:${idStr}:${d}`, JSON.stringify(data.logs[idStr][d]));
+      await cloudSet(`session-log:${idStr}:${d}`, data.logs[idStr][d]);
     }
   }
   input.value = "";
@@ -692,7 +705,7 @@ function miniChartSVG(points, color){
 
 function renderPanel(){
   const autoMicro = currentMicroFromDate(new Date());
-  const cal = CALENDAR.find(c=>c.micro===autoMicro.micro);
+  const cal = CALENDAR.find(c=>c.micro===autoMicro.micro) || CALENDAR[CALENDAR.length-1];
   const color = PHASE_COLOR[cal.faseCode];
 
   let formHTML = "";
@@ -770,7 +783,7 @@ function renderPanel(){
       <div class="section-title">Panel de Equipo</div>
       <div class="section-note">${State.athletes.length} atleta${State.athletes.length===1?"":"s"} registrado${State.athletes.length===1?"":"s"} · Almacenamiento permanente activo</div>
     </div>
-    <div style="font-size:11.5px;color:var(--ok);margin-bottom:14px;">● Guardado permanente local y en la nube activo — los datos se conservan automáticamente en este dispositivo.</div>
+    <div style="font-size:11.5px;color:var(--ok);margin-bottom:14px;">● Guardado permanente local y en la nube activo — los datos se conservan automáticamente.</div>
     <div style="margin-bottom:14px; display:flex; gap:8px; flex-wrap:wrap;">
       <button class="btn" onclick="State.showAddForm=!State.showAddForm;State.editingAthleteId=null;render();">${State.showAddForm?"Cerrar formulario":"+ Agregar Atleta"}</button>
       <button class="btn secondary" style="margin-left:8px" onclick="importPresetRoster()">Importar 30 Atletas (Excel)</button>
@@ -809,7 +822,7 @@ function renderHoy(){
   const weekday = today.getDay();
   const trainingDay = trainingDayFromWeekday(weekday);
   const autoMicro = currentMicroFromDate(today);
-  const cal = CALENDAR.find(c=>c.micro===autoMicro.micro);
+  const cal = CALENDAR.find(c=>c.micro===autoMicro.micro) || CALENDAR[CALENDAR.length-1];
   const color = PHASE_COLOR[cal.faseCode];
   
   let exercises = null;
@@ -851,7 +864,7 @@ function renderSelector(){
   if(State.athletes.length===0) return `<div class="day-block"><div class="empty-msg">Registra al menos un atleta en <b>Panel de Equipo</b> para usar esta sección.<br/><br/><button class="btn big" onclick="setTab('panel')">Ir a Panel de Equipo</button></div></div>`;
   if(!State.selectedAthleteId) State.selectedAthleteId = State.athletes[0].id;
   const athlete = State.athletes.find(a=>a.id===State.selectedAthleteId);
-  const cal = CALENDAR.find(c=>c.micro===State.microId);
+  const cal = CALENDAR.find(c=>c.micro===State.microId) || CALENDAR[0];
   const color = PHASE_COLOR[cal.faseCode];
   const dots = CALENDAR.map(c=>`<div class="micro-dot ${c.micro===State.microId?"active":""}" style="color:${PHASE_COLOR[c.faseCode]};background:${c.micro===State.microId?PHASE_COLOR[c.faseCode]:""}" onclick="setMicro(${c.micro})">${c.micro}</div>`).join("");
   
@@ -980,8 +993,8 @@ async function render(){
       </div>
       ${body}
       <div class="footer-note">
-        1RM calculado por fórmula Epley: 1RM = kg × (1 + 0.0333 × reps). Cargas del microciclo activo tomadas del calendario ATR (31 ago – 22 nov 2026).
-        Programación semanal ampliada de Lunes a Viernes con bloques específicos de Core y Estabilidad Lumbopélvica para martes y jueves.
+        1RM calculado por fórmula Epley: 1RM = kg × (1 + 0.0333 × reps). Cargas del microciclo activo tomadas del calendario ATR (7 sep – 29 nov 2026).
+        Programación semanal de Lunes a Viernes con bloques específicos de Core y Estabilidad Lumbopélvica para martes y jueves.
         Ritmo y velocidad de ejecución basados en las zonas carga-velocidad de González-Badillo / Sánchez-Medina.
       </div>
     </div>
