@@ -1,518 +1,889 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma Integral de Fuerza - Sprinters & Atletas ATR</title>
-    <style>
-        :root {
-            --primary-color: #1e3a8a;
-            --secondary-color: #3b82f6;
-            --accent-color: #f59e0b;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #1e293b;
-            --border-color: #e2e8f0;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Panel de Fuerza ATR — Atletismo Nayarit</title>
+<style>
+  :root{
+    --bg:#0A0D12; --surface:#12161D; --surface2:#1A2029; --surface3:#212836;
+    --line:#2A3140; --text:#EDEFF3; --muted:#8B94A3; --muted2:#5C6472;
+    --lane:#E2452C; --acum:#3B82F6; --trans:#E2452C; --real:#F2B705; --ok:#37C77F;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;}
+  #root{min-height:100vh;}
+  .mono{font-family:'Courier New',Courier,monospace;}
+  .display{font-family:'Arial Narrow',Arial,sans-serif;text-transform:uppercase;letter-spacing:0.02em;}
+  .app{max-width:1180px;margin:0 auto;padding:20px 16px 60px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{width:38px;height:38px;border-radius:50%;background:conic-gradient(from 180deg, var(--lane), #7A1E12, var(--lane));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;}
+  .brand-title{font-weight:700;font-size:19px;letter-spacing:0.02em;text-transform:uppercase;}
+  .brand-sub{font-size:11px;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;}
+  .tabs{display:flex;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px;flex-wrap:wrap;}
+  .tab{padding:9px 14px;border-radius:7px;font-size:12px;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;color:var(--muted);cursor:pointer;border:none;background:transparent;}
+  .tab.active{background:var(--lane);color:#fff;}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;margin:26px 0 14px;border-bottom:1px solid var(--line);padding-bottom:10px;flex-wrap:wrap;gap:8px;}
+  .section-title{font-weight:700;font-size:15px;letter-spacing:0.03em;text-transform:uppercase;}
+  .section-note{font-size:12px;color:var(--muted);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;}
+  .lane-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden;cursor:pointer;}
+  .lane-stripe{position:absolute;left:0;top:0;bottom:0;width:5px;}
+  .lane-row{display:flex;align-items:center;gap:11px;}
+  .bib{width:34px;height:34px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-family:'Courier New',monospace;font-weight:700;font-size:13px;flex-shrink:0;}
+  .lane-name{font-weight:700;font-size:14.5px;}
+  .lane-event{font-size:11.5px;color:var(--muted);margin-top:1px;}
+  .lane-meta{display:flex;justify-content:space-between;margin-top:12px;font-size:11px;align-items:center;}
+  .phase-tag{font-size:10.5px;letter-spacing:0.03em;text-transform:uppercase;padding:3px 8px;border-radius:5px;font-weight:700;}
+  .rm-row{display:flex;gap:14px;margin-top:10px;font-size:12px;}
+  .rm-item{color:var(--muted);}
+  .rm-item b{color:var(--text);font-family:'Courier New',monospace;}
+  .del-btn{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:var(--surface3);color:var(--muted);border:none;cursor:pointer;font-size:13px;line-height:1;}
+  .del-btn:hover{background:#7A1E12;color:#fff;}
+  .today-hero{background:linear-gradient(135deg, var(--surface2), var(--surface));border:1px solid var(--line);border-radius:14px;padding:22px 20px;margin-bottom:20px;}
+  .today-date{font-family:'Courier New',monospace;font-size:12px;color:var(--muted);letter-spacing:0.03em;}
+  .today-day{font-weight:700;font-size:26px;text-transform:uppercase;margin:4px 0 2px;}
+  .today-phase{display:inline-block;margin-top:8px;}
+  .picker-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center;justify-content:space-between;}
+  select{background:var(--surface2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:13px;}
+  .day-block{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:14px;overflow:hidden;}
+  .day-head{background:var(--surface2);padding:12px 16px;font-weight:700;font-size:13px;letter-spacing:0.03em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  th{text-align:left;color:var(--muted);font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:0.03em;padding:8px 12px;border-bottom:1px solid var(--line);}
+  td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  .ex-name{font-weight:700;}
+  .ex-plano{font-size:10.5px;color:var(--muted);}
+  .load-pill{font-family:'Courier New',monospace;font-weight:700;background:var(--surface3);padding:3px 8px;border-radius:6px;display:inline-block;white-space:nowrap;}
+  .rest-msg,.empty-msg{text-align:center;padding:40px 20px;color:var(--muted);}
+  .selector-bar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px;}
+  .selector-bar label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.03em;display:block;margin-bottom:4px;}
+  .micro-strip{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
+  .micro-dot{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Courier New',monospace;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--line);background:var(--surface2);color:var(--muted);}
+  .micro-dot.active{color:#fff;}
+  .cal-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px;}
+  .cal-item{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 13px;}
+  .cal-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.03em;}
+  .cal-value{font-family:'Courier New',monospace;font-size:14px;font-weight:700;margin-top:3px;}
+  .footer-note{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted2);line-height:1.6;}
+  .rm-form,.athlete-form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px;}
+  .field{display:flex;flex-direction:column;gap:4px;}
+  .field label{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.03em;}
+  input[type=number],input[type=date],input[type=text]{background:var(--surface2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-family:'Courier New',monospace;font-size:13px;width:110px;}
+  input[type=text].wide{width:170px;font-family:inherit;}
+  .btn{background:var(--lane);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12.5px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;cursor:pointer;}
+  .btn.secondary{background:var(--surface3);color:var(--text);}
+  .btn.big{padding:12px 22px;font-size:13px;}
+  .chart-wrap{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px;}
+  .rpe-input{width:60px;}
+  .log-cell{display:flex;gap:6px;align-items:center;}
+  .log-list{display:flex;flex-direction:column;gap:8px;}
+  .log-entry{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:10px 13px;display:flex;justify-content:space-between;align-items:center;font-size:12.5px;}
+  .save-bar{display:flex;justify-content:flex-end;padding:12px 16px;background:var(--surface2);}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ok);color:#06210F;padding:10px 18px;border-radius:8px;font-size:12.5px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;z-index:50;box-shadow:0 6px 18px rgba(0,0,0,.4);}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-        }
+  .vel-pill{display:inline-block;font-family:'Courier New',monospace;font-weight:700;font-size:11px;padding:3px 8px;border-radius:6px;margin-top:4px;}
+  .tempo-note{font-size:11px;color:var(--muted);line-height:1.4;}
+  .vel-legend{display:flex;flex-wrap:wrap;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:18px;font-size:11px;}
+  .vel-legend-item{display:flex;align-items:center;gap:6px;color:var(--muted);}
+  .vel-legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
 
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-
-        header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        header h1 {
-            margin: 0 0 10px 0;
-            font-size: 24px;
-        }
-
-        header p {
-            margin: 0;
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .nav-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            background-color: #e2e8f0;
-            border: none;
-            padding: 10px 20px;
-            font-size: 15px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            border: 1px solid var(--border-color);
-        }
-
-        .selectors-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        select {
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            font-size: 15px;
-            background-color: white;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .info-box {
-            background-color: #f1f5f9;
-            padding: 12px;
-            border-radius: 8px;
-            border-left: 4px solid var(--secondary-color);
-        }
-
-        .info-box span {
-            display: block;
-            font-size: 12px;
-            color: #64748b;
-        }
-
-        .info-box strong {
-            font-size: 16px;
-            color: var(--primary-color);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 13px;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            background-color: #f8fafc;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        tr:hover {
-            background-color: #f1f5f9;
-        }
-
-        .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .badge-Acumulación { background-color: #dbeafe; color: #1e40af; }
-        .badge-Transformación { background-color: #fef3c7; color: #92400e; }
-        .badge-Realización { background-color: #dcfce7; color: #166534; }
-    </style>
+  @media (max-width:640px){
+    .brand-title{font-size:16px;} .today-day{font-size:20px;}
+    .day-head{font-size:11.5px; line-height:1.4; padding:10px 12px;}
+    .app{padding:14px 10px 50px;}
+    input[type=number],input[type=date],input[type=text]{width:90px;}
+    table{border:none;}
+    thead{display:none;}
+    table, tbody, tr, td{display:block; width:100%;}
+    tr{background:var(--surface); border:1px solid var(--line); border-radius:10px; margin-bottom:10px; padding:10px 12px;}
+    td{border-bottom:1px solid var(--line); padding:8px 0; display:flex; justify-content:space-between; align-items:flex-start; gap:12px;}
+    td:last-child{border-bottom:none;}
+    td::before{content:attr(data-label); color:var(--muted); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; flex-shrink:0; padding-top:2px;}
+    td:first-child{flex-direction:column; align-items:flex-start; gap:2px;}
+    td:first-child::before{display:none;}
+    .ex-name{font-size:14px;}
+    .log-cell{justify-content:flex-end;}
+  }
+</style>
 </head>
 <body>
-
-<div class="container">
-    <header>
-        <h1>SISTEMA DE CONTROL DE FUERZA - 30 ATLETAS ATR</h1>
-        <p>Plataforma basada en planificación oficial con fórmula Epley y control de velocidad VMP</p>
-    </header>
-
-    <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab(event, 'selectorTab')">Selector & Rutina Dinámica</button>
-        <button class="tab-btn" onclick="switchTab(event, 'atletasTab')">Base de 30 Atletas & RMs</button>
-        <button class="tab-btn" onclick="switchTab(event, 'calendarioTab')">Calendario ATR (12 Microciclos)</button>
-        <button class="tab-btn" onclick="switchTab(event, 'bancoTab')">Banco Ergonómico de Ejercicios</button>
-    </div>
-
-    <!-- TAB 1: SELECTOR Y RUTINA DINÁMICA -->
-    <div id="selectorTab" class="tab-content active">
-        <div class="card">
-            <h3>Selección de Atleta y Microciclo ATR</h3>
-            <div class="selectors-grid">
-                <div class="form-group">
-                    <label for="atletaSelect">Seleccionar Atleta (1 - 30):</label>
-                    <select id="atletaSelect" onchange="actualizarPlataforma()"></select>
-                </div>
-                <div class="form-group">
-                    <label for="microSelect">Seleccionar Microciclo (1 - 12):</label>
-                    <select id="microSelect" onchange="actualizarPlataforma()"></select>
-                </div>
-            </div>
-
-            <div class="info-grid">
-                <div class="info-box">
-                    <span>Atleta / Prueba</span>
-                    <strong id="nombreAtleta">-</strong>
-                </div>
-                <div class="info-box">
-                    <span>Peso Corporal / Edad</span>
-                    <strong id="datosAtleta">-</strong>
-                </div>
-                <div class="info-box">
-                    <span>Fase ATR Actual</span>
-                    <strong id="faseAtleta">-</strong>
-                </div>
-                <div class="info-box">
-                    <span>Fechas Microciclo</span>
-                    <strong id="fechasAtleta">-</strong>
-                </div>
-                <div class="info-box">
-                    <span>1RM Sentadilla (Raíz)</span>
-                    <strong id="rmSentadilla">-</strong>
-                </div>
-                <div class="info-box">
-                    <span>1RM Press Banca (Raíz)</span>
-                    <strong id="rmBanca">-</strong>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3 id="tituloRutina">Rutina Operativa por Grupos Musculares y Transferencia al Sprint</h3>
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Plano Muscular / Gesto</th>
-                            <th>Ejercicio Específico</th>
-                            <th>% Raíz</th>
-                            <th>Carga Asignada</th>
-                            <th>VMP Ref / Carácter</th>
-                            <th>Enfoque Ergonómico al Sprint</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaRutinaBody">
-                        <!-- Dinámico -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- TAB 2: BASE DE ATLETAS -->
-    <div id="atletasTab" class="tab-content">
-        <div class="card">
-            <h3>Registro General de Atletas y Cálculo 1RM (Epley)</h3>
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre Completo</th>
-                            <th>Edad</th>
-                            <th>Sexo</th>
-                            <th>Prueba Principal</th>
-                            <th>Peso (kg)</th>
-                            <th>1RM Sentadilla</th>
-                            <th>1RM Press Banca</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaAtletasBody">
-                        <!-- Dinámico -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- TAB 3: CALENDARIO ATR -->
-    <div id="calendarioTab" class="tab-content">
-        <div class="card">
-            <h3>Cronograma del Macrociclo ATR (31 Agosto - 22 Noviembre 2026)</h3>
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Micro #</th>
-                            <th>Fase ATR</th>
-                            <th>Fechas (Lunes - Domingo)</th>
-                            <th>Tipo de Microciclo</th>
-                            <th>% 1RM Sentadilla</th>
-                            <th>% 1RM Banca</th>
-                            <th>Volumen / Enfoque</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaCalendarioBody">
-                        <!-- Dinámico -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- TAB 4: BANCO DE EJERCICIOS -->
-    <div id="bancoTab" class="tab-content">
-        <div class="card">
-            <h3>Banco Completo de Ejercicios y Coeficientes Ergonómicos</h3>
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Plano Muscular / Gesto</th>
-                            <th>Ejercicio Específico</th>
-                            <th>Raíz Base</th>
-                            <th>% Coeficiente</th>
-                            <th>Enfoque Ergonómico para Sprinters</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaBancoBody">
-                        <!-- Dinámico -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
+<div id="root"></div>
 <script>
-    // Base de datos oficial de los 30 atletas con nombres reales y RMs calculados por Epley
-    const atletas = [
-        {id: 1, nombre: "Habib alexander martinez perez", edad: 19, sexo: "M", prueba: "100m - 200m", peso: 72, rmSentadilla: 111.0, rmBanca: 49.3},
-        {id: 2, nombre: "joan lopez", edad: 20, sexo: "M", prueba: "200m - 400m", peso: 75, rmSentadilla: 117.6, rmBanca: 49.3},
-        {id: 3, nombre: "aldo sainz", edad: 18, sexo: "F", prueba: "100m - 100m Vallas", peso: 59, rmSentadilla: 88.6, rmBanca: 57.0},
-        {id: 4, nombre: "david Rodriguez", edad: 21, sexo: "M", prueba: "100m - 4x100m", peso: 74, rmSentadilla: 136.0, rmBanca: 69.8},
-        {id: 5, nombre: "mia solis torres", edad: 19, sexo: "F", prueba: "200m - 400m", peso: 61, rmSentadilla: 109.2, rmBanca: 40.8},
-        {id: 6, nombre: "valentina carrillo", edad: 22, sexo: "F", prueba: "100m - 200m", peso: 76, rmSentadilla: 84.0, rmBanca: 40.8},
-        {id: 7, nombre: "ailen cabildo", edad: 17, sexo: "F", prueba: "200m - 400m", peso: 56, rmSentadilla: 66.0, rmBanca: 34.0},
-        {id: 8, nombre: "yamielth sedano", edad: 20, sexo: "M", prueba: "400m - 4x400m", peso: 73, rmSentadilla: 75.8, rmBanca: 34.0},
-        {id: 9, nombre: "samira sedano", edad: 19, sexo: "F", prueba: "400m Vallas", peso: 58.5, rmSentadilla: 56.7, rmBanca: 28.3},
-        {id: 10, nombre: "Daniela Quintana", edad: 21, sexo: "M", prueba: "100m - 200m", peso: 78, rmSentadilla: 73.7, rmBanca: 31.2},
-        {id: 11, nombre: "Hugo Ornelin", edad: 19, sexo: "M", prueba: "400m - 4x400m", peso: 56, rmSentadilla: 98.6, rmBanca: 38.5},
-        {id: 12, nombre: "abigail Talavera", edad: 15, sexo: "F", prueba: "impulso de bala", peso: 70, rmSentadilla: 89.5, rmBanca: 42.0},
-        {id: 13, nombre: "Daniel perez", edad: 15, sexo: "M", prueba: "200m - 400m", peso: 60, rmSentadilla: 96.0, rmBanca: 52.5},
-        {id: 14, nombre: "Valeriq de la cruz", edad: 15, sexo: "F", prueba: "100m Vallas", peso: 52, rmSentadilla: 89.8, rmBanca: 33.0},
-        {id: 15, nombre: "Celeste de la Cruz", edad: 15, sexo: "F", prueba: "400m Vallas", peso: 50, rmSentadilla: 88.8, rmBanca: 27.1},
-        {id: 16, nombre: "jimena bustos muñoz", edad: 16, sexo: "F", prueba: "100m - 4x100m", peso: 48, rmSentadilla: 57.6, rmBanca: 18.0},
-        {id: 17, nombre: "Atleta 17", edad: 21, sexo: "M", prueba: "400m - 4x400m", peso: 73.2, rmSentadilla: 160.3, rmBanca: 62.3},
-        {id: 18, nombre: "Atleta 18", edad: 17, sexo: "F", prueba: "100m - 200m", peso: 68.3, rmSentadilla: 68.0, rmBanca: 54.4},
-        {id: 19, nombre: "Atleta 19", edad: 22, sexo: "M", prueba: "200m - 400m", peso: 56.1, rmSentadilla: 142.8, rmBanca: 90.0},
-        {id: 20, nombre: "Atleta 20", edad: 23, sexo: "F", prueba: "100m Vallas", peso: 54.9, rmSentadilla: 108.0, rmBanca: 57.6},
-        {id: 21, nombre: "Atleta 21", edad: 16, sexo: "M", prueba: "400m Vallas", peso: 71.9, rmSentadilla: 117.1, rmBanca: 68.8},
-        {id: 22, nombre: "Atleta 22", edad: 21, sexo: "F", prueba: "100m - 4x100m", peso: 72.7, rmSentadilla: 68.0, rmBanca: 72.8},
-        {id: 23, nombre: "Atleta 23", edad: 20, sexo: "M", prueba: "400m - 4x400m", peso: 58.1, rmSentadilla: 138.1, rmBanca: 91.0},
-        {id: 24, nombre: "Atleta 24", edad: 21, sexo: "F", prueba: "100m - 200m", peso: 68.5, rmSentadilla: 110.8, rmBanca: 74.0},
-        {id: 25, nombre: "Atleta 25", edad: 22, sexo: "M", prueba: "200m - 400m", peso: 55.7, rmSentadilla: 113.4, rmBanca: 109.9},
-        {id: 26, nombre: "Atleta 26", edad: 21, sexo: "F", prueba: "100m Vallas", peso: 66.6, rmSentadilla: 99.6, rmBanca: 54.4},
-        {id: 27, nombre: "Atleta 27", edad: 18, sexo: "M", prueba: "400m Vallas", peso: 68.6, rmSentadilla: 163.3, rmBanca: 86.1},
-        {id: 28, nombre: "Atleta 28", edad: 21, sexo: "F", prueba: "100m - 4x100m", peso: 60.3, rmSentadilla: 109.2, rmBanca: 44.4},
-        {id: 29, nombre: "Atleta 29", edad: 19, sexo: "M", prueba: "400m - 4x400m", peso: 59.7, rmSentadilla: 139.2, rmBanca: 90.7},
-        {id: 30, nombre: "Atleta 30", edad: 17, sexo: "F", prueba: "100m - 200m", peso: 80.8, rmSentadilla: 101.5, rmBanca: 66.9}
-    ];
+"use strict";
 
-    // Cronograma oficial de los 12 Microciclos ATR
-    const microciclos = [
-        {num: 1, fase: "Acumulación", fechas: "31/08/2026 - 06/09/2026", tipo: "Micro 1: Ajuste Anatómico", pctSentadilla: 0.60, pctBanca: 0.60, vol: "Medio (350 reps)"},
-        {num: 2, fase: "Acumulación", fechas: "07/09/2026 - 13/09/2026", tipo: "Micro 2: Carga Hipertrofia I", pctSentadilla: 0.70, pctBanca: 0.70, vol: "Alto (420 reps)"},
-        {num: 3, fase: "Acumulación", fechas: "14/09/2026 - 20/09/2026", tipo: "Micro 3: Carga Hipertrofia II", pctSentadilla: 0.75, pctBanca: 0.75, vol: "Alto (450 reps)"},
-        {num: 4, fase: "Acumulación", fechas: "21/09/2026 - 27/09/2026", tipo: "Micro 4: Carga Máxima (A)", pctSentadilla: 0.80, pctBanca: 0.75, vol: "Alto (400 reps)"},
-        {num: 5, fase: "Acumulación", fechas: "28/09/2026 - 04/10/2026", tipo: "Micro 5: Choque / Descarga", pctSentadilla: 0.50, pctBanca: 0.50, vol: "Bajo (240 reps)"},
-        {num: 6, fase: "Transformación", fechas: "05/10/2026 - 11/10/2026", tipo: "Micro 6: Potencia / Fuerza Rápida", pctSentadilla: 0.70, pctBanca: 0.65, vol: "Medio (320 reps)"},
-        {num: 7, fase: "Transformación", fechas: "12/10/2026 - 18/10/2026", tipo: "Micro 7: Impacto / Contraste PAP", pctSentadilla: 0.85, pctBanca: 0.80, vol: "Medio-Alto (340 reps)"},
-        {num: 8, fase: "Transformación", fechas: "19/10/2026 - 25/10/2026", tipo: "Micro 8: Halterofilia / Potencia", pctSentadilla: 0.75, pctBanca: 0.70, vol: "Medio (320 reps)"},
-        {num: 9, fase: "Transformación", fechas: "26/10/2026 - 01/11/2026", tipo: "Micro 9: Transf. Específica de Salida", pctSentadilla: 0.80, pctBanca: 0.75, vol: "Medio (300 reps)"},
-        {num: 10, fase: "Realización", fechas: "02/11/2026 - 08/11/2026", tipo: "Micro 10: Tapering / Pre-Pico", pctSentadilla: 0.70, pctBanca: 0.65, vol: "Bajo (200 reps)"},
-        {num: 11, fase: "Realización", fechas: "09/11/2026 - 15/11/2026", tipo: "Micro 11: Realización Competitiva I", pctSentadilla: 0.85, pctBanca: 0.75, vol: "Muy Bajo (140 reps)"},
-        {num: 12, fase: "Realización", fechas: "16/11/2026 - 22/11/2026", tipo: "Micro 12: Pico Competitivo Total", pctSentadilla: 0.60, pctBanca: 0.60, vol: "Mínimo (100 reps)"}
-    ];
+const epley = (kg,reps)=> Math.round(kg*(1+0.0333*reps)*10)/10;
+const todayISO = ()=> new Date().toISOString().slice(0,10);
+const fmtDate = (iso)=>{ const [y,m,d]=iso.split("-"); return `${d}/${m}/${y}`; };
+const esc = (s)=> String(s==null?"":s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-    // Banco completo de 15 ejercicios con coeficientes ergonómicos oficiales
-    const bancoEjercicios = [
-        {plano: "Cuádriceps (Empuje Aceleración)", ejercicio: "Media Sentadilla con Barra", raiz: "Sentadilla Profunda", coef: 1.22, enfoque: "Ángulo 90-110° idéntico a salida de tacos"},
-        {plano: "Cuádriceps (Torso Vertical)", ejercicio: "Sentadilla Frontal en Rack", raiz: "Sentadilla Profunda", coef: 0.75, enfoque: "Postura erguida y estabilidad de tronco"},
-        {plano: "Cuádriceps / Glúteo (Unilateral)", ejercicio: "Zancadas / Desplantes con Barra", raiz: "Sentadilla Profunda", coef: 0.65, enfoque: "Propulsión unilateral y control pélvico"},
-        {plano: "Femoral / Isquios (Bisagra)", ejercicio: "Peso Muerto Rumano con Barra", raiz: "Sentadilla Profunda", coef: 0.85, enfoque: "Fuerza excéntrica en máxima velocidad"},
-        {plano: "Femoral / Isquios (Flexión)", ejercicio: "Buenos Días con Barra en Rack", raiz: "Sentadilla Profunda", coef: 0.62, enfoque: "Extensión terminal de cadera"},
-        {plano: "Glúteo (Vector Horizontal)", ejercicio: "Hip Thrust Pesado con Barra", raiz: "Sentadilla Profunda", coef: 1.10, enfoque: "Mayor vector antero-posterior de carrera"},
-        {plano: "Pantorrilla / Stiffness", ejercicio: "Puntera / Elevación Talones", raiz: "Sentadilla Profunda", coef: 1.40, enfoque: "Rigidez de tobillo (reducción tiempo contacto)"},
-        {plano: "Hombro (Braceo Aceleración)", ejercicio: "Press Militar Parado con Barra", raiz: "Press de Banca", coef: 0.65, enfoque: "Fuerza deltoidea anterior para oscilación"},
-        {plano: "Hombro / Potencia", ejercicio: "Push Press / Empuje de Fuerza", raiz: "Press de Banca", coef: 0.75, enfoque: "Transferencia balística pies-cintura escapular"},
-        {plano: "Halterofilia (Potencia RFD)", ejercicio: "Arrancada Colgante (Hang Power Snatch)", raiz: "Sentadilla Profunda", coef: 0.70, enfoque: "Triple extensión explosiva para salida de tacos"},
-        {plano: "Halterofilia (Potencia RFD)", ejercicio: "Cargada Colgante (Hang Power Clean)", raiz: "Sentadilla Profunda", coef: 0.78, enfoque: "Aceleración horizontal y aplicación de fuerza vertical"},
-        {plano: "Espalda (Fijación Escapular)", ejercicio: "Remo Inclinado Pendlay", raiz: "Press de Banca", coef: 0.65, enfoque: "Evita el balanceo parásito del tronco"},
-        {plano: "Trapecios / Absorción", ejercicio: "Encogimientos de Hombros (Shrugs)", raiz: "Press de Banca", coef: 0.85, enfoque: "Firmeza cervical en impactos de salida"},
-        {plano: "Tríceps (Bloqueo Braceo)", ejercicio: "Press Francés con Barra en Banco", raiz: "Press de Banca", coef: 0.35, enfoque: "Fijación del codo a 90° en fase de recobro"},
-        {plano: "Bíceps (Tracción de Brazo)", ejercicio: "Curl de Bíceps con Barra de Pie", raiz: "Press de Banca", coef: 0.42, enfoque: "Tracción anterior del brazo en aceleración"}
-    ];
+const CALENDAR = [
+  {micro:1, fase:"Acumulación", faseCode:"A", start:"2026-09-07", end:"2026-09-13", tipo:"Adaptación Anatómica / Base", pctSquat:0.65, pctBench:0.65, perdidaVel:"10% - 12%", volumen:"Alto (400 reps)", enfoque:"Preparación articular, tendinosa y puesta a tono neuromuscular"},
+  {micro:2, fase:"Acumulación", faseCode:"A", start:"2026-09-14", end:"2026-09-20", tipo:"Hipertrofia-Fuerza", pctSquat:0.72, pctBench:0.72, perdidaVel:"12% - 15%", volumen:"Muy Alto (480 reps)", enfoque:"Ganancia de volumen muscular y base de fuerza para transferencia neural"},
+  {micro:3, fase:"Acumulación", faseCode:"A", start:"2026-09-21", end:"2026-09-27", tipo:"Fuerza Máxima I", pctSquat:0.80, pctBench:0.80, perdidaVel:"15% - 18%", volumen:"Medio-Alto (360 reps)", enfoque:"Reclutamiento de FT IIx/IIb · Primeros picos de activación neural"},
+  {micro:4, fase:"Acumulación", faseCode:"A", start:"2026-09-28", end:"2026-10-04", tipo:"Fuerza Máxima II", pctSquat:0.85, pctBench:0.85, perdidaVel:"15% - 20%", volumen:"Medio (320 reps)", enfoque:"Consolidación de reclutamiento · Clusters 3×3 y parejas de impacto"},
+  {micro:5, fase:"Acumulación", faseCode:"A", start:"2026-10-05", end:"2026-10-11", tipo:"Recuperación / Consolidación", pctSquat:0.70, pctBench:0.70, perdidaVel:"< 10%", volumen:"Bajo (280 reps)", enfoque:"Supercompensación neural y recuperación articular antes del pico final"},
+  {micro:6, fase:"Acumulación", faseCode:"A", start:"2026-10-12", end:"2026-10-18", tipo:"Fuerza Máxima III / Pico Acumulación", pctSquat:0.90, pctBench:0.88, perdidaVel:"18% - 22%", volumen:"Muy Bajo (240 reps)", enfoque:"Pico máximo de Acumulación · Máxima densidad neural · Transición a Transformación"},
+  {micro:7, fase:"Transformación", faseCode:"T", start:"2026-10-19", end:"2026-10-25", tipo:"Carga / Potencia I", pctSquat:0.70, pctBench:0.65, perdidaVel:"< 10-12%", volumen:"Medio (320 reps)", enfoque:"Fuerza rápida, RFD y arrancada colgante"},
+  {micro:8, fase:"Transformación", faseCode:"T", start:"2026-10-26", end:"2026-11-01", tipo:"Impacto / PAP 85%", pctSquat:0.85, pctBench:0.80, perdidaVel:"< 10%", volumen:"Medio-Alto (340 reps)", enfoque:"Pico de contraste pesado y Método Francés (Cometti)"},
+  {micro:9, fase:"Transformación", faseCode:"T", start:"2026-11-02", end:"2026-11-08", tipo:"Carga / Halterofilia", pctSquat:0.75, pctBench:0.70, perdidaVel:"< 10%", volumen:"Medio (320 reps)", enfoque:"Derivados de halterofilia y triple extensión explosiva"},
+  {micro:10, fase:"Transformación", faseCode:"T", start:"2026-11-09", end:"2026-11-15", tipo:"Específico / RFD", pctSquat:0.65, pctBench:0.65, perdidaVel:"< 8-10%", volumen:"Medio-Bajo (280 reps)", enfoque:"Tasa de desarrollo de fuerza y velocidad horizontal"},
+  {micro:11, fase:"Realización", faseCode:"R", start:"2026-11-16", end:"2026-11-22", tipo:"Puesta a Punto", pctSquat:0.50, pctBench:0.50, perdidaVel:"< 5%", volumen:"Muy Bajo (180 reps)", enfoque:"Potenciación neural y stiffness de tobillo sin fatiga"},
+  {micro:12, fase:"Realización", faseCode:"R", start:"2026-11-23", end:"2026-11-29", tipo:"Competición / Descarga Final", pctSquat:0.40, pctBench:0.40, perdidaVel:"< 5%", volumen:"Mínimo (120 reps)", enfoque:"Tapering final, máxima frescura y velocidad pura"},
+];
+const PHASE_COLOR = {A:"var(--acum)", T:"var(--trans)", R:"var(--real)"};
+const PHASE_LABEL = {A:"Acumulación", T:"Transformación", R:"Realización"};
+const DAY_LABEL = {
+  monday:"Lunes — Fuerza Máxima / Potencia Base (Inferior y Superior)", 
+  tuesday:"Martes — Core Avanzado, Estabilidad Lumbopélvica y Prevención", 
+  wednesday:"Miércoles — Tracción, Cadena Posterior y Halterofilia", 
+  thursday:"Jueves — Core Dinámico, Rotacional y Anti-movimiento", 
+  friday:"Viernes — Específico & Contraste Francés (Cometti)"
+};
 
-    function inicializarSelects() {
-        const atletaSelect = document.getElementById("atletaSelect");
-        atletas.forEach(a => {
-            let opt = document.createElement("option");
-            opt.value = a.id;
-            opt.textContent = `ID ${a.id}: ${a.nombre} (${a.prueba})`;
-            atletaSelect.appendChild(opt);
-        });
+const seriesSquatRoot = (m)=> m<=3 ? "3 series × 6 reps [Clúster]" : m<=10 ? "4 series × 6 reps" : "3 series × 6 reps [PAP]";
+const seriesHalteroA = (m)=> m>=6 ? "4 series × 3 reps [Explosivo]" : "3 series × 4 reps [Técnica]";
+const seriesBenchRoot = (m)=> m<=3 ? "3 series × 6 reps [F. Máx]" : "4 series × 8 reps";
+const seriesHingeRoot = (m)=> m<=3 ? "3 series × 6 reps" : "4 series × 8 reps";
 
-        const microSelect = document.getElementById("microSelect");
-        microciclos.forEach(m => {
-            let opt = document.createElement("option");
-            opt.value = m.num;
-            opt.textContent = `Micro ${m.num} - ${m.tipo} (${m.fase})`;
-            microSelect.appendChild(opt);
-        });
+function MONDAY(cal){return [
+  {plano:"Cuádriceps (Empuje Raíz)", nombre:"Sentadilla Trasera Profunda con Barra en Rack", series:seriesSquatRoot(cal.micro), pct:cal.pctSquat, base:"squat", pausa:"180-240s"},
+  {plano:"Halterofilia (Potencia RFD)", nombre:"Arrancada Colgante de Potencia (Hang Power Snatch)", series:seriesHalteroA(cal.micro), pct:cal.pctSquat, base:"squat", pausa:"150s"},
+  {plano:"Pecho (Empuje Horiz. Raíz)", nombre:"Press de Banca Plano con Barra", series:seriesBenchRoot(cal.micro), pct:cal.pctBench, base:"bench", pausa:"180s"},
+  {plano:"Pecho (Empuje Inclinado)", nombre:"Press Inclinado con Mancuernas", series:"5 series × 10 reps", pct:0.70, base:"fixed", fixedLoad:"24 kg c/u", pausa:"120s"},
+  {plano:"Hombro (Empuje Vertical)", nombre:"Press Militar de Pie con Barra en Rack", series:"3 series × 6 reps", pct:0.80, base:"bench", pausa:"150s"},
+  {plano:"Hombro (Estabilizador)", nombre:"Elevaciones Laterales con Mancuernas + Ligas", series:"4 series × 15 reps", pct:0.55, base:"fixed", fixedLoad:"10 kg + liga", pausa:"90s"},
+  {plano:"Tríceps (Extensión Codo)", nombre:"Press Francés en Banco con Barra Z", series:"4 series × 10 reps", pct:0.65, base:"bench", pausa:"90s"},
+  {plano:"Tríceps (Empuje Corporal)", nombre:"Fondos en Barras Paralelas con Lastre", series:"4 series × 8 reps", pct:0.75, base:"fixed", fixedLoad:"+15 kg lastre", pausa:"120s"},
+  {plano:"Pantorrilla / Tobillo", nombre:"Elevación de Talones con Barra (Puntera)", series:"5 series × 10 reps", pct:0.80, base:"squat", pausa:"90s"},
+];}
 
-        // Llenar tabla de atletas
-        const atletasBody = document.getElementById("tablaAtletasBody");
-        atletas.forEach(a => {
-            atletasBody.innerHTML += `<tr>
-                <td><strong>${a.id}</strong></td>
-                <td>${a.nombre}</td>
-                <td>${a.edad}</td>
-                <td>${a.sexo}</td>
-                <td>${a.prueba}</td>
-                <td>${a.peso} kg</td>
-                <td><strong>${a.rmSentadilla.toFixed(1)} kg</strong></td>
-                <td><strong>${a.rmBanca.toFixed(1)} kg</strong></td>
-            </tr>`;
-        });
+function TUESDAY(cal){return [
+  {plano:"Core (Anti-Extensión)", nombre:"Plancha Abdominal Frontal con Antebrazos sobre Balón Suizo", series:"4 series × 45 seg", pct:null, base:"fixed", fixedLoad:"Isometría con inestabilidad", pausa:"60s"},
+  {plano:"Core (Anti-Extensión / Dinámico)", nombre:"Rollout con Barra desde las Rodillas", series:"4 series × 10 reps", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"75s"},
+  {plano:"Core (Anti-Rotación)", nombre:"Pallof Press con Banda Elástica Fuerte", series:"4 series × 12 reps / lado", pct:null, base:"fixed", fixedLoad:"Resistencia banda", pausa:"60s"},
+  {plano:"Core (Flexión Lateral / Oblicuos)", nombre:"Paseo del Granjero Unilateral (Farmer's Walk)", series:"4 series × 30 metros / brazo", pct:null, base:"fixed", fixedLoad:"Mancuerna 26 kg", pausa:"90s"},
+  {plano:"Core (Flexión Dinámica / Cadera)", nombre:"Elevaciones de Piernas Colgado en Barra Fix", series:"4 series × 12 reps", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"75s"},
+  {plano:"Core / Estabilidad Lumbar", nombre:"Bird-Dog con Pausa y Extensión Cruzada", series:"3 series × 15 reps / lado", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"60s"},
+  {plano:"Core (Rotacional Explosivo)", nombre:"Russian Twist con Balón Medicinal", series:"4 series × 20 reps total", pct:null, base:"fixed", fixedLoad:"Balón 8 kg", pausa:"60s"},
+  {plano:"Prevención / Isquios", nombre:"Copenhagen Plank en Banco (Aductores)", series:"3 series × 25 seg / pierna", pct:null, base:"fixed", fixedLoad:"Isometría corporal", pausa:"60s"},
+];}
 
-        // Llenar tabla de calendario
-        const calBody = document.getElementById("tablaCalendarioBody");
-        microciclos.forEach(m => {
-            calBody.innerHTML += `<tr>
-                <td><strong>Micro ${m.num}</strong></td>
-                <td><span class="badge badge-${m.fase}">${m.fase}</span></td>
-                <td>${m.fechas}</td>
-                <td>${m.tipo}</td>
-                <td>${(m.pctSentadilla * 100).toFixed(0)}%</td>
-                <td>${(m.pctBanca * 100).toFixed(0)}%</td>
-                <td>${m.vol}</td>
-            </tr>`;
-        });
+function WEDNESDAY(cal){return [
+  {plano:"Femoral (Bisagra de Cadera)", nombre:"Peso Muerto Rumano con Barra", series:seriesHingeRoot(cal.micro), pct:cal.pctSquat, base:"squat", pausa:"180-240s"},
+  {plano:"Halterofilia (Potencia RFD)", nombre:"Cargada Colgante de Potencia (Hang Power Clean)", series:seriesHalteroA(cal.micro), pct:cal.pctSquat, base:"squat", pausa:"150s"},
+  {plano:"Glúteo (Extensión Horiz.)", nombre:"Hip Thrust Pesado con Barra y Banco", series:seriesHingeRoot(cal.micro), pct:cal.pctSquat, base:"squat", pausa:"180s"},
+  {plano:"Glúteo / Cuádriceps Unilateral", nombre:"Step-Up Pesado a Banco con Mancuernas", series:"4 series × 8 reps / pierna", pct:0.70, base:"fixed", fixedLoad:"22 kg c/u", pausa:"90s"},
+  {plano:"Espalda (Tracción Vertical)", nombre:"Dominadas Pronas en Barra con Lastre", series:"3 series × 6 reps", pct:0.80, base:"fixed", fixedLoad:"+15 kg lastre", pausa:"150s"},
+  {plano:"Espalda (Tracción Horiz.)", nombre:"Remo con Barra Inclinado (Pendlay Row)", series:"4 series × 8 reps", pct:0.75, base:"squat", pausa:"120s"},
+  {plano:"Espalda (Unilateral)", nombre:"Remo Unilateral con Mancuerna en Banco", series:"4 series × 10 reps / brazo", pct:0.70, base:"fixed", fixedLoad:"32 kg", pausa:"90s"},
+  {plano:"Hombro Posterior", nombre:"Face Pull con Ligas en Rack", series:"4 series × 15 reps", pct:0.55, base:"fixed", fixedLoad:"Liga fuerte", pausa:"60s"},
+  {plano:"Bíceps (Tracción de Brazo)", nombre:"Curl de Bíceps con Barra de Piso", series:"4 series × 10 reps", pct:0.65, base:"bench", pausa:"90s"},
+];}
 
-        // Llenar tabla de banco
-        const bancoBody = document.getElementById("tablaBancoBody");
-        bancoEjercicios.forEach(b => {
-            bancoBody.innerHTML += `<tr>
-                <td><strong>${b.plano}</strong></td>
-                <td>${b.ejercicio}</td>
-                <td>${b.raiz}</td>
-                <td>${b.coef}</td>
-                <td>${b.enfoque}</td>
-            </tr>`;
-        });
+function THURSDAY(cal){return [
+  {plano:"Core (Estabilidad Lateral)", nombre:"Plancha Lateral Dinámica con Alcance Subiendo Brazo", series:"4 series × 12 reps / lado", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"60s"},
+  {plano:"Core (Anti-Extensión Profunda)", nombre:"Ab Wheel Rollout (Rueda Abdominal)", series:"4 series × 10 reps", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"75s"},
+  {plano:"Core / Glúteo (Posterior)", nombre:"Puente de Glúteos Isométrico a 1 Pierna con Elevación", series:"4 series × 15 reps / pierna", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"60s"},
+  {plano:"Core (Transferencia Velocidad)", nombre:"Lanzamientos de Balón Medicinal contra Muro con Rotación", series:"4 series × 10 reps / lado", pct:null, base:"fixed", fixedLoad:"Balón 6 kg", pausa:"90s"},
+  {plano:"Core (Flexión / Cadera)", nombre:"Encogimientos de Rodillas colgado en Barra (Toes to Bar prog)", series:"4 series × 10 reps", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"75s"},
+  {plano:"Core (Estabilidad Escapular)", nombre:"Plancha Alta con Toques Alternos a Hombros", series:"4 series × 20 toques", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"60s"},
+  {plano:"Core (Sostén / Faja Abdominal)", nombre:"Vacío Abdominal (Vacuum) en Apoyo Tripodal", series:"4 series × 30 seg", pct:null, base:"fixed", fixedLoad:"Control respiratorio", pausa:"60s"},
+  {plano:"Prevención / Cadera", nombre:"Monster Walks con Banda Elástica en Rodillas", series:"4 series × 15 pasos c/lado", pct:null, base:"fixed", fixedLoad:"Resistencia media", pausa:"60s"},
+];}
 
-        actualizarPlataforma();
+function FRIDAY(cal){
+  const contraste = (cal.faseCode==="T" || cal.faseCode==="R");
+  return [
+    {plano:"Glúteo / Pierna Unilateral", nombre:"Sentadilla Búlgara con Mancuernas", series:"4 series × 8 reps / pierna", pct:0.75, base:"fixed", fixedLoad:"24 kg c/u", pausa:"120s"},
+    {plano:"Glúteo / Isquios", nombre:"Puente de Glúteo a 1 Pierna con Disco en cadera", series:"4 series × 8 reps / pierna", pct:0.70, base:"fixed", fixedLoad:"Disco 25 kg", pausa:"90s"},
+    {plano:"Aductores / Prevención", nombre:"Copenhagen Plank en Banco", series:"4 series × 25 seg / pierna", pct:null, base:"fixed", fixedLoad:"Isometría corporal", pausa:"60s"},
+    {plano:"Trapecios / Escápula", nombre:"Encogimientos de Hombros con Barra (Shrugs)", series:"4 series × 8 reps", pct:0.85, base:"squat", pausa:"120s"},
+    {plano:"Hombros / Halterofilia", nombre:"High Pull con Barra desde Colgante", series:"3 series × 6 reps", pct:0.75, base:"bench", pausa:"120s"},
+    {plano:"Hombro / Potencia", nombre:"Push Press / Empuje con Barra", series:"3 series × 5 reps", pct:0.80, base:"bench", pausa:"150s"},
+    {plano:"Hombros / Unilateral", nombre:"Press de Hombro Unilateral con Mancuerna", series:"4 series × 10 reps / brazo", pct:null, base:"fixed", fixedLoad:"18 kg", pausa:"90s"},
+    contraste
+      ? {plano:"Contraste Francés (Cometti)", nombre:"Sentadilla (80%) + Salto + Drop Jump + Sprint 15m", series:"3 series [4 estaciones]", pct:0.80, base:"squat", pausa:"180s", note:"Activo Micros 6-12"}
+      : {plano:"Fuerza Base", nombre:"Sentadilla Base (Fuerza Hipertrofia)", series:"3 series × 6 reps", pct:0.70, base:"squat", pausa:"180s"},
+  ];
+}
+
+const loadFor = (ex, a)=>{
+  if(ex.base==="fixed") return ex.fixedLoad;
+  const rm = ex.base==="squat" ? epley(a.squatKg,a.squatReps) : epley(a.benchKg,a.benchReps);
+  return `${Math.round(rm*ex.pct*10)/10} kg`;
+};
+
+function velocityZone(pct){
+  if(pct==null) return null;
+  const table = [
+    {p:0.40,v:1.00},{p:0.50,v:0.85},{p:0.55,v:0.78},{p:0.60,v:0.70},
+    {p:0.65,v:0.63},{p:0.70,v:0.55},{p:0.75,v:0.48},{p:0.80,v:0.40},
+    {p:0.85,v:0.32},{p:0.90,v:0.25},
+  ];
+  const c = Math.min(Math.max(pct,0.40),0.90);
+  let v = table[table.length-1].v;
+  for(let i=0;i<table.length-1;i++){
+    if(c>=table[i].p && c<=table[i+1].p){
+      const t=(c-table[i].p)/(table[i+1].p-table[i].p);
+      v = table[i].v + t*(table[i+1].v-table[i].v);
+      break;
     }
+  }
+  const vMin = Math.round((v-0.05)*100)/100;
+  const vMax = Math.round((v+0.05)*100)/100;
+  let zone, color;
+  if(v>=0.85){zone="Velocidad-Potencia"; color="#22C55E";}
+  else if(v>=0.65){zone="Fuerza-Velocidad"; color="#3B82F6";}
+  else if(v>=0.45){zone="Fuerza-Potencia"; color="#F2B705";}
+  else {zone="Fuerza Máxima"; color="#E2452C";}
+  return {vMin, vMax, zone, color};
+}
+const VELOCITY_LEGEND = [
+  {zone:"Fuerza Máxima", color:"#E2452C", range:"< 0.45 m/s"},
+  {zone:"Fuerza-Potencia", color:"#F2B705", range:"0.45 – 0.65 m/s"},
+  {zone:"Fuerza-Velocidad", color:"#3B82F6", range:"0.65 – 0.85 m/s"},
+  {zone:"Velocidad-Potencia", color:"#22C55E", range:"> 0.85 m/s"},
+];
+function velocityLegendHTML(){
+  return `<div class="vel-legend">${VELOCITY_LEGEND.map(z=>
+    `<div class="vel-legend-item"><span class="vel-legend-dot" style="background:${z.color}"></span>${z.zone} · ${z.range}</div>`
+  ).join("")}</div>`;
+}
+function tempoFor(ex){
+  const n = ex.nombre.toLowerCase();
+  if(n.includes("plank") || n.includes("isometr") || n.includes("vacuum")) return "Tensión constante (isometría), sin componente de velocidad";
+  if(n.includes("monster walk") || n.includes("face pull") || n.includes("pallof") || n.includes("elevaciones") || n.includes("curl")) return "Tempo 2-0-2-0 controlado";
+  if(ex.base==="fixed" && ex.pct==null) return "Técnica controlada y fluida, enfoque en control postural";
+  if(n.includes("arrancada") || n.includes("cargada") || n.includes("contraste") || n.includes("push press") || n.includes("high pull") || n.includes("lanzamientos")) return "Máxima velocidad intencional (fase concéntrica explosiva)";
+  if(ex.base==="squat" || ex.base==="bench"){
+    if(ex.pct!=null && ex.pct>=0.80) return "Excéntrico controlado (2-3s), concéntrico explosivo";
+    return "Concéntrico intencionalmente rápido, excéntrico controlado";
+  }
+  return "Ejecución técnica controlada";
+}
+function velocityCellHTML(ex){
+  const tempo = tempoFor(ex);
+  let velHTML = "";
+  if(ex.base!=="fixed" && ex.pct!=null){
+    const z = velocityZone(ex.pct);
+    velHTML = `<div class="vel-pill" style="background:${z.color}22;color:${z.color}">${z.vMin}–${z.vMax} m/s · ${z.zone}</div>`;
+  }
+  return `<div class="tempo-note">${tempo}</div>${velHTML}`;
+}
+const currentMicroFromDate = (d)=>{
+  const iso = d.toISOString().slice(0,10);
+  const found = CALENDAR.find(c=> iso>=c.start && iso<=c.end);
+  if(found) return {micro:found.micro, status:"activo"};
+  if(iso < CALENDAR[0].start) return {micro:1, status:"pretemporada"};
+  return {micro:12, status:"finalizado"};
+};
+const trainingDayFromWeekday = (w)=>{ 
+  if(w===1) return "monday"; 
+  if(w===2) return "tuesday"; 
+  if(w===3) return "wednesday"; 
+  if(w===4) return "thursday"; 
+  if(w===5) return "friday"; 
+  return null; 
+};
 
-    function actualizarPlataforma() {
-        const atletaId = parseInt(document.getElementById("atletaSelect").value);
-        const microNum = parseInt(document.getElementById("microSelect").value);
+const hasStorage = ()=> typeof window!=="undefined" && window.storage && typeof window.storage.get==="function";
+async function stGet(key){
+  if(!hasStorage()) return null;
+  try{ const r = await window.storage.get(key); return r ? r.value : null; }catch(e){ return null; }
+}
+async function stSet(key,val){
+  if(!hasStorage()) return false;
+  try{ await window.storage.set(key,val); return true; }catch(e){ return false; }
+}
 
-        const atleta = atletas.find(a => a.id === atletaId);
-        const micro = microciclos.find(m => m.num === microNum);
+const PRESET_ROSTER = [
+  {id:1, name:"Habib Alexander Martínez Pérez", age:18, sex:"M", event:"200m - 400m", bw:54, squatKg:90, squatReps:7, benchKg:40, benchReps:7},
+  {id:2, name:"Joan López", age:15, sex:"M", event:"100m", bw:65, squatKg:98, squatReps:6, benchKg:40, benchReps:7},
+  {id:3, name:"Aldo Sainz", age:23, sex:"M", event:"400m", bw:78, squatKg:105, squatReps:5, benchKg:50, benchReps:12},
+  {id:4, name:"David Rodríguez", age:16, sex:"M", event:"Salto Longitud", bw:55, squatKg:60, squatReps:7, benchKg:35, benchReps:6},
+  {id:5, name:"Mia Solís Torres", age:18, sex:"M", event:"200m - 400m", bw:50, squatKg:91, squatReps:6, benchKg:35, benchReps:5},
+  {id:6, name:"Valentina Carrillo", age:15, sex:"F", event:"100m - 200m", bw:53, squatKg:70, squatReps:6, benchKg:35, benchReps:5},
+  {id:7, name:"Ailen Cabildo", age:17, sex:"F", event:"200m - 400m", bw:57, squatKg:55, squatReps:6, benchKg:30, benchReps:4},
+  {id:8, name:"Yamielth Sedano", age:15, sex:"F", event:"800m", bw:50, squatKg:65, squatReps:5, benchKg:30, benchReps:4},
+  {id:9, name:"Samira Sedano", age:15, sex:"F", event:"Salto Longitud", bw:46, squatKg:46, squatReps:7, benchKg:25, benchReps:4},
+  {id:10, name:"Daniela Quintana", age:15, sex:"F", event:"800m", bw:54, squatKg:65, squatReps:4, benchKg:26, benchReps:6},
+  {id:11, name:"Hugo Ornelin", age:15, sex:"M", event:"400m - 4x400m", bw:56, squatKg:80, squatReps:7, benchKg:35, benchReps:3},
+  {id:12, name:"Abigail Talavera", age:15, sex:"F", event:"Impulso de Bala", bw:70, squatKg:79, squatReps:4, benchKg:35, benchReps:6},
+  {id:13, name:"Daniel Pérez", age:15, sex:"M", event:"200m - 400m", bw:60, squatKg:80, squatReps:6, benchKg:45, benchReps:5},
+  {id:14, name:"Valeria de la Cruz", age:15, sex:"F", event:"100m Vallas", bw:52, squatKg:77, squatReps:5, benchKg:30, benchReps:3},
+  {id:15, name:"Celeste de la Cruz", age:15, sex:"F", event:"400m Vallas", bw:50, squatKg:72, squatReps:7, benchKg:22, benchReps:7},
+  {id:16, name:"Jimena Bustos Muñoz", age:16, sex:"F", event:"100m - 4x100m", bw:48, squatKg:48, squatReps:6, benchKg:15, benchReps:6},
+  {id:17, name:"Atleta 17 (falta nombre)", age:21, sex:"M", event:"400m - 4x400m", bw:73.2, squatKg:130, squatReps:7, benchKg:55, benchReps:4},
+  {id:18, name:"Atleta 18 (falta nombre)", age:17, sex:"F", event:"100m - 200m", bw:68.3, squatKg:60, squatReps:4, benchKg:48, benchReps:4},
+  {id:19, name:"Atleta 19 (falta nombre)", age:22, sex:"M", event:"200m - 400m", bw:56.1, squatKg:126, squatReps:4, benchKg:75, benchReps:6},
+  {id:20, name:"Atleta 20 (falta nombre)", age:23, sex:"F", event:"100m Vallas", bw:54.9, squatKg:90, squatReps:6, benchKg:48, benchReps:6},
+  {id:21, name:"Atleta 21 (falta nombre)", age:16, sex:"M", event:"400m Vallas", bw:71.9, squatKg:95, squatReps:7, benchKg:59, benchReps:5},
+  {id:22, name:"Atleta 22 (falta nombre)", age:21, sex:"F", event:"100m - 4x100m", bw:72.7, squatKg:60, squatReps:4, benchKg:59, benchReps:7},
+  {id:23, name:"Atleta 23 (falta nombre)", age:20, sex:"M", event:"400m - 4x400m", bw:58.1, squatKg:112, squatReps:7, benchKg:78, benchReps:5},
+  {id:24, name:"Atleta 24 (falta nombre)", age:21, sex:"F", event:"100m - 200m", bw:68.5, squatKg:95, squatReps:5, benchKg:60, benchReps:7},
+  {id:25, name:"Atleta 25 (falta nombre)", age:22, sex:"M", event:"200m - 400m", bw:55.7, squatKg:92, squatReps:7, benchKg:97, benchReps:4},
+  {id:26, name:"Atleta 26 (falta nombre)", age:21, sex:"F", event:"100m Vallas", bw:66.6, squatKg:83, squatReps:6, benchKg:48, benchReps:4},
+  {id:27, name:"Atleta 27 (falta nombre)", age:18, sex:"M", event:"400m Vallas", bw:68.6, squatKg:140, squatReps:5, benchKg:76, benchReps:4},
+  {id:28, name:"Atleta 28 (falta nombre)", age:21, sex:"F", event:"100m - 4x100m", bw:60.3, squatKg:91, squatReps:6, benchKg:37, benchReps:6},
+  {id:29, name:"Atleta 29 (falta nombre)", age:19, sex:"M", event:"400m - 4x400m", bw:59.7, squatKg:116, squatReps:6, benchKg:80, benchReps:4},
+  {id:30, name:"Atleta 30 (falta nombre)", age:17, sex:"F", event:"100m - 200m", bw:80.8, squatKg:87, squatReps:5, benchKg:59, benchReps:4},
+];
+const PRESET_DATE = "2026-08-31";
 
-        document.getElementById("nombreAtleta").textContent = `${atleta.nombre} (${atleta.prueba})`;
-        document.getElementById("datosAtleta").textContent = `${atleta.peso} kg | ${atleta.edad} años (${atleta.sexo})`;
-        document.getElementById("faseAtleta").innerHTML = `<span class="badge badge-${micro.fase}">${micro.fase}</span>`;
-        document.getElementById("fechasAtleta").textContent = micro.fechas;
-        document.getElementById("rmSentadilla").textContent = `${atleta.rmSentadilla.toFixed(1)} kg`;
-        document.getElementById("rmBanca").textContent = `${atleta.rmBanca.toFixed(1)} kg`;
-        document.getElementById("tituloRutina").textContent = `Rutina Operativa Dinámica: Atleta #${atleta.id} - Microciclo ${micro.num} (${micro.tipo})`;
+const State = {
+  athletes: [],
+  nextId: 1,
+  tab: "panel",
+  selectedAthleteId: null,
+  microId: 1,
+  showAddForm: false,
+  logMode: false,
+  logDraft: {},
+  historial: {},
+  logsCache: {},
+};
 
-        // Generar dinámicamente la tabla de la rutina con base en los 15 ejercicios del documento
-        const tbody = document.getElementById("tablaRutinaBody");
-        tbody.innerHTML = "";
+async function initState(){
+  const raw = await stGet("athletes-roster");
+  if(raw){
+    try{
+      const data = JSON.parse(raw);
+      State.athletes = data.athletes || [];
+      State.nextId = data.nextId || (State.athletes.length+1);
+    }catch(e){}
+  }
+  const autoMicro = currentMicroFromDate(new Date());
+  State.microId = autoMicro.micro;
+  if(State.athletes.length) State.selectedAthleteId = State.athletes[0].id;
+  render();
+}
+async function persistRoster(){
+  await stSet("athletes-roster", JSON.stringify({athletes:State.athletes, nextId:State.nextId}));
+}
 
-        bancoEjercicios.forEach(item => {
-            // Determinar la raíz correspondiente (Sentadilla o Press de Banca)
-            let rmBase = item.raiz === "Sentadilla Profunda" ? atleta.rmSentadilla : atleta.rmBanca;
-            let pctMacro = item.raiz === "Sentadilla Profunda" ? micro.pctSentadilla : micro.pctBanca;
-            
-            // Cálculo exacto de la carga: RM Base * % Microciclo * Coeficiente Ergonómico
-            let cargaFinal = (rmBase * pctMacro * item.coef).toFixed(1);
-            let pctTotalStr = ((pctMacro * item.coef) * 100).toFixed(0) + "%";
+function setTab(tab){ State.tab = tab; State.showAddForm=false; render(); }
 
-            tbody.innerHTML += `
-                <tr>
-                    <td><strong>${item.plano}</strong></td>
-                    <td>${item.ejercicio}</td>
-                    <td>${pctTotalStr}</td>
-                    <td><strong>${cargaFinal} kg</strong></td>
-                    <td>VMP Ref / CE Dinámico</td>
-                    <td>${item.enfoque}</td>
-                </tr>
-            `;
-        });
+async function addAthlete(fields){
+  const a = {
+    id: State.nextId++,
+    name: fields.name.trim(),
+    age: Number(fields.age)||null,
+    sex: fields.sex,
+    event: fields.event.trim(),
+    bw: Number(fields.bw)||null,
+    squatKg: Number(fields.squatKg)||0,
+    squatReps: Number(fields.squatReps)||1,
+    benchKg: Number(fields.benchKg)||0,
+    benchReps: Number(fields.benchReps)||1,
+  };
+  State.athletes.push(a);
+  await persistRoster();
+  const hist = [{date: todayISO(), squatKg:a.squatKg, squatReps:a.squatReps, benchKg:a.benchKg, benchReps:a.benchReps}];
+  State.historial[a.id] = hist;
+  await stSet(`rm-history:${a.id}`, JSON.stringify(hist));
+  State.selectedAthleteId = a.id;
+  State.showAddForm = false;
+  showToast("Atleta registrado");
+  render();
+}
+
+async function deleteAthlete(id, evt){
+  if(evt) evt.stopPropagation();
+  const authorized = await ensurePinAndConfirm("eliminar a este atleta");
+  if(!authorized) return;
+  if(!confirm("¿Eliminar este atleta del roster? Esta acción no se puede deshacer.")) return;
+  State.athletes = State.athletes.filter(a=>a.id!==id);
+  await persistRoster();
+  if(State.selectedAthleteId===id) State.selectedAthleteId = State.athletes[0] ? State.athletes[0].id : null;
+  render();
+}
+
+async function importPresetRoster(){
+  if(State.athletes.length>0){
+    const authorized = await ensurePinAndConfirm("reemplazar el roster actual por los 30 atletas del Excel");
+    if(!authorized) return;
+    if(!confirm(`Esto reemplazará los ${State.athletes.length} atletas actuales por los 30 del archivo Excel. ¿Continuar?`)) return;
+  }
+  State.athletes = PRESET_ROSTER.map(a=>({...a}));
+  State.nextId = 31;
+  await persistRoster();
+  for(const a of State.athletes){
+    const hist = [{date: PRESET_DATE, squatKg:a.squatKg, squatReps:a.squatReps, benchKg:a.benchKg, benchReps:a.benchReps}];
+    State.historial[a.id] = hist;
+    await stSet(`rm-history:${a.id}`, JSON.stringify(hist));
+  }
+  State.selectedAthleteId = State.athletes[0].id;
+  showToast("30 atletas importados");
+  render();
+}
+
+async function getCoachPin(){ return await stGet("coach-pin"); }
+async function ensurePinAndConfirm(actionLabel){
+  const pin = await getCoachPin();
+  if(!pin){
+    const newPin = prompt(`Aún no hay PIN de entrenador configurado.\nCrea un PIN (4 a 6 dígitos) para proteger las eliminaciones de aquí en adelante:`);
+    if(!newPin) return false;
+    if(!/^\d{4,6}$/.test(newPin)){ alert("El PIN debe tener entre 4 y 6 dígitos numéricos."); return false; }
+    await stSet("coach-pin", newPin);
+    showToast("PIN de entrenador configurado");
+    return true;
+  }
+  const entered = prompt(`Ingresa el PIN de entrenador para ${actionLabel}:`);
+  if(entered===null) return false;
+  if(entered!==pin){ alert("PIN incorrecto. No se realizó la acción."); return false; }
+  return true;
+}
+async function changePin(){
+  const pin = await getCoachPin();
+  if(pin){
+    const entered = prompt("Ingresa el PIN actual del entrenador:");
+    if(entered===null) return;
+    if(entered!==pin){ alert("PIN incorrecto."); return; }
+  }
+  const newPin = prompt("Nuevo PIN (4 a 6 dígitos):");
+  if(!newPin) return;
+  if(!/^\d{4,6}$/.test(newPin)){ alert("El PIN debe tener entre 4 y 6 dígitos numéricos."); return; }
+  await stSet("coach-pin", newPin);
+  showToast("PIN actualizado");
+}
+
+function selectAthlete(id){ State.selectedAthleteId = Number(id); State.logMode=false; State.logDraft={}; render(); }
+function goToAthleteToday(id){ State.selectedAthleteId=Number(id); State.tab="hoy"; State.logMode=false; State.logDraft={}; render(); }
+function setMicro(m){ State.microId = m; render(); }
+
+let toastTimer=null;
+function showToast(msg){
+  const el = document.getElementById("toast");
+  if(!el) return;
+  el.textContent = msg; el.style.display="block";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ el.style.display="none"; }, 1800);
+}
+
+async function toggleLogMode(){
+  State.logMode = !State.logMode;
+  if(State.logMode){
+    const a = State.athletes.find(x=>x.id===State.selectedAthleteId);
+    const key = `session-log:${a.id}:${todayISO()}`;
+    const raw = await stGet(key);
+    if(raw){
+      try{
+        const log = JSON.parse(raw);
+        const d = {};
+        log.entries.forEach(e=>{ d[e.nombre]={completado:e.completado, rpe:e.rpe}; });
+        State.logDraft = d;
+      }catch(e){}
     }
+  }
+  render();
+}
+function updateDraft(nombre, field, value){
+  if(!State.logDraft[nombre]) State.logDraft[nombre]={};
+  State.logDraft[nombre][field]=value;
+}
+async function guardarSesion(exercises, athleteId, day, micro){
+  const entries = exercises.map(ex=>({
+    nombre: ex.nombre,
+    completado: (State.logDraft[ex.nombre]&&State.logDraft[ex.nombre].completado)||"",
+    rpe: (State.logDraft[ex.nombre]&&State.logDraft[ex.nombre].rpe)||"",
+  }));
+  const log = {athleteId, date: todayISO(), day, micro, entries};
+  await stSet(`session-log:${athleteId}:${todayISO()}`, JSON.stringify(log));
+  const idxRaw = await stGet(`log-index:${athleteId}`);
+  let idx = [];
+  try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
+  if(!idx.includes(todayISO())){ idx.push(todayISO()); await stSet(`log-index:${athleteId}`, JSON.stringify(idx)); }
+  showToast("Sesión registrada");
+  render();
+}
 
-    function switchTab(evt, tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        evt.currentTarget.classList.add('active');
+async function loadHistorialFor(athleteId){
+  if(State.historial[athleteId]) return State.historial[athleteId];
+  const raw = await stGet(`rm-history:${athleteId}`);
+  let hist = [];
+  try{ hist = raw?JSON.parse(raw):[]; }catch(e){}
+  if(!hist.length){
+    const a = State.athletes.find(x=>x.id===athleteId);
+    if(a) hist = [{date:todayISO(), squatKg:a.squatKg, squatReps:a.squatReps, benchKg:a.benchKg, benchReps:a.benchReps}];
+  }
+  State.historial[athleteId] = hist;
+  return hist;
+}
+async function loadLogsFor(athleteId){
+  const idxRaw = await stGet(`log-index:${athleteId}`);
+  let idx = [];
+  try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
+  const sorted = [...idx].sort().reverse().slice(0,6);
+  const entries = [];
+  for(const d of sorted){
+    const raw = await stGet(`session-log:${athleteId}:${d}`);
+    if(raw){ try{ entries.push(JSON.parse(raw)); }catch(e){} }
+  }
+  State.logsCache[athleteId] = entries;
+  return entries;
+}
+async function addRMEntry(athleteId, entry){
+  const hist = await loadHistorialFor(athleteId);
+  const updated = [...hist, entry].sort((a,b)=>a.date.localeCompare(b.date));
+  State.historial[athleteId] = updated;
+  await stSet(`rm-history:${athleteId}`, JSON.stringify(updated));
+  showToast("Test guardado");
+  render();
+}
+
+async function exportBackup(){
+  const data = {version:1, exportedAt:new Date().toISOString(), athletes:State.athletes, nextId:State.nextId, historial:{}, logs:{}};
+  for(const a of State.athletes){
+    data.historial[a.id] = await loadHistorialFor(a.id);
+    const idxRaw = await stGet(`log-index:${a.id}`);
+    let idx=[]; try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
+    data.logs[a.id] = {};
+    for(const d of idx){
+      const raw = await stGet(`session-log:${a.id}:${d}`);
+      if(raw){ try{ data.logs[a.id][d] = JSON.parse(raw); }catch(e){} }
     }
+  }
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url; link.download = `respaldo_fuerza_atr_${todayISO()}.json`;
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  showToast("Respaldo descargado");
+}
+function triggerImport(){ document.getElementById("import-file").click(); }
+async function handleImportFile(input){
+  const file = input.files[0];
+  if(!file) return;
+  const authorized = await ensurePinAndConfirm("restaurar un respaldo (reemplaza el roster actual)");
+  if(!authorized){ input.value=""; return; }
+  const text = await file.text();
+  let data;
+  try{ data = JSON.parse(text); }catch(e){ alert("Archivo inválido."); input.value=""; return; }
+  if(!confirm("Esto reemplazará el roster y el historial actuales con los del respaldo. ¿Continuar?")){ input.value=""; return; }
+  State.athletes = data.athletes || [];
+  State.nextId = data.nextId || (State.athletes.length+1);
+  await persistRoster();
+  State.historial = {}; State.logsCache = {};
+  for(const idStr of Object.keys(data.historial||{})){
+    State.historial[idStr] = data.historial[idStr];
+    await stSet(`rm-history:${idStr}`, JSON.stringify(data.historial[idStr]));
+  }
+  for(const idStr of Object.keys(data.logs||{})){
+    const days = Object.keys(data.logs[idStr]);
+    await stSet(`log-index:${idStr}`, JSON.stringify(days));
+    for(const d of days){
+      await stSet(`session-log:${idStr}:${d}`, JSON.stringify(data.logs[idStr][d]));
+    }
+  }
+  input.value = "";
+  showToast("Respaldo restaurado");
+  render();
+}
 
-    window.onload = inicializarSelects;
+function athleteOptionsHTML(selectedId){
+  return State.athletes.map(a=>`<option value="${a.id}" ${a.id===selectedId?"selected":""}>${a.id}. ${esc(a.name)}</option>`).join("");
+}
+function exerciseTableHTML(exercises, athlete, logMode){
+  const rows = exercises.map(ex=>{
+    const d = State.logDraft[ex.nombre]||{};
+    return `<tr>
+      <td data-label="Ejercicio"><div class="ex-name">${esc(ex.nombre)}</div><div class="ex-plano">${esc(ex.plano)}${ex.note?` · ${esc(ex.note)}`:""}</div></td>
+      <td data-label="Series" class="mono">${esc(ex.series)}</td>
+      <td data-label="% 1RM" class="mono">${ex.pct!=null?Math.round(ex.pct*100)+"%":"—"}</td>
+      <td data-label="Carga"><span class="load-pill">${loadFor(ex,athlete)}</span></td>
+      <td data-label="Ritmo / Velocidad">${velocityCellHTML(ex)}</td>
+      <td data-label="Pausa" class="mono" style="color:var(--muted)">${ex.pausa}</td>
+      ${logMode ? `<td data-label="Realizado / RPE"><div class="log-cell">
+          <input type="text" placeholder="ej. 4x8" style="width:70px" value="${esc(d.completado||"")}"
+            oninput="updateDraft('${esc(ex.nombre).replace(/'/g,"\\'")}','completado',this.value)"/>
+          <select class="rpe-input" onchange="updateDraft('${esc(ex.nombre).replace(/'/g,"\\'")}','rpe',this.value)">
+            <option value="">RPE</option>
+            ${[6,6.5,7,7.5,8,8.5,9,9.5,10].map(v=>`<option value="${v}" ${String(d.rpe)===String(v)?"selected":""}>${v}</option>`).join("")}
+          </select>
+        </div></td>` : ""}
+    </tr>`;
+  }).join("");
+  return `<table><thead><tr>
+      <th>Ejercicio</th><th>Series</th><th>% 1RM</th><th>Carga</th><th>Ritmo / Velocidad</th><th>Pausa</th>${logMode?"<th>Realizado / RPE</th>":""}
+    </tr></thead><tbody>${rows}</tbody></table>`;
+}
+function miniChartSVG(points, color){
+  if(points.length<2) return `<div style="font-size:11.5px;color:var(--muted)">Se necesitan al menos 2 registros para graficar.</div>`;
+  const W=560,H=140,pad=28;
+  const ys = points.map(p=>p.y);
+  const minY = Math.min(...ys)*0.95, maxY = Math.max(...ys)*1.05;
+  const xI = i => pad + (i/(points.length-1))*(W-2*pad);
+  const yV = v => H-pad - ((v-minY)/((maxY-minY)||1))*(H-2*pad);
+  const path = points.map((p,i)=>`${i===0?"M":"L"} ${xI(i)} ${yV(p.y)}`).join(" ");
+  const circles = points.map((p,i)=>`<circle cx="${xI(i)}" cy="${yV(p.y)}" r="3.5" fill="${color}"/>`).join("");
+  const labels = points.map((p,i)=>`<text x="${xI(i)}" y="${H-8}" font-size="9" fill="var(--muted)" text-anchor="middle" font-family="Courier New">${p.dateLabel}</text>`).join("");
+  const last = points[points.length-1];
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}">
+    <line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="var(--line)" stroke-width="1"/>
+    <path d="${path}" fill="none" stroke="${color}" stroke-width="2.5"/>
+    ${circles}${labels}
+    <text x="${xI(points.length-1)}" y="${yV(last.y)-10}" font-size="11" fill="${color}" text-anchor="end" font-family="Courier New" font-weight="700">${last.y} kg</text>
+  </svg>`;
+}
+
+function renderPanel(){
+  const autoMicro = currentMicroFromDate(new Date());
+  const cal = CALENDAR.find(c=>c.micro===autoMicro.micro);
+  const color = PHASE_COLOR[cal.faseCode];
+
+  const formHTML = State.showAddForm ? `
+    <div class="athlete-form">
+      <div class="field"><label>Nombre</label><input type="text" class="wide" id="f-name" placeholder="Nombre completo"/></div>
+      <div class="field"><label>Edad</label><input type="number" id="f-age" style="width:70px"/></div>
+      <div class="field"><label>Sexo</label>
+        <select id="f-sex"><option value="M">M</option><option value="F">F</option></select>
+      </div>
+      <div class="field"><label>Prueba</label><input type="text" class="wide" id="f-event" placeholder="100m - 200m"/></div>
+      <div class="field"><label>Peso (kg)</label><input type="number" id="f-bw" style="width:80px"/></div>
+      <div class="field"><label>Sent. kg</label><input type="number" id="f-squatkg"/></div>
+      <div class="field"><label>Sent. reps</label><input type="number" id="f-squatreps" style="width:70px"/></div>
+      <div class="field"><label>Banca kg</label><input type="number" id="f-benchkg"/></div>
+      <div class="field"><label>Banca reps</label><input type="number" id="f-benchreps" style="width:70px"/></div>
+      <button class="btn" onclick="submitAddForm()">Registrar Atleta</button>
+      <button class="btn secondary" onclick="State.showAddForm=false;render();">Cancelar</button>
+    </div>` : "";
+
+  const grid = State.athletes.length===0
+    ? `<div class="lane-card" style="cursor:default;text-align:center;padding:36px 16px;">
+         <div class="empty-msg" style="padding:0;">Aún no hay atletas registrados.<br/>Agrega el primero para empezar a planificar.</div>
+       </div>`
+    : `<div class="grid">${State.athletes.map(a=>{
+        const cAthlete = color;
+        return `<div class="lane-card" onclick="goToAthleteToday(${a.id})">
+          <button class="del-btn" onclick="deleteAthlete(${a.id}, event)">×</button>
+          <div class="lane-stripe" style="background:${cAthlete}"></div>
+          <div class="lane-row">
+            <div class="bib" style="color:${cAthlete}">${a.id}</div>
+            <div>
+              <div class="lane-name">${esc(a.name)}</div>
+              <div class="lane-event">${esc(a.event||"—")}${a.age?` · ${a.age} años`:""}${a.sex?` · ${a.sex}`:""}</div>
+            </div>
+          </div>
+          <div class="rm-row">
+            <div class="rm-item">Sent. <b>${epley(a.squatKg,a.squatReps)} kg</b></div>
+            <div class="rm-item">Banca <b>${epley(a.benchKg,a.benchReps)} kg</b></div>
+          </div>
+          <div class="lane-meta">
+            <span class="phase-tag" style="background:${cAthlete}22;color:${cAthlete}">Micro ${autoMicro.micro} · ${PHASE_LABEL[cal.faseCode]}</span>
+          </div>
+        </div>`;
+      }).join("")}</div>`;
+
+  return `
+    <div class="section-head">
+      <div class="section-title">Panel de Equipo</div>
+      <div class="section-note">${State.athletes.length} atleta${State.athletes.length===1?"":"s"} registrado${State.athletes.length===1?"":"s"} · sin límite</div>
+    </div>
+    <div style="font-size:11.5px;color:var(--ok);margin-bottom:14px;">● Guardado automático activo — los datos persisten entre sesiones.</div>
+    <div style="margin-bottom:14px; display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="btn" onclick="State.showAddForm=!State.showAddForm;render();">${State.showAddForm?"Cerrar formulario":"+ Agregar Atleta"}</button>
+      <button class="btn secondary" style="margin-left:8px" onclick="importPresetRoster()">Importar 30 Atletas (Excel)</button>
+      <button class="btn secondary" onclick="exportBackup()">⬇ Exportar respaldo</button>
+      <button class="btn secondary" onclick="triggerImport()">⬆ Restaurar respaldo</button>
+    </div>
+    ${formHTML}
+    ${grid}
+  `;
+}
+
+function renderHoy(){
+  if(State.athletes.length===0) return `<div class="day-block"><div class="empty-msg">Registra al menos un atleta en <b>Panel de Equipo</b> para usar esta sección.<br/><br/><button class="btn big" onclick="setTab('panel')">Ir a Panel de Equipo</button></div></div>`;
+  if(!State.selectedAthleteId) State.selectedAthleteId = State.athletes[0].id;
+  const athlete = State.athletes.find(a=>a.id===State.selectedAthleteId);
+  const today = new Date();
+  const weekday = today.getDay();
+  const trainingDay = trainingDayFromWeekday(weekday);
+  const autoMicro = currentMicroFromDate(today);
+  const cal = CALENDAR.find(c=>c.micro===autoMicro.micro);
+  const color = PHASE_COLOR[cal.faseCode];
+  
+  let exercises = null;
+  if(trainingDay==="monday") exercises = MONDAY(cal);
+  else if(trainingDay==="tuesday") exercises = TUESDAY(cal);
+  else if(trainingDay==="wednesday") exercises = WEDNESDAY(cal);
+  else if(trainingDay==="thursday") exercises = THURSDAY(cal);
+  else if(trainingDay==="friday") exercises = FRIDAY(cal);
+
+  const dateStr = today.toLocaleDateString('es-MX', {weekday:'long', day:'numeric', month:'long'});
+  const statusMsg = autoMicro.status==="pretemporada" ? `Pretemporada — el macrociclo inicia el ${fmtDate(CALENDAR[0].start)}`
+    : autoMicro.status==="finalizado" ? "Macrociclo finalizado — última fase mostrada como referencia"
+    : `Micro ${autoMicro.micro} en curso`;
+
+  const tableAndSave = exercises ? `
+    <div class="day-block">
+      <div class="day-head"><span>${DAY_LABEL[trainingDay]}</span><span class="mono" style="font-weight:400;color:var(--muted);font-size:11px">${esc(athlete.name)}</span></div>
+      ${exerciseTableHTML(exercises, athlete, State.logMode)}
+      ${State.logMode ? `<div class="save-bar"><button class="btn" onclick='guardarSesion(${JSON.stringify(exercises).replace(/'/g,"&#39;")}, ${athlete.id}, "${trainingDay}", ${cal.micro})'>Guardar sesión</button></div>` : ""}
+    </div>` : `<div class="day-block"><div class="rest-msg">Hoy no corresponde sesión programada en el ciclo Lun–Vie.<br/>Usa el Selector de Microciclo para revisar cualquier día de la semana.</div></div>`;
+
+  return `
+    <div class="today-hero">
+      <div class="today-date mono">${dateStr.toUpperCase()}</div>
+      <div class="today-day">${trainingDay?DAY_LABEL[trainingDay].split("—")[0]:"Día de descanso / fin de semana"}</div>
+      <div style="font-size:12.5px;color:var(--muted);margin-top:4px">${statusMsg}</div>
+      <div class="today-phase"><span class="phase-tag" style="background:${color}22;color:${color}">Micro ${cal.micro} · ${PHASE_LABEL[cal.faseCode]} · ${cal.tipo}</span></div>
+    </div>
+    <div class="picker-row">
+      <select onchange="selectAthlete(this.value)">${athleteOptionsHTML(athlete.id)}</select>
+      ${exercises ? `<button class="btn ${State.logMode?"secondary":""}" onclick="toggleLogMode()">${State.logMode?"Ocultar registro":"Registrar sesión"}</button>` : ""}
+    </div>
+    ${exercises ? velocityLegendHTML() : ""}
+    ${tableAndSave}
+  `;
+}
+
+function renderSelector(){
+  if(State.athletes.length===0) return `<div class="day-block"><div class="empty-msg">Registra al menos un atleta en <b>Panel de Equipo</b> para usar esta sección.<br/><br/><button class="btn big" onclick="setTab('panel')">Ir a Panel de Equipo</button></div></div>`;
+  if(!State.selectedAthleteId) State.selectedAthleteId = State.athletes[0].id;
+  const athlete = State.athletes.find(a=>a.id===State.selectedAthleteId);
+  const cal = CALENDAR.find(c=>c.micro===State.microId);
+  const color = PHASE_COLOR[cal.faseCode];
+  const dots = CALENDAR.map(c=>`<div class="micro-dot ${c.micro===State.microId?"active":""}" style="color:${PHASE_COLOR[c.faseCode]};background:${c.micro===State.microId?PHASE_COLOR[c.faseCode]:""}" onclick="setMicro(${c.micro})">${c.micro}</div>`).join("");
+  
+  const days = ["monday","tuesday","wednesday","thursday","friday"].map(day=>{
+    let exs = [];
+    if(day==="monday") exs = MONDAY(cal);
+    else if(day==="tuesday") exs = TUESDAY(cal);
+    else if(day==="wednesday") exs = WEDNESDAY(cal);
+    else if(day==="thursday") exs = THURSDAY(cal);
+    else if(day==="friday") exs = FRIDAY(cal);
+    return `<div class="day-block"><div class="day-head"><span>${DAY_LABEL[day]}</span></div>${exerciseTableHTML(exs, athlete, false)}</div>`;
+  }).join("");
+
+  return `
+    <div class="selector-bar">
+      <div><label>Atleta</label><select onchange="selectAthlete(this.value)">${athleteOptionsHTML(athlete.id)}</select></div>
+      <div style="flex:1;min-width:220px"><label>Microciclo (1–12)</label><div class="micro-strip">${dots}</div></div>
+    </div>
+    <div class="cal-info">
+      <div class="cal-item"><div class="cal-label">Fase ATR</div><div class="cal-value" style="color:${color}">${cal.fase}</div></div>
+      <div class="cal-item"><div class="cal-label">Tipo Microciclo</div><div class="cal-value" style="font-size:12px">${cal.tipo}</div></div>
+      <div class="cal-item"><div class="cal-label">Fechas</div><div class="cal-value mono" style="font-size:12px">${fmtDate(cal.start)} – ${fmtDate(cal.end)}</div></div>
+      <div class="cal-item"><div class="cal-label">% 1RM Sent. / Banca</div><div class="cal-value">${Math.round(cal.pctSquat*100)}% / ${Math.round(cal.pctBench*100)}%</div></div>
+      <div class="cal-item"><div class="cal-label">Volumen</div><div class="cal-value" style="font-size:12px">${cal.volumen}</div></div>
+      <div class="cal-item"><div class="cal-label">Pérdida Velocidad</div><div class="cal-value" style="font-size:12px">${cal.perdidaVel}</div></div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin:-6px 0 18px">${cal.enfoque}</div>
+    ${velocityLegendHTML()}
+    ${days}
+  `;
+}
+
+async function renderHistorial(){
+  if(State.athletes.length===0) return `<div class="day-block"><div class="empty-msg">Registra al menos un atleta en <b>Panel de Equipo</b> para usar esta sección.<br/><br/><button class="btn big" onclick="setTab('panel')">Ir a Panel de Equipo</button></div></div>`;
+  if(!State.selectedAthleteId) State.selectedAthleteId = State.athletes[0].id;
+  const athlete = State.athletes.find(a=>a.id===State.selectedAthleteId);
+  const hist = await loadHistorialFor(athlete.id);
+  const logs = await loadLogsFor(athlete.id);
+
+  const squatPoints = hist.map(h=>({y:epley(h.squatKg,h.squatReps), dateLabel:fmtDate(h.date).slice(0,5)}));
+  const benchPoints = hist.map(h=>({y:epley(h.benchKg,h.benchReps), dateLabel:fmtDate(h.date).slice(0,5)}));
+
+  const rows = [...hist].reverse().map(h=>`<tr>
+    <td data-label="Fecha" class="mono">${fmtDate(h.date)}</td>
+    <td data-label="Sentadilla" class="mono">${h.squatKg}kg × ${h.squatReps}</td>
+    <td data-label="1RM Sent."><span class="load-pill">${epley(h.squatKg,h.squatReps)} kg</span></td>
+    <td data-label="Banca" class="mono">${h.benchKg}kg × ${h.benchReps}</td>
+    <td data-label="1RM Banca"><span class="load-pill">${epley(h.benchKg,h.benchReps)} kg</span></td>
+  </tr>`).join("");
+
+  const logsHTML = logs.length===0
+    ? `<div style="font-size:12px;color:var(--muted)">Sin registros de ejecución todavía. Regístralos desde "Rutina Hoy".</div>`
+    : `<div class="log-list">${logs.map(l=>{
+        const rpes = l.entries.map(e=>Number(e.rpe)).filter(v=>!isNaN(v));
+        const avg = rpes.length ? (rpes.reduce((a,b)=>a+b,0)/rpes.length).toFixed(1) : "—";
+        return `<div class="log-entry"><span>${fmtDate(l.date)} · ${(DAY_LABEL[l.day]||"").split("—")[0].trim()}</span><span class="mono" style="color:var(--muted)">${l.entries.length} ejercicios · RPE prom. ${avg}</span></div>`;
+      }).join("")}</div>`;
+
+  return `
+    <div class="section-head"><div class="section-title">Historial de 1RM</div><div class="section-note">Progresión por Epley · Registro de sesiones</div></div>
+    <div class="picker-row"><select onchange="selectAthlete(this.value)">${athleteOptionsHTML(athlete.id)}</select></div>
+    <div class="chart-wrap">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Sentadilla Profunda</div>
+      ${miniChartSVG(squatPoints,"var(--acum)")}
+      <div style="font-size:12px;color:var(--muted);margin:14px 0 4px">Press de Banca</div>
+      ${miniChartSVG(benchPoints,"var(--real)")}
+    </div>
+    <div class="rm-form">
+      <div class="field"><label>Fecha</label><input type="date" id="rm-date" value="${todayISO()}"/></div>
+      <div class="field"><label>Sent. kg</label><input type="number" id="rm-squatkg"/></div>
+      <div class="field"><label>Sent. reps</label><input type="number" id="rm-squatreps" style="width:70px"/></div>
+      <div class="field"><label>Banca kg</label><input type="number" id="rm-benchkg"/></div>
+      <div class="field"><label>Banca reps</label><input type="number" id="rm-benchreps" style="width:70px"/></div>
+      <button class="btn" onclick="submitRMEntry(${athlete.id})">Agregar Test</button>
+    </div>
+    <div class="section-head"><div class="section-title" style="font-size:13px">Registros de Test (${hist.length})</div></div>
+    <table style="margin-bottom:22px"><thead><tr><th>Fecha</th><th>Sentadilla</th><th>1RM Sent.</th><th>Banca</th><th>1RM Banca</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="section-head"><div class="section-title" style="font-size:13px">Últimas Sesiones Registradas</div></div>
+    ${logsHTML}
+  `;
+}
+
+function submitAddForm(){
+  const name = document.getElementById("f-name").value;
+  if(!name.trim()){ alert("El nombre es obligatorio."); return; }
+  const fields = {
+    name, age: document.getElementById("f-age").value, sex: document.getElementById("f-sex").value,
+    event: document.getElementById("f-event").value, bw: document.getElementById("f-bw").value,
+    squatKg: document.getElementById("f-squatkg").value, squatReps: document.getElementById("f-squatreps").value || 1,
+    benchKg: document.getElementById("f-benchkg").value, benchReps: document.getElementById("f-benchreps").value || 1,
+  };
+  addAthlete(fields);
+}
+function submitRMEntry(athleteId){
+  const squatKg = Number(document.getElementById("rm-squatkg").value);
+  const squatReps = Number(document.getElementById("rm-squatreps").value);
+  const benchKg = Number(document.getElementById("rm-benchkg").value);
+  const benchReps = Number(document.getElementById("rm-benchreps").value);
+  const date = document.getElementById("rm-date").value || todayISO();
+  if(!squatKg||!squatReps||!benchKg||!benchReps){ alert("Completa todos los campos del test."); return; }
+  addRMEntry(athleteId, {date, squatKg, squatReps, benchKg, benchReps});
+}
+
+async function render(){
+  const root = document.getElementById("root");
+  let body = "";
+  if(State.tab==="panel") body = renderPanel();
+  else if(State.tab==="hoy") body = renderHoy();
+  else if(State.tab==="selector") body = renderSelector();
+  else if(State.tab==="historial") body = await renderHistorial();
+
+  root.innerHTML = `
+    <div class="app">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-mark display">AN</div>
+          <div><div class="brand-title">Panel de Fuerza ATR</div><div class="brand-sub">Atletismo Nayarit · Bahía de Banderas</div></div>
+        </div>
+        <div class="tabs">
+          <button class="tab ${State.tab==='panel'?'active':''}" onclick="setTab('panel')">Panel Equipo</button>
+          <button class="tab ${State.tab==='hoy'?'active':''}" onclick="setTab('hoy')">Rutina Hoy</button>
+          <button class="tab ${State.tab==='selector'?'active':''}" onclick="setTab('selector')">Selector Microciclo</button>
+          <button class="tab ${State.tab==='historial'?'active':''}" onclick="setTab('historial')">Historial RM</button>
+          <button class="tab" onclick="changePin()" title="Configurar PIN de entrenador">🔒 PIN</button>
+        </div>
+      </div>
+      ${body}
+      <div class="footer-note">
+        1RM calculado por fórmula Epley: 1RM = kg × (1 + 0.0333 × reps). Cargas del microciclo activo tomadas del calendario ATR (7 sep – 29 nov 2026).
+        Programación semanal ampliada de Lunes a Viernes con bloques específicos de Core y Estabilidad Lumbopélvica para martes y jueves.
+        Ritmo y velocidad de ejecución basados en las zonas carga-velocidad de González-Badillo / Sánchez-Medina.
+      </div>
+    </div>
+    <div id="toast" class="toast" style="display:none;"></div>
+  `;
+}
+
+initState();
 </script>
-
+<input type="file" id="import-file" accept="application/json" style="display:none" onchange="handleImportFile(this)"/>
 </body>
 </html>
