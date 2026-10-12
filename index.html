@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Panel de Fuerza ATR — Atletismo Nayarit</title>
+<title>Panel de Fuerza ATR — Atletismo Nayarit (Micros 6-12 Potencia)</title>
 <style>
   :root{
     --bg:#0A0D12; --surface:#12161D; --surface2:#1A2029; --surface3:#212836;
@@ -15,36 +15,15 @@
   #root{min-height:100vh;}
   .mono{font-family:'Courier New',Courier,monospace;}
   .display{font-family:'Arial Narrow',Arial,sans-serif;text-transform:uppercase;letter-spacing:0.02em;}
-  .app{max-width:1180px;margin:0 auto;padding:20px 16px 60px;}
+  .app{max-width:1280px;margin:0 auto;padding:20px 16px 60px;}
   .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
   .brand{display:flex;align-items:center;gap:12px;}
   .brand-mark{width:38px;height:38px;border-radius:50%;background:conic-gradient(from 180deg, var(--lane), #7A1E12, var(--lane));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;}
   .brand-title{font-weight:700;font-size:19px;letter-spacing:0.02em;text-transform:uppercase;}
   .brand-sub{font-size:11px;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;}
-  .tabs{display:flex;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px;flex-wrap:wrap;}
-  .tab{padding:9px 14px;border-radius:7px;font-size:12px;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;color:var(--muted);cursor:pointer;border:none;background:transparent;}
-  .tab.active{background:var(--lane);color:#fff;}
   .section-head{display:flex;align-items:baseline;justify-content:space-between;margin:26px 0 14px;border-bottom:1px solid var(--line);padding-bottom:10px;flex-wrap:wrap;gap:8px;}
   .section-title{font-weight:700;font-size:15px;letter-spacing:0.03em;text-transform:uppercase;}
   .section-note{font-size:12px;color:var(--muted);}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;}
-  .lane-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden;cursor:pointer;}
-  .lane-stripe{position:absolute;left:0;top:0;bottom:0;width:5px;}
-  .lane-row{display:flex;align-items:center;gap:11px;}
-  .bib{width:34px;height:34px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-family:'Courier New',monospace;font-weight:700;font-size:13px;flex-shrink:0;}
-  .lane-name{font-weight:700;font-size:14.5px;}
-  .lane-event{font-size:11.5px;color:var(--muted);margin-top:1px;}
-  .lane-meta{display:flex;justify-content:space-between;margin-top:12px;font-size:11px;align-items:center;}
-  .phase-tag{font-size:10.5px;letter-spacing:0.03em;text-transform:uppercase;padding:3px 8px;border-radius:5px;font-weight:700;}
-  .rm-row{display:flex;gap:14px;margin-top:10px;font-size:12px;}
-  .rm-item{color:var(--muted);}
-  .rm-item b{color:var(--text);font-family:'Courier New',monospace;}
-  .del-btn{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:var(--surface3);color:var(--muted);border:none;cursor:pointer;font-size:13px;line-height:1;}
-  .del-btn:hover{background:#7A1E12;color:#fff;}
-  .today-hero{background:linear-gradient(135deg, var(--surface2), var(--surface));border:1px solid var(--line);border-radius:14px;padding:22px 20px;margin-bottom:20px;}
-  .today-date{font-family:'Courier New',monospace;font-size:12px;color:var(--muted);letter-spacing:0.03em;}
-  .today-day{font-weight:700;font-size:26px;text-transform:uppercase;margin:4px 0 2px;}
-  .today-phase{display:inline-block;margin-top:8px;}
   .picker-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center;justify-content:space-between;}
   select{background:var(--surface2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:13px;}
   .day-block{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:14px;overflow:hidden;}
@@ -55,1122 +34,482 @@
   tr:last-child td{border-bottom:none;}
   .ex-name{font-weight:700;}
   .ex-plano{font-size:10.5px;color:var(--muted);}
-  .ex-enfasis{font-size:9px;color:var(--accent);font-style:italic;margin-top:2px;}
+  .ex-enfasis{font-size:9px;color:#E2B86A;font-style:italic;margin-top:2px;}
   .load-pill{font-family:'Courier New',monospace;font-weight:700;background:var(--surface3);padding:3px 8px;border-radius:6px;display:inline-block;white-space:nowrap;}
-  .rest-msg,.empty-msg{text-align:center;padding:40px 20px;color:var(--muted);}
-  .selector-bar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px;}
-  .selector-bar label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.03em;display:block;margin-bottom:4px;}
-  .micro-strip{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
-  .micro-dot{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Courier New',monospace;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--line);background:var(--surface2);color:var(--muted);}
-  .micro-dot.active{color:#fff;}
+  .rest-msg{text-align:center;padding:40px 20px;color:var(--muted);}
   .cal-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px;}
   .cal-item{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 13px;}
   .cal-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.03em;}
   .cal-value{font-family:'Courier New',monospace;font-size:14px;font-weight:700;margin-top:3px;}
   .footer-note{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted2);line-height:1.6;}
-  .rm-form,.athlete-form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px;}
+  .rm-form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px;}
   .field{display:flex;flex-direction:column;gap:4px;}
   .field label{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.03em;}
-  input[type=number],input[type=date],input[type=text]{background:var(--surface2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-family:'Courier New',monospace;font-size:13px;width:110px;}
-  input[type=text].wide{width:170px;font-family:inherit;}
+  input[type=number]{background:var(--surface2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-family:'Courier New',monospace;font-size:13px;width:110px;}
   .btn{background:var(--lane);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12.5px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;cursor:pointer;}
-  .btn.secondary{background:var(--surface3);color:var(--text);}
   .btn.big{padding:12px 22px;font-size:13px;}
-  .chart-wrap{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px;}
-  .rpe-input{width:60px;}
-  .log-cell{display:flex;gap:6px;align-items:center;}
-  .log-list{display:flex;flex-direction:column;gap:8px;}
-  .log-entry{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:10px 13px;display:flex;justify-content:space-between;align-items:center;font-size:12.5px;}
-  .save-bar{display:flex;justify-content:flex-end;padding:12px 16px;background:var(--surface2);}
-  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ok);color:#06210F;padding:10px 18px;border-radius:8px;font-size:12.5px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;z-index:50;box-shadow:0 6px 18px rgba(0,0,0,.4);}
-
-  .vel-pill{display:inline-block;font-family:'Courier New',monospace;font-weight:700;font-size:11px;padding:3px 8px;border-radius:6px;margin-top:4px;}
-  .tempo-note{font-size:11px;color:var(--muted);line-height:1.4;}
-  .vel-legend{display:flex;flex-wrap:wrap;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:18px;font-size:11px;}
-  .vel-legend-item{display:flex;align-items:center;gap:6px;color:var(--muted);}
-  .vel-legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+  .highlight-rfd{background:#3A2A1A;padding:4px 8px;border-radius:4px;border-left:3px solid #E2B86A;}
+  .cometti-block{background:linear-gradient(135deg, #3A2A1A, #2A2015);border:2px solid #E2B86A;border-radius:10px;padding:16px;margin:16px 0;color:#FFE;font-family:'Courier New',monospace;}
+  .cometti-title{font-weight:700;font-size:12px;color:#FFE;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:8px;}
+  .cometti-step{font-size:11px;margin:4px 0;line-height:1.4;}
+  .micro-info{font-size:10px;color:var(--muted);margin-top:8px;padding:8px;background:var(--surface3);border-radius:6px;}
 
   @media (max-width:640px){
-    .brand-title{font-size:16px;} .today-day{font-size:20px;}
-    .day-head{font-size:11.5px; line-height:1.4; padding:10px 12px;}
+    .brand-title{font-size:16px;}
     .app{padding:14px 10px 50px;}
-    input[type=number],input[type=date],input[type=text]{width:90px;}
     table{border:none;}
     thead{display:none;}
     table, tbody, tr, td{display:block; width:100%;}
-    tr{background:var(--surface); border:1px solid var(--line); border-radius:10px; margin-bottom:10px; padding:10px 12px;}
-    td{border-bottom:1px solid var(--line); padding:8px 0; display:flex; justify-content:space-between; align-items:flex-start; gap:12px;}
-    td:last-child{border-bottom:none;}
-    td::before{content:attr(data-label); color:var(--muted); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; flex-shrink:0; padding-top:2px;}
-    td:first-child{flex-direction:column; align-items:flex-start; gap:2px;}
-    td:first-child::before{display:none;}
-    .ex-name{font-size:14px;}
-    .log-cell{justify-content:flex-end;}
+    td{padding:8px 6px;}
   }
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script>
-"use strict";
+// ═══════════════════════════════════════════════════════════════════════════
+// CONSTANTES Y DATOS BASE
+// ═══════════════════════════════════════════════════════════════════════════
 
-const epley = (kg,reps)=> Math.round(kg*(1+0.0333*reps)*10)/10;
-const todayISO = ()=> new Date().toISOString().slice(0,10);
-const fmtDate = (iso)=>{ const [y,m,d]=iso.split("-"); return `${d}/${m}/${y}`; };
-const esc = (s)=> String(s==null?"":s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ROSTER = [
+  {name:"Atleta 1", halterKg:80, squatKg:140, benchKg:90, halterReps:3},
+  {name:"Atleta 2", halterKg:75, squatKg:135, benchKg:85, halterReps:3},
+  {name:"Atleta 3", halterKg:85, squatKg:150, benchKg:95, halterReps:3},
+];
 
 const CALENDAR = [
-  {micro:1, fase:"Acumulación", faseCode:"A", start:"2026-09-07", end:"2026-09-13", tipo:"Adaptación Anatómica / Base", pctSquat:0.65, pctBench:0.65, pctHalter:0.60, perdidaVel:"10% - 12%", volumen:"Alto (400 reps)", enfoque:"Preparación articular, tendinosa y puesta a tono neuromuscular"},
-  {micro:2, fase:"Acumulación", faseCode:"A", start:"2026-09-14", end:"2026-09-20", tipo:"Hipertrofia-Fuerza", pctSquat:0.72, pctBench:0.72, pctHalter:0.65, perdidaVel:"12% - 15%", volumen:"Muy Alto (480 reps)", enfoque:"Ganancia de volumen muscular y base de fuerza para transferencia neural"},
-  {micro:3, fase:"Acumulación", faseCode:"A", start:"2026-09-21", end:"2026-09-27", tipo:"Fuerza Máxima I", pctSquat:0.80, pctBench:0.80, pctHalter:0.70, perdidaVel:"15% - 18%", volumen:"Medio-Alto (360 reps)", enfoque:"Reclutamiento de FT IIx/IIb · Primeros picos de activación neural"},
-  {micro:4, fase:"Acumulación", faseCode:"A", start:"2026-09-28", end:"2026-10-04", tipo:"Fuerza Máxima II", pctSquat:0.85, pctBench:0.85, pctHalter:0.75, perdidaVel:"15% - 20%", volumen:"Medio (320 reps)", enfoque:"Consolidación de reclutamiento · Clusters 3×3 y parejas de impacto"},
-  {micro:5, fase:"Acumulación", faseCode:"A", start:"2026-10-05", end:"2026-10-11", tipo:"Recuperación / Consolidación", pctSquat:0.70, pctBench:0.70, pctHalter:0.65, perdidaVel:"< 10%", volumen:"Bajo (280 reps)", enfoque:"Supercompensación neural y recuperación articular antes del pico final"},
-  {micro:6, fase:"Acumulación", faseCode:"A", start:"2026-10-12", end:"2026-10-18", tipo:"Fuerza Máxima III / Pico Acumulación", pctSquat:0.90, pctBench:0.88, pctHalter:0.80, perdidaVel:"18% - 22%", volumen:"Muy Bajo (240 reps)", enfoque:"Pico máximo de Acumulación · Máxima densidad neural · Transición a Transformación"},
-  {micro:7, fase:"Transformación", faseCode:"T", start:"2026-10-19", end:"2026-10-25", tipo:"Carga / Potencia I", pctSquat:0.70, pctBench:0.65, pctHalter:0.75, perdidaVel:"< 10-12%", volumen:"Medio (320 reps)", enfoque:"Fuerza rápida, RFD y arrancada colgante"},
-  {micro:8, fase:"Transformación", faseCode:"T", start:"2026-10-26", end:"2026-11-01", tipo:"Impacto / PAP 85%", pctSquat:0.85, pctBench:0.80, pctHalter:0.82, perdidaVel:"< 10%", volumen:"Medio-Alto (340 reps)", enfoque:"Pico de contraste pesado y Método Francés (Cometti)"},
-  {micro:9, fase:"Transformación", faseCode:"T", start:"2026-11-02", end:"2026-11-08", tipo:"Carga / Halterofilia", pctSquat:0.75, pctBench:0.70, pctHalter:0.80, perdidaVel:"< 10%", volumen:"Medio (320 reps)", enfoque:"Derivados de halterofilia y triple extensión explosiva"},
-  {micro:10, fase:"Transformación", faseCode:"T", start:"2026-11-09", end:"2026-11-15", tipo:"Específico / RFD", pctSquat:0.65, pctBench:0.65, pctHalter:0.70, perdidaVel:"< 8-10%", volumen:"Medio-Bajo (280 reps)", enfoque:"Tasa de desarrollo de fuerza y velocidad horizontal"},
-  {micro:11, fase:"Realización", faseCode:"R", start:"2026-11-16", end:"2026-11-22", tipo:"Puesta a Punto", pctSquat:0.50, pctBench:0.50, pctHalter:0.55, perdidaVel:"< 5%", volumen:"Muy Bajo (180 reps)", enfoque:"Potenciación neural y stiffness de tobillo sin fatiga"},
-  {micro:12, fase:"Realización", faseCode:"R", start:"2026-11-23", end:"2026-11-29", tipo:"Competición / Descarga Final", pctSquat:0.40, pctBench:0.40, pctHalter:0.45, perdidaVel:"< 5%", volumen:"Mínimo (120 reps)", enfoque:"Tapering final, máxima frescura y velocidad pura"},
+  {micro:1, fase:"Acum", fechas:"07-13 sep", title:"Adaptación Anatómica", sqBw:0.65, bnBw:0.65, hBw:0.60},
+  {micro:2, fase:"Acum", fechas:"14-20 sep", title:"Hipertrofia-Fuerza", sqBw:0.72, bnBw:0.72, hBw:0.65},
+  {micro:3, fase:"Acum", fechas:"21-27 sep", title:"Fuerza Máxima I", sqBw:0.80, bnBw:0.80, hBw:0.70},
+  {micro:4, fase:"Acum", fechas:"28sep-4oct", title:"Fuerza Máxima II", sqBw:0.85, bnBw:0.85, hBw:0.75},
+  {micro:5, fase:"Acum", fechas:"05-11 oct", title:"Recuperación", sqBw:0.70, bnBw:0.70, hBw:0.65},
+  {micro:6, fase:"Acum", fechas:"12-18 oct", title:"Pico Acum. → POTENCIA", sqBw:0.90, bnBw:0.88, hBw:0.80},
+  {micro:7, fase:"Trans", fechas:"19-25 oct", title:"Carga/Potencia I", sqBw:0.70, bnBw:0.65, hBw:0.75},
+  {micro:8, fase:"Trans", fechas:"26oct-1nov", title:"Impacto/PAP 85%", sqBw:0.85, bnBw:0.80, hBw:0.82},
+  {micro:9, fase:"Trans", fechas:"02-08 nov", title:"Carga/Halterofilia", sqBw:0.75, bnBw:0.70, hBw:0.80},
+  {micro:10, fase:"Trans", fechas:"09-15 nov", title:"Específico/RFD", sqBw:0.65, bnBw:0.65, hBw:0.70},
+  {micro:11, fase:"Real", fechas:"16-22 nov", title:"Puesta a Punto", sqBw:0.50, bnBw:0.50, hBw:0.55},
+  {micro:12, fase:"Real", fechas:"23-29 nov", title:"Competición", sqBw:0.40, bnBw:0.40, hBw:0.45},
 ];
-const PHASE_COLOR = {A:"var(--acum)", T:"var(--trans)", R:"var(--real)"};
-const PHASE_LABEL = {A:"Acumulación", T:"Transformación", R:"Realización"};
-const DAY_LABEL = {
-  monday:"Lunes — Fuerza Máxima / Potencia Base (Inferior y Superior)", 
-  tuesday:"Martes — Core Avanzado, Estabilidad Lumbopélvica y Prevención", 
-  wednesday:"Miércoles — Tracción, Cadena Posterior y Halterofilia", 
-  thursday:"Jueves — Core Dinámico, Rotacional y Anti-movimiento", 
-  friday:"Viernes — Específico & Contraste Francés (Cometti)"
-};
 
-// SELECTOR DE VARIANTES POR MICROCICLO
+// ═══════════════════════════════════════════════════════════════════════════
+// SELECTORES DE VARIANTES POR MICROCICLO
+// ═══════════════════════════════════════════════════════════════════════════
+
 const selectSquatVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Sentadilla Trasera Profunda en Rack", enfasis:"Adaptación, rango completo"};
-  if(micro <= 4) return {nombre:"Media Sentadilla 90° Pesada", enfasis:"Ángulo específico salida tacos"};
-  if(micro === 5) return {nombre:"Sentadilla Frontal", enfasis:"Recuperación, técnica sin fatiga"};
-  if(micro <= 10) return {nombre:"Sentadilla Explosiva (Reducida)", enfasis:"Potencia, máxima velocidad"};
-  return {nombre:"Sentadilla Muy Ligera", enfasis:"Mantenimiento, activación neural"};
-};
-
-const selectHipThrustVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Hip Thrust con Barra en Banco", enfasis:"Adaptación, vector horizontal"};
-  if(micro <= 4) return {nombre:"Hip Thrust Pesado con Barra", enfasis:"Extensión cadera máxima"};
-  if(micro === 5) return {nombre:"Hip Thrust Moderado", enfasis:"Recuperación, sin fatiga"};
-  if(micro <= 10) return {nombre:"Hip Thrust Explosivo", enfasis:"PAP extensión cadera, velocidad"};
-  return {nombre:"Hip Thrust Ligero", enfasis:"Activación cadera"};
+  if(micro <= 2) return {nombre:"Sentadilla - Técnica", enfasis:"Rango completo, patrón correcto", series:"3 × 6 reps"};
+  if(micro <= 4) return {nombre:"Sentadilla - Fuerza Máxima", enfasis:"Máxima tensión", series:"4 × 3-4 reps"};
+  if(micro === 5) return {nombre:"Sentadilla - Recuperación", enfasis:"Sin fatiga", series:"3 × 5 reps"};
+  if(micro <= 10) return {nombre:"Sentadilla Explosiva", enfasis:"RFD MÁXIMA - Salida de tacos", series:"4 × 2-3 reps [EXPLOSIVO]"};
+  return {nombre:"Sentadilla - Activación", enfasis:"Patrón limpio", series:"2 × 3 reps"};
 };
 
 const selectRDLVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Peso Muerto Rumano Clásico con Barra", enfasis:"Adaptación, control excéntrico"};
-  if(micro <= 4) return {nombre:"RDL Pesado", enfasis:"Fuerza máxima isquios"};
-  if(micro === 5) return {nombre:"Peso Muerto Sumo (Variante)", enfasis:"Recuperación, amplitud cadera"};
-  if(micro <= 10) return {nombre:"RDL Dinámico Unilateral", enfasis:"Potencia isquios"};
-  return {nombre:"RDL Muy Ligero", enfasis:"Movilidad dinámica"};
-};
-
-const selectBancaVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Press de Banca Plano en Banco", enfasis:"Adaptación, pausa 1s"};
-  if(micro <= 4) return {nombre:"Press de Banca Pesado", enfasis:"Fuerza máxima, pausa 2s"};
-  if(micro === 5) return {nombre:"Press de Banca Moderado", enfasis:"Recuperación, velocidad natural"};
-  if(micro <= 10) return {nombre:"Press de Banca Explosivo", enfasis:"Potencia tren superior"};
-  return {nombre:"Press de Banca Muy Ligero", enfasis:"Activación, sin fatiga"};
-};
-
-const selectInclinedVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Press Inclinado con Mancuernas", enfasis:"Adaptación", pct:0.70};
-  if(micro <= 4) return {nombre:"Press Inclinado Pesado", enfasis:"Pectoral-deltoides", pct:0.75};
-  if(micro === 5) return {nombre:"Press Inclinado Ligero", enfasis:"Recuperación", pct:0.60};
-  return {nombre:"Press Inclinado Dinámico", enfasis:"Potencia deltoides", pct:0.70};
-};
-
-const selectDominadasVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Dominadas Asistidas con Banda", enfasis:"Adaptación", lastre:"BW - banda"};
-  if(micro <= 4) return {nombre:"Dominadas Ponderadas", enfasis:"Fuerza máxima tracción", lastre:"+25 kg"};
-  if(micro === 5) return {nombre:"Dominadas Asistidas Moderadas", enfasis:"Recuperación", lastre:"BW - 10 kg"};
-  if(micro <= 10) return {nombre:"Dominadas Explosivas", enfasis:"Potencia tracción", lastre:"BW o +10 kg"};
-  return {nombre:"Dominadas Asistidas Ligeras", enfasis:"Activación", lastre:"BW - 20 kg"};
-};
-
-const selectPressMilitarVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Press Militar Sentado con Barra", enfasis:"Adaptación, 60-70%"};
-  if(micro <= 4) return {nombre:"Press Militar de Pie Pesado", enfasis:"Fuerza máxima, 80-85%"};
-  if(micro === 5) return {nombre:"Press Militar Sentado Moderado", enfasis:"Recuperación, 65%"};
-  if(micro <= 10) return {nombre:"Push Press / Empuje de Fuerza", enfasis:"Potencia hombro, 75-80%"};
-  return {nombre:"Press Militar Muy Ligero", enfasis:"Activación, 50%"};
-};
-
-const selectPectoralVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Flexión con Pecho en Banco Bajo", enfasis:"Adaptación vector horizontal", pct:0.65};
-  if(micro <= 4) return {nombre:"Press Pecho Horizontal Pesado", enfasis:"Máxima fuerza pectoral", pct:0.80};
-  if(micro === 5) return {nombre:"Press Pecho Moderado", enfasis:"Recuperación", pct:0.65};
-  if(micro <= 10) return {nombre:"Flexión Explosiva / Pecho Dinámico", enfasis:"Potencia tren superior", pct:0.70};
-  return {nombre:"Press Pecho Muy Ligero", enfasis:"Activación sin fatiga", pct:0.55};
-};
-
-const selectTricepsVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Extensión Tríceps Cuerda en Polea", enfasis:"Adaptación, rango completo"};
-  if(micro <= 4) return {nombre:"Fondos Pesados en Banco + Lastre", enfasis:"Fuerza máxima cierre"};
-  if(micro === 5) return {nombre:"Press Francés Moderado", enfasis:"Recuperación"};
-  if(micro <= 10) return {nombre:"Extensión Explosiva Tríceps", enfasis:"Potencia extensión"};
-  return {nombre:"Extensión Tríceps Ligera", enfasis:"Activación neural"};
-};
-
-const selectTraccionVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Remo con Liga (Adaptación) - Banda Ligera", enfasis:"Rango completo, control técnico"};
-  if(micro <= 4) return {nombre:"Remo Inclinado con Liga Fuerte", enfasis:"Fuerza máxima espalda"};
-  if(micro === 5) return {nombre:"Remo Moderado Unilateral con Liga Media", enfasis:"Recuperación"};
-  if(micro <= 10) return {nombre:"Remo Explosivo con Liga Fuerte", enfasis:"Potencia espalda, velocidad"};
-  return {nombre:"Remo Ligero con Liga Ligera", enfasis:"Activación neural"};
-};
-
-const selectCoreAntiExt = (micro) => {
-  if(micro <= 2) return {nombre:"Plancha Abdominal Frontal 45 seg", enfasis:"Base isométrica"};
-  if(micro <= 4) return {nombre:"Ab Wheel Rollout Pesado", enfasis:"Fuerza anti-extensión"};
-  if(micro === 5) return {nombre:"Plancha Moderada en Balón Suizo", enfasis:"Recuperación con inestabilidad"};
-  if(micro <= 10) return {nombre:"Ab Wheel Explosivo", enfasis:"Potencia anti-extensión"};
-  return {nombre:"Plancha Ligera", enfasis:"Activación neural"};
-};
-
-const selectCoreAntiRot = (micro) => {
-  if(micro <= 2) return {nombre:"Pallof Press Moderado", enfasis:"Estabilidad rotacional base"};
-  if(micro <= 4) return {nombre:"Pallof Press Pesado Unilateral", enfasis:"Fuerza máxima anti-rotación"};
-  if(micro === 5) return {nombre:"Pallof Press Ligero", enfasis:"Recuperación"};
-  if(micro <= 10) return {nombre:"Pallof Press Explosivo", enfasis:"Potencia rotacional"};
-  return {nombre:"Pallof Press Muy Ligero", enfasis:"Activación"};
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// SELECTORES DE SÓLEO (ESPECIFICO PARA VELOCISTAS)
-// ═══════════════════════════════════════════════════════════════════════════
-
-const selectSoleoVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Calf Raises - Adaptación Técnica", enfasis:"Rango completo, patrón motor correcto", series:"3 × 12-15 reps", pct:0.60};
-  if(micro <= 4) return {nombre:"Single-Leg Calf Raises - Fuerza Máxima", enfasis:"Máxima tensión, excéntrico 4s [FM]", series:"4 × 6-8 reps/pierna", pct:0.85, tempo:"2-1-4"};
-  if(micro === 5) return {nombre:"Calf Raises - Recuperación", enfasis:"Movimiento sin fatiga, activación", series:"3 × 10 reps", pct:0.65};
-  if(micro <= 10) return {nombre:"Single-Leg Calf Raises - EXPLOSIVO [RFD]", enfasis:"Máxima velocidad concéntrica, explosividad pura", series:"4 × 6-8 reps/pierna [EXPLOSIVO]", pct:0.75, tempo:"1-0-3"};
-  return {nombre:"Calf Raises - Activación Neural", enfasis:"Patrón motor limpio, máxima frescura", series:"2 × 4 reps", pct:0.50};
-};
-
-const selectSeatedCalfVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Seated Calf Raises - Volumen Base", enfasis:"Rango completo, adaptación tendinosa", series:"3 × 12-15 reps", pct:0.65};
-  if(micro <= 4) return {nombre:"Seated Calf Raises - Fuerza Máxima", enfasis:"Máxima carga, excéntrico 4s [FM]", series:"4 × 6-8 reps", pct:0.85, tempo:"2-1-4"};
-  if(micro === 5) return {nombre:"Seated Calf Raises - Recuperación", enfasis:"Volumen moderado, sin fatiga", series:"3 × 10 reps", pct:0.65};
-  if(micro <= 10) return {nombre:"Seated Calf Raises - Potencia [RFD]", enfasis:"Velocidad máxima concéntrica, explosividad", series:"4 × 6-8 reps [EXPLOSIVO]", pct:0.75, tempo:"1-0-3"};
-  return {nombre:"Seated Calf Raises - Activación", enfasis:"Patrón limpio, máxima frescura", series:"2 × 5 reps", pct:0.50};
-};
-
-const selectJumpCalfVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Jump Calf Raises - Coordinación", enfasis:"Aprendizaje patrón explosivo", series:"3 × 5-6 reps", pct:0.60};
-  if(micro <= 4) return {nombre:"Jump Calf Raises - Control Técnico", enfasis:"Explosividad controlada, técnica", series:"3 × 5-6 reps", pct:0.70};
-  if(micro === 5) return {nombre:"Jump Calf Raises - Recuperación", enfasis:"Movimiento muy ligero", series:"2 × 5 reps", pct:0.50};
-  if(micro <= 10) return {nombre:"Jump Calf Raises - MÁXIMA RFD [⭐ CRÍTICO]", enfasis:"Máxima altura, explosividad pura, energía elástica", series:"4 × 4-6 reps [EXPLOSIVO]", pct:0.80};
-  return {nombre:"Jump Calf Raises - Activación Neuromuscular", enfasis:"Coordinación ligera", series:"2 × 4 reps", pct:0.40};
-};
-
-const selectDropWalkVariant = (micro) => {
-  if(micro <= 4) return {nombre:"Drop Walking - Técnica (Introducción)", enfasis:"Aprendizaje patrón excéntrico", series:"2 × 20-30 pasos", pct:0.60};
-  if(micro === 5) return {nombre:"Drop Walking - No recomendado", enfasis:"Recuperación (mantener sóleo ligero)", series:"—", pct:null};
-  if(micro <= 10) return {nombre:"Drop Walking - TRABAJO ESPECÍFICO [⭐ SPRINTERS]", enfasis:"Excéntrico controlado 3-4s, preparación máxima para sprint", series:"3 × 40-50 pasos [ÉNFASIS MÁXIMO]", pct:0.80};
-  return {nombre:"Drop Walking - Muy Ligero (Opcional)", enfasis:"Coordinación ligera", series:"1 × 15-20 pasos", pct:0.50};
+  if(micro <= 2) return {nombre:"RDL - Técnica", enfasis:"Rango completo, control", series:"3 × 6 reps"};
+  if(micro <= 4) return {nombre:"RDL - Fuerza Máxima", enfasis:"Máxima tensión", series:"4 × 3-4 reps"};
+  if(micro === 5) return {nombre:"RDL - Recuperación", enfasis:"Sin fatiga", series:"3 × 5 reps"};
+  if(micro <= 10) return {nombre:"RDL Explosivo", enfasis:"RFD MÁXIMA - Cadena posterior potencia", series:"4 × 2-3 reps [EXPLOSIVO]"};
+  return {nombre:"RDL - Activación", enfasis:"Patrón limpio", series:"2 × 3 reps"};
 };
 
 const selectSnatchVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Snatch Technique (Forma Clásica)", enfasis:"Aprendizaje técnica, patrón motor", series:"3 × 4 [Técnica]", pct:0.50};
-  if(micro <= 4) return {nombre:"Snatch Pull (Tirada de Arrancada)", enfasis:"Fuerza máxima cadena posterior", series:"4 × 3", pct:0.90};
-  if(micro === 5) return {nombre:"Power Snatch Ligero (Técnica sin fatiga)", enfasis:"Recuperación, patrón limpio", series:"3 × 4", pct:0.60};
-  if(micro <= 10) return {nombre:"Power Snatch Explosivo (Máxima RFD)", enfasis:"Velocidad de reclutamiento", series:"4 × 2-3 [Explosivo]", pct:0.75};
-  return {nombre:"Snatch Muy Ligero (Activación)", enfasis:"Patrón motor sin fatiga", series:"3 × 3", pct:0.40};
+  if(micro <= 2) return {nombre:"Snatch - Técnica", enfasis:"Patrón motor", series:"3 × 4 reps"};
+  if(micro <= 4) return {nombre:"Snatch - Fuerza", enfasis:"Máxima fuerza", series:"4 × 3-4 reps @ 80%"};
+  if(micro === 5) return {nombre:"Snatch - Recuperación", enfasis:"Técnica", series:"3 × 4 reps"};
+  if(micro <= 10) return {nombre:"Power Snatch - EXPLOSIVO [⭐ TRANSFERENCIA]", enfasis:"TRIPLE EXTENSIÓN = Aceleración 0-30m", series:"4 × 2-3 @ 75% [EXPLOSIVO MÁXIMO]"};
+  return {nombre:"Snatch - Activación", enfasis:"Patrón motor limpio", series:"2 × 3 reps"};
 };
 
 const selectCleanVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Power Clean Técnico (Forma Clásica)", enfasis:"Aprendizaje técnica", series:"3 × 4 [Técnica]", pct:0.50};
-  if(micro <= 4) return {nombre:"Clean Pull (Tirada de Cargada)", enfasis:"Fuerza máxima explosiva", series:"4 × 3", pct:0.95};
-  if(micro === 5) return {nombre:"Power Clean Ligero (Técnica sin fatiga)", enfasis:"Recuperación técnica", series:"3 × 4", pct:0.60};
-  if(micro <= 10) return {nombre:"Power Clean + Push Press (Combi Potencia)", enfasis:"Máxima transferencia velocidad", series:"3 × 2-3 [Explosivo]", pct:0.75};
-  return {nombre:"Power Clean Muy Ligero (Activación)", enfasis:"Patrón sin fatiga", series:"3 × 3", pct:0.40};
+  if(micro <= 2) return {nombre:"Clean - Técnica", enfasis:"Patrón motor", series:"3 × 4 reps"};
+  if(micro <= 4) return {nombre:"Clean - Fuerza", enfasis:"Máxima fuerza", series:"4 × 3-4 reps @ 80%"};
+  if(micro === 5) return {nombre:"Clean - Recuperación", enfasis:"Técnica", series:"3 × 4 reps"};
+  if(micro <= 10) return {nombre:"Power Clean + Press - EXPLOSIVO [⭐ TRANSFERENCIA]", enfasis:"SINCRONIZACIÓN piernas-brazos integrada", series:"3 × 2-3 @ 75% [COMBI POTENCIA]"};
+  return {nombre:"Clean - Activación", enfasis:"Patrón motor limpio", series:"2 × 3 reps"};
 };
 
-const selectHighPullVariant = (micro) => {
-  if(micro <= 2) return {nombre:"High Pull Técnico (Barra Colgante)", enfasis:"Aprendizaje movimiento", series:"3 × 5 [Técnica]", pct:0.60};
-  if(micro <= 4) return {nombre:"High Pull Pesado desde Suelo", enfasis:"Máxima fuerza tracción", series:"4 × 3", pct:0.85};
-  if(micro === 5) return {nombre:"High Pull Ligero (Banda + Barra)", enfasis:"Técnica sin fatiga", series:"3 × 5", pct:0.60};
-  if(micro <= 10) return {nombre:"High Pull Explosivo (Velocidad máxima)", enfasis:"RFD explosiva tracción", series:"4 × 2-3 [RFD]", pct:0.75};
-  return {nombre:"High Pull Muy Ligero (Activación)", enfasis:"Patrón motor", series:"3 × 4", pct:0.50};
+const selectJumpSquatVariant = (micro) => {
+  if(micro <= 4) return {nombre:"Jump Squat - Técnica", enfasis:"Aprendizaje patrón explosivo", series:"3 × 4 reps"};
+  if(micro === 5) return {nombre:"Jump Squat - Recuperación", enfasis:"Ligero", series:"2 × 4 reps"};
+  if(micro <= 10) return {nombre:"Jump Squat Explosivo", enfasis:"Máxima altura, potencia cuádriceps, energía elástica", series:"4 × 3-4 reps [EXPLOSIVO]"};
+  return {nombre:"Jump Squat - Activación", enfasis:"Coordinación ligera", series:"2 × 3 reps"};
 };
 
-const selectJerkVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Push Press Técnico", enfasis:"Aprendizaje empuje explosivo", series:"3 × 4 [Técnica]", pct:0.60};
-  if(micro <= 4) return {nombre:"Push Press Pesado", enfasis:"Fuerza máxima empuje", series:"4 × 3", pct:0.80};
-  if(micro === 5) return {nombre:"Push Press Moderado", enfasis:"Recuperación con potencia", series:"3 × 4", pct:0.65};
-  if(micro <= 10) return {nombre:"Push Press Explosivo (Máxima velocidad barra)", enfasis:"Potencia empuje superior", series:"4 × 2-3 [Explosivo]", pct:0.75};
-  return {nombre:"Push Press Muy Ligero", enfasis:"Activación", series:"3 × 3", pct:0.50};
+const selectCurlVariant = (micro) => {
+  if(micro <= 2) return {nombre:"Curl Barra EZ - Técnica", enfasis:"Técnica, rango completo", series:"3 × 8-10 reps"};
+  if(micro <= 4) return {nombre:"Curl Barra EZ - Fuerza", enfasis:"Máxima fuerza bíceps", series:"4 × 4-6 reps"};
+  if(micro === 5) return {nombre:"Curl Barra EZ - Recuperación", enfasis:"Sin fatiga", series:"3 × 6 reps"};
+  if(micro <= 10) return {nombre:"Curl Barra EZ Explosivo", enfasis:"Máxima velocidad, POTENCIA ciclo braceo", series:"3 × 4-6 reps @ 70% [EXPLOSIVO]"};
+  return {nombre:"Curl Barra EZ - Activación", enfasis:"Patrón limpio", series:"2 × 4 reps"};
 };
 
-const selectPullsVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Tall Snatch Pulls (Parado)", enfasis:"Coordinación vertical", series:"3 × 5", pct:0.70};
-  if(micro <= 4) return {nombre:"Snatch Pulls from Blocks (Más Peso)", enfasis:"Fuerza máxima rango corto", series:"4 × 3", pct:0.95};
-  if(micro === 5) return {nombre:"RDL + Snatch Shrug (Técnica)", enfasis:"Recuperación movimiento integrado", series:"3 × 4", pct:0.65};
-  if(micro <= 10) return {nombre:"Snatch Pulls Explosivos (Máxima velocidad)", enfasis:"Aceleración y explosividad", series:"4 × 2-3", pct:0.85};
-  return {nombre:"Tall Snatches (Técnica muy ligera)", enfasis:"Patrón motor", series:"3 × 3", pct:0.50};
+const selectTricepsVariant = (micro) => {
+  if(micro <= 2) return {nombre:"Tricep Ext - Técnica", enfasis:"Rango completo", series:"3 × 8-10 reps"};
+  if(micro <= 4) return {nombre:"Tricep Ext - Fuerza", enfasis:"Máxima fuerza extensión", series:"4 × 4-6 reps"};
+  if(micro === 5) return {nombre:"Tricep Ext - Recuperación", enfasis:"Sin fatiga", series:"3 × 6 reps"};
+  if(micro <= 10) return {nombre:"Tricep Ext Explosivo", enfasis:"Máxima velocidad extensión, swing atrás", series:"4 × 3-4 @ 75% [EXPLOSIVO]"};
+  return {nombre:"Tricep Ext - Activación", enfasis:"Patrón limpio", series:"2 × 3 reps"};
 };
 
-const selectKettlebellVariant = (micro) => {
-  if(micro <= 2) return {nombre:"Kettlebell Swing Técnico", enfasis:"Coordinación cadera", series:"3 × 8 reps", pct:0.60};
-  if(micro <= 4) return {nombre:"Kettlebell Snatch Pesado (1 Mano)", enfasis:"Potencia unilateral", series:"3 × 5 c/brazo", pct:0.75};
-  if(micro === 5) return {nombre:"Kettlebell Clean (Moderado)", enfasis:"Recuperación explosiva", series:"3 × 5 c/brazo", pct:0.65};
-  if(micro <= 10) return {nombre:"Kettlebell Snatch + Push Press (Combi)", enfasis:"Ciclo completo potencia", series:"4 × 3 c/brazo", pct:0.75};
-  return {nombre:"Kettlebell Swing Ligero", enfasis:"Activación cadera", series:"3 × 6", pct:0.55};
+const selectRemoVariant = (micro) => {
+  if(micro <= 2) return {nombre:"Remo Barra - Técnica", enfasis:"Control máximo", series:"3 × 6-8 reps"};
+  if(micro <= 4) return {nombre:"Remo Barra - Fuerza", enfasis:"Máxima fuerza tracción", series:"4 × 3-4 reps"};
+  if(micro === 5) return {nombre:"Remo Barra - Recuperación", enfasis:"Sin fatiga", series:"3 × 6 reps"};
+  if(micro <= 10) return {nombre:"Remo Barra Explosivo", enfasis:"RFD MÁXIMA - Tracción rápida swing atrás", series:"4 × 2-3 @ 75% [RFD MÁXIMA]"};
+  return {nombre:"Remo Barra - Activación", enfasis:"Patrón limpio", series:"2 × 3 reps"};
 };
 
-const seriesSquatRoot = (m)=> m<=3 ? "3 series × 6 reps [Clúster]" : m<=10 ? "4 series × 6 reps" : "3 series × 6 reps [PAP]";
-const seriesHalteroA = (m)=> m>=6 ? "4 series × 3 reps [Explosivo]" : "3 series × 4 reps [Técnica]";
-const seriesBenchRoot = (m)=> m<=3 ? "3 series × 6 reps [F. Máx]" : "4 series × 8 reps";
-const seriesHingeRoot = (m)=> m<=3 ? "3 series × 6 reps" : "4 series × 8 reps";
+const selectPectoralVariant = (micro) => {
+  if(micro <= 2) return {nombre:"Press Pecho - Técnica", enfasis:"Rango completo", series:"3 × 8-10 reps"};
+  if(micro <= 4) return {nombre:"Press Pecho - Fuerza", enfasis:"Máxima fuerza empuje", series:"4 × 3-4 reps"};
+  if(micro === 5) return {nombre:"Press Pecho - Recuperación", enfasis:"Sin fatiga", series:"3 × 6 reps"};
+  if(micro <= 10) return {nombre:"Press Pecho Explosivo", enfasis:"Máxima velocidad empuje, swing adelante", series:"3 × 4-5 @ 70% [EXPLOSIVO]"};
+  return {nombre:"Press Pecho - Activación", enfasis:"Patrón limpio", series:"2 × 3 reps"};
+};
 
-function MONDAY(cal){
-  const squat = selectSquatVariant(cal.micro);
-  const snatch = selectSnatchVariant(cal.micro);
-  const clean = selectCleanVariant(cal.micro);
-  const highpull = selectHighPullVariant(cal.micro);
-  const jerk = selectJerkVariant(cal.micro);
-  const press = selectPressMilitarVariant(cal.micro);
-  const traccion = selectTraccionVariant(cal.micro);
-  
-  return [
-    // TREN INFERIOR - CUÁDRICEPS (3 ejercicios)
-    {plano:"Cuádriceps (Empuje Raíz I)", nombre:squat.nombre, enfasis:squat.enfasis, series:seriesSquatRoot(cal.micro), pct:cal.pctSquat, base:"squat", pausa:"180-240s"},
-    {plano:"Cuádriceps (Empuje Raíz II)", nombre:"Step-Up Pesado a Banco", series:"3 series × 8 reps/pierna", pct:0.65, base:"fixed", fixedLoad:"20 kg c/u", pausa:"90s"},
-    {plano:"Cuádriceps (Empuje Raíz III)", nombre:"Band Box Squat (Sentadilla en Caja con Liga)", series:"4 series × 6-8 reps", pct:0.80, base:"fixed", fixedLoad:"Liga fuerte anclada", pausa:"120s"},
-    // PANTORRILLA (1 ejercicio)
-    {plano:"Pantorrilla / Tobillo", nombre:"Calf Raise con Liga de Resistencia", series:"4 series × 12-15 reps", pct:0.75, base:"fixed", fixedLoad:"Liga media-fuerte", pausa:"90s"},
-    // GLÚTEO (1 ejercicio)
-    {plano:"Glúteo (Extensión Horiz.)", nombre:"Hip Thrust con Barra Pesado", series:"4 series × 6-8 reps", pct:cal.pctSquat*0.85, base:"squat", pausa:"120s"},
-    // HALTEROFILIA (4 ejercicios - MÁXIMA POTENCIA)
-    {plano:"Halterofilia (RFD I - Arrancada)", nombre:snatch.nombre, enfasis:snatch.enfasis, series:snatch.series || seriesHalteroA(cal.micro), pct:cal.pctHalter, base:"halter", pausa:"150s"},
-    {plano:"Halterofilia (RFD II - Cargada)", nombre:clean.nombre, enfasis:clean.enfasis, series:clean.series || seriesHalteroA(cal.micro), pct:cal.pctHalter, base:"halter", pausa:"150s"},
-    {plano:"Halterofilia (RFD III - High Pull)", nombre:highpull.nombre, enfasis:highpull.enfasis, series:highpull.series || "3-4 series × 5-6 reps", pct:cal.pctHalter*1.1, base:"halter", pausa:"120s"},
-    {plano:"Halterofilia (RFD IV - Push/Jerk)", nombre:jerk.nombre, enfasis:jerk.enfasis, series:jerk.series || "3 series × 4-6 reps", pct:cal.pctHalter*0.85, base:"halter", pausa:"120s"},
-    // BÍCEPS (2 ejercicios)
-    {plano:"Bíceps (Tracción I)", nombre:"Curl de Bíceps con Barra", series:"3 series × 8 reps", pct:0.65, base:"bench", pausa:"90s"},
-    {plano:"Bíceps (Tracción II)", nombre:"Curl Mancuerna Alterno", series:"3 series × 10 reps", pct:0.60, base:"fixed", fixedLoad:"16 kg c/u", pausa:"75s"},
-    // ESPALDA (2 ejercicios)
-    {plano:"Espalda (Tracción I)", nombre:traccion.nombre, enfasis:traccion.enfasis, series:"3-4 series × 6-8 reps", pct:0.75, base:"squat", pausa:"120s"},
-    {plano:"Espalda (Tracción II)", nombre:"Face Pull con Ligas", series:"4 series × 12 reps", pct:0.55, base:"fixed", fixedLoad:"Liga fuerte", pausa:"60s"},
-    // DELTOIDES (2 ejercicios)
-    {plano:"Deltoides (Empuje I)", nombre:press.nombre, enfasis:press.enfasis, series:"3 series × 6-8 reps", pct:cal.pctBench*0.85, base:"bench", pausa:"120s"},
-    {plano:"Deltoides (Empuje II)", nombre:"Elevaciones Laterales Mancuernas", series:"4 series × 12 reps", pct:0.55, base:"fixed", fixedLoad:"10 kg c/u", pausa:"90s"},
-  ];}
+const selectDeltoidesVariant = (micro) => {
+  if(micro <= 2) return {nombre:"Press Militar - Técnica", enfasis:"Patrón motor correcto", series:"3 × 6-8 reps"};
+  if(micro <= 4) return {nombre:"Press Militar - Fuerza", enfasis:"Máxima fuerza", series:"4 × 3-4 reps"};
+  if(micro === 5) return {nombre:"Press Militar - Recuperación", enfasis:"Sin fatiga", series:"3 × 6 reps"};
+  if(micro <= 10) return {nombre:"Press Militar Explosivo", enfasis:"Potencia tren superior, COORDINACIÓN brazo-pierna", series:"3 × 3-4 @ 70% [EXPLOSIVO]"};
+  return {nombre:"Press Militar - Activación", enfasis:"Patrón motor limpio", series:"2 × 3 reps"};
+};
 
+const selectSoleoVariant = (micro) => {
+  if(micro <= 2) return {nombre:"Calf Raises - Adaptación", enfasis:"Rango completo, patrón motor", series:"3 × 12-15 reps"};
+  if(micro <= 4) return {nombre:"Single-Leg Calf - FM", enfasis:"Máxima tensión, excéntrico 4s", series:"4 × 6-8 reps/pierna @ 85%"};
+  if(micro === 5) return {nombre:"Calf Raises - Recuperación", enfasis:"Sin fatiga", series:"3 × 10 reps"};
+  if(micro <= 10) return {nombre:"Single-Leg Calf - EXPLOSIVO [RFD]", enfasis:"Máxima velocidad, explosividad pura", series:"4 × 6-8 reps/pierna @ 75% [EXPLOSIVO]"};
+  return {nombre:"Calf Raises - Activación", enfasis:"Patrón motor limpio", series:"2 × 4 reps"};
+};
 
-function TUESDAY(cal){
-  const coreExt = selectCoreAntiExt(cal.micro);
-  const coreRot = selectCoreAntiRot(cal.micro);
-  const soleo = selectSoleoVariant(cal.micro);
-  const seatedCalf = selectSeatedCalfVariant(cal.micro);
-  
-  return [
-    // CORE Y PREVENCIÓN + SÓLEO - 10 EJERCICIOS TOTALES
-    {plano:"Core (Anti-Extensión I)", nombre:coreExt.nombre, enfasis:coreExt.enfasis, series:"4 series × 45-60 seg", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"75s"},
-    {plano:"Core (Anti-Extensión II)", nombre:"Ab Wheel Rollout", series:"3 series × 8-12 reps", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"90s"},
-    {plano:"Core (Anti-Rotación I)", nombre:coreRot.nombre, enfasis:coreRot.enfasis, series:"4 series × 12 reps/lado", pct:null, base:"fixed", fixedLoad:"Banda media", pausa:"75s"},
-    {plano:"Core (Anti-Rotación II)", nombre:"Russian Twist con Balón Medicinal", series:"3 series × 20 reps total", pct:null, base:"fixed", fixedLoad:"Balón 6 kg", pausa:"60s"},
-    
-    // ⭐ SÓLEO - ESPECÍFICO PARA VELOCISTAS (2 EJERCICIOS)
-    {plano:"Sóleo (Fuerza/Poder I) ⭐", nombre:soleo.nombre, enfasis:soleo.enfasis, series:soleo.series, pct:soleo.pct, base:"fixed", fixedLoad:"Peso corporal o mancuerna", pausa:"90-120s"},
-    {plano:"Sóleo (Fuerza/Poder II) ⭐", nombre:seatedCalf.nombre, enfasis:seatedCalf.enfasis, series:seatedCalf.series, pct:seatedCalf.pct, base:"fixed", fixedLoad:"Máquina o peso rodillas", pausa:"90-120s"},
-    
-    {plano:"Prevención / Isquios I", nombre:"Nordic Hamstring Curls (Asistido)", series:"3 series × 5-8 reps", pct:null, base:"fixed", fixedLoad:"Banda asistencia", pausa:"120s"},
-    {plano:"Prevención / Isquios II", nombre:"Copenhagen Plank en Banco", series:"3 series × 30 seg/pierna", pct:null, base:"fixed", fixedLoad:"Isometría corporal", pausa:"75s"},
-    {plano:"Estabilidad / Cadera", nombre:"Monster Walks con Banda", series:"3 series × 15 pasos c/lado", pct:null, base:"fixed", fixedLoad:"Banda resistencia", pausa:"60s"},
-    {plano:"Estabilidad / Lumbar", nombre:"Bird-Dog Cruzado Dinámico", series:"4 series × 12 reps/lado", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"75s"},
-  ];}
-function WEDNESDAY(cal){
-  const rdl = selectRDLVariant(cal.micro);
-  const snatch = selectSnatchVariant(cal.micro);
-  const clean = selectCleanVariant(cal.micro);
-  const pulls = selectPullsVariant(cal.micro);
-  const kettlebell = selectKettlebellVariant(cal.micro);
-  const hipthrust = selectHipThrustVariant(cal.micro);
-  const pectoral = selectPectoralVariant(cal.micro);
-  const triceps = selectTricepsVariant(cal.micro);
-  const press = selectPressMilitarVariant(cal.micro);
-  
-  return [
-    // TREN INFERIOR - FEMORALES (3 ejercicios)
-    {plano:"Femoral (Bisagra I - RDL)", nombre:rdl.nombre, enfasis:rdl.enfasis, series:seriesHingeRoot(cal.micro), pct:cal.pctSquat, base:"squat", pausa:"180-240s"},
-    {plano:"Femoral (Bisagra II - Unilateral)", nombre:"RDL Unilateral con Mancuerna", series:"3 series × 8 reps/pierna", pct:0.70, base:"fixed", fixedLoad:"20 kg", pausa:"90s"},
-    {plano:"Femoral (Good Morning)", nombre:"Good Morning con Barra", series:"3 series × 8 reps", pct:cal.pctSquat*0.75, base:"squat", pausa:"120s"},
-    // GLÚTEO (1 ejercicio)
-    {plano:"Glúteo (Extensión Horiz.)", nombre:hipthrust.nombre, enfasis:hipthrust.enfasis, series:"4 series × 6-8 reps", pct:cal.pctSquat*0.85, base:"squat", pausa:"120s"},
-    // PANTORRILLA (1 ejercicio)
-    {plano:"Pantorrilla / Tobillo", nombre:"Calf Raise con Liga de Resistencia", series:"4 series × 12-15 reps", pct:0.75, base:"fixed", fixedLoad:"Liga media-fuerte", pausa:"90s"},
-    // HALTEROFILIA (4 ejercicios - MÁXIMA POTENCIA Y EXPLOSIVIDAD)
-    {plano:"Halterofilia (RFD I - Arrancada)", nombre:snatch.nombre, enfasis:snatch.enfasis, series:snatch.series || seriesHalteroA(cal.micro), pct:cal.pctHalter, base:"halter", pausa:"150s"},
-    {plano:"Halterofilia (RFD II - Cargada)", nombre:clean.nombre, enfasis:clean.enfasis, series:clean.series || seriesHalteroA(cal.micro), pct:cal.pctHalter, base:"halter", pausa:"150s"},
-    {plano:"Halterofilia (RFD III - Pulls desde Blocks)", nombre:pulls.nombre, enfasis:pulls.enfasis, series:pulls.series || "4 series × 3", pct:cal.pctHalter*1.15, base:"halter", pausa:"150s"},
-    {plano:"Halterofilia (RFD IV - Kettlebell Explosivo)", nombre:kettlebell.nombre, enfasis:kettlebell.enfasis, series:kettlebell.series || "3-4 series × 4-5 c/brazo", pct:0.70, base:"fixed", fixedLoad:"16-20 kg", pausa:"90s"},
-    // PECTORAL (2 ejercicios)
-    {plano:"Pectoral (Empuje Horiz. I)", nombre:pectoral.nombre, enfasis:pectoral.enfasis, series:"3-4 series × 6-8 reps", pct:pectoral.pct || cal.pctBench, base:"bench", pausa:"120s"},
-    {plano:"Pectoral (Empuje Horiz. II)", nombre:"Flexiones (BW + Carga)", series:"3 series × 6-10 reps", pct:0.70, base:"fixed", fixedLoad:"+10 kg", pausa:"120s"},
-    // TRÍCEPS (2 ejercicios)
-    {plano:"Tríceps (Extensión I)", nombre:triceps.nombre, enfasis:triceps.enfasis, series:"3 series × 8 reps", pct:0.70, base:"bench", pausa:"90s"},
-    {plano:"Tríceps (Extensión II)", nombre:"Fondos en Paralelas con Lastre", series:"3 series × 6-8 reps", pct:0.75, base:"fixed", fixedLoad:"+15 kg", pausa:"120s"},
-    // HOMBRO (2 ejercicios)
-    {plano:"Deltoides (Empuje I)", nombre:press.nombre, enfasis:press.enfasis, series:"3 series × 6-8 reps", pct:cal.pctBench*0.85, base:"bench", pausa:"120s"},
-    {plano:"Deltoides (Posterior)", nombre:"Face Pull con Ligas", series:"4 series × 12 reps", pct:0.55, base:"fixed", fixedLoad:"Liga fuerte", pausa:"60s"},
-  ];}
+const selectJumpCalfVariant = (micro) => {
+  if(micro <= 2) return {nombre:"Jump Calf - Coordinación", enfasis:"Aprendizaje patrón", series:"3 × 5-6 reps"};
+  if(micro <= 4) return {nombre:"Jump Calf - Control", enfasis:"Explosividad controlada", series:"3 × 5-6 reps"};
+  if(micro === 5) return {nombre:"Jump Calf - Recuperación", enfasis:"Muy ligero", series:"2 × 5 reps"};
+  if(micro <= 10) return {nombre:"Jump Calf - MÁXIMA RFD [⭐ CRÍTICO]", enfasis:"Máxima altura, explosividad pura, energía elástica", series:"4 × 4-6 reps @ 80% [EXPLOSIVO]"};
+  return {nombre:"Jump Calf - Activación", enfasis:"Coordinación ligera", series:"2 × 4 reps"};
+};
 
-function THURSDAY(cal){
-  const coreExt = selectCoreAntiExt(cal.micro);
-  const coreRot = selectCoreAntiRot(cal.micro);
-  const jumpCalf = selectJumpCalfVariant(cal.micro);
-  const dropWalk = selectDropWalkVariant(cal.micro);
-  
-  return [
-    // CORE Y ESTABILIDAD TREN SUPERIOR + SÓLEO POTENCIA - ENFOCADO A CORREDORES (12 EJERCICIOS)
-    {plano:"Core (Estabilidad Lateral I)", nombre:"Plancha Lateral Dinámica 45 seg", series:"4 series × 45 seg/lado", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"75s"},
-    {plano:"Core (Estabilidad Lateral II)", nombre:"Plancha Lateral con Abducción de Cadera", series:"3 series × 10 reps/lado", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"60s"},
-    {plano:"Core (Anti-Extensión)", nombre:coreExt.nombre, enfasis:coreExt.enfasis, series:"4 series × 45-60 seg", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"75s"},
-    {plano:"Core (Anti-Rotación)", nombre:coreRot.nombre, enfasis:coreRot.enfasis, series:"3 series × 12 reps/lado", pct:null, base:"fixed", fixedLoad:"Banda media", pausa:"75s"},
-    
-    // ⭐ SÓLEO POTENCIA Y EXPLOSIVIDAD (2 EJERCICIOS)
-    {plano:"Sóleo Potencia/RFD I ⭐", nombre:jumpCalf.nombre, enfasis:jumpCalf.enfasis, series:jumpCalf.series, pct:jumpCalf.pct, base:"fixed", fixedLoad:"Peso corporal (saltos)", pausa:"120-150s"},
-    {plano:"Sóleo Excéntrico/Especifico II ⭐", nombre:dropWalk.nombre, enfasis:dropWalk.enfasis, series:dropWalk.series || "—", pct:dropWalk.pct, base:"fixed", fixedLoad:"Incline/Peldaño", pausa:"120s"},
-    
-    {plano:"Estabilidad Escapular I", nombre:"Plancha Alta Dinámica", series:"4 series × 20 toques alternos", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"60s"},
-    {plano:"Estabilidad Escapular II", nombre:"Palos de Resistencia (Band Pull Aparts)", series:"4 series × 15 reps", pct:null, base:"fixed", fixedLoad:"Banda media", pausa:"60s"},
-    {plano:"Movilidad / Prevención", nombre:"Dislocaciones de Hombro con Banda", series:"3 series × 12 reps", pct:null, base:"fixed", fixedLoad:"Banda ligera", pausa:"75s"},
-    {plano:"Respiración / Control", nombre:"Dead Bug Coordenado", series:"3 series × 10 reps/lado", pct:null, base:"fixed", fixedLoad:"Peso corporal", pausa:"60s"},
-  ];}
-function FRIDAY(cal){
-  const squat = selectSquatVariant(cal.micro);
-  const rdl = selectRDLVariant(cal.micro);
-  const snatch = selectSnatchVariant(cal.micro);
-  const clean = selectCleanVariant(cal.micro);
-  const highpull = selectHighPullVariant(cal.micro);
-  const pulls = selectPullsVariant(cal.micro);
-  const kettlebell = selectKettlebellVariant(cal.micro);
-  const traccion = selectTraccionVariant(cal.micro);
-  const press = selectPressMilitarVariant(cal.micro);
-  const contraste = (cal.faseCode==="T" || cal.faseCode==="R");
-  
-  return [
-    // COMBINACIÓN LUNES + MIÉRCOLES - ENFOCADO A CORREDORES DE 100m
-    // TREN INFERIOR - CUÁDRICEPS (2 ejercicios)
-    {plano:"Cuádriceps (Empuje I)", nombre:squat.nombre, enfasis:squat.enfasis, series:seriesSquatRoot(cal.micro), pct:cal.pctSquat, base:"squat", pausa:"180-240s"},
-    {plano:"Cuádriceps (Empuje II)", nombre:"Band Box Squat (Sentadilla en Caja + Liga)", series:"3 series × 6-8 reps", pct:0.80, base:"fixed", fixedLoad:"Liga fuerte anclada", pausa:"120s"},
-    // TREN INFERIOR - FEMORALES (2 ejercicios)
-    {plano:"Femoral (RDL)", nombre:rdl.nombre, enfasis:rdl.enfasis, series:seriesHingeRoot(cal.micro), pct:cal.pctSquat, base:"squat", pausa:"180-240s"},
-    {plano:"Femoral (Good Morning)", nombre:"Good Morning con Barra", series:"3 series × 8 reps", pct:cal.pctSquat*0.75, base:"squat", pausa:"120s"},
-    // PANTORRILLA + GLÚTEO (2 ejercicios)
-    {plano:"Pantorrilla / Tobillo", nombre:"Calf Raise con Liga de Resistencia", series:"4 series × 12-15 reps", pct:0.75, base:"fixed", fixedLoad:"Liga media-fuerte", pausa:"90s"},
-    {plano:"Glúteo (Hip Thrust)", nombre:"Hip Thrust Barra Pesado", series:"3 series × 6-8 reps", pct:cal.pctSquat*0.85, base:"squat", pausa:"120s"},
-    // HALTEROFILIA EXPLOSIVA (4 ejercicios - CICLO COMPLETO DE POTENCIA)
-    {plano:"Halterofilia (Ciclo I - Arrancada)", nombre:snatch.nombre, enfasis:snatch.enfasis, series:snatch.series || seriesHalteroA(cal.micro), pct:cal.pctHalter, base:"halter", pausa:"150s"},
-    {plano:"Halterofilia (Ciclo II - Cargada)", nombre:clean.nombre, enfasis:clean.enfasis, series:clean.series || seriesHalteroA(cal.micro), pct:cal.pctHalter, base:"halter", pausa:"150s"},
-    {plano:"Halterofilia (Ciclo III - High Pull)", nombre:highpull.nombre, enfasis:highpull.enfasis, series:highpull.series || "3-4 series × 5-6 reps", pct:cal.pctHalter*1.1, base:"halter", pausa:"120s"},
-    {plano:"Halterofilia (Ciclo IV - Kettlebell Combi)", nombre:kettlebell.nombre, enfasis:kettlebell.enfasis, series:kettlebell.series || "3-4 series × 3-4 c/brazo", pct:0.70, base:"fixed", fixedLoad:"16-20 kg", pausa:"90s"},
-    // TRACCIÓN + EMPUJE (2 ejercicios)
-    {plano:"Espalda (Tracción)", nombre:traccion.nombre, enfasis:traccion.enfasis, series:"3 series × 6-8 reps", pct:0.75, base:"squat", pausa:"120s"},
-    {plano:"Pectoral (Empuje)", nombre:"Press Pecho Horizontal", series:"3 series × 6-8 reps", pct:cal.pctBench*0.75, base:"bench", pausa:"120s"},
-    // HOMBRO (1 ejercicio)
-    {plano:"Deltoides (Empuje)", nombre:press.nombre, enfasis:press.enfasis, series:"3 series × 5-6 reps", pct:cal.pctBench*0.85, base:"bench", pausa:"120s"},
-    // TÉCNICA Y PLIOMETRÍA (1 ejercicio - Cometti)
-    contraste
-      ? {plano:"Cometti Francés (Potencia)", nombre:"Sentadilla 80% + Salto Vertical + Drop Jump + Sprint 15m", series:"3 series [4 estaciones]", pct:0.80, base:"squat", pausa:"180s", note:"✓ Activo Micros 6-12: Transferencia velocidad"}
-      : {plano:"Técnica / Aceleración", nombre:"Pistol Squat Asistido + Sprint 10m Explosivo", series:"3 series × 5 c/pierna + sprint", pct:0.70, base:"squat", pausa:"120s"},
-  ];}
-
-const loadFor = (ex, a)=>{
-  if(ex.base==="fixed") return ex.fixedLoad;
-  if(ex.base==="halter"){
-    const rm = epley(a.halterKg, a.halterReps);
-    return `${Math.round(rm*ex.pct*10)/10} kg`;
+const selectComettiVariant = (micro) => {
+  if(micro >= 6 && micro <= 10) {
+    return {
+      nombre:"COMETTI FRANCÉS - TRANSFERENCIA MÁXIMA [⭐ CRÍTICO]",
+      enfasis:"Conversión fuerza máxima → velocidad sprint 100m",
+      estructura:"Squat 80% → Salto Vertical → Drop Jump → Sprint 15m",
+      series:"3-4 ciclos completos",
+      pausa:"3-4 minutos entre ciclos",
+      rpe:"9/10 (máximo esfuerzo)",
+      objetivo:"MÁXIMA TRANSFERENCIA a aceleración 0-30m"
+    };
   }
-  const rm = ex.base==="squat" ? epley(a.squatKg,a.squatReps) : epley(a.benchKg,a.benchReps);
-  return `${Math.round(rm*ex.pct*10)/10} kg`;
+  return {nombre:"COMETTI No incluido", enfasis:"Solo Micros 6-10", estructura:"—"};
 };
 
-function velocityZone(pct){
-  if(pct==null) return null;
-  const table = [
-    {p:0.40,v:1.00},{p:0.50,v:0.85},{p:0.55,v:0.78},{p:0.60,v:0.70},
-    {p:0.65,v:0.63},{p:0.70,v:0.55},{p:0.75,v:0.48},{p:0.80,v:0.40},
-    {p:0.85,v:0.32},{p:0.90,v:0.25},
+// ═══════════════════════════════════════════════════════════════════════════
+// FUNCIONES DE CÁLCULO DE CARGA
+// ═══════════════════════════════════════════════════════════════════════════
+
+function epley(kg, reps) {
+  if(reps === 1) return kg;
+  return kg * (36 / (37 - reps));
+}
+
+function loadFor(ex, a) {
+  if(!a) return "—";
+  const b = (ex.base === "squat") ? a.squatKg : (ex.base === "bench") ? a.benchKg : (ex.base === "halter") ? a.halterKg : null;
+  if(!b) return "—";
+  const rm = (ex.base === "halter") ? epley(b, a.halterReps) : b;
+  return Math.round(rm * (ex.pct || 0.75));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FUNCIONES DE DÍAS (LUNES A VIERNES) - REESTRUCTURADAS MICROS 6-12
+// ═══════════════════════════════════════════════════════════════════════════
+
+function MONDAY(cal) {
+  const squat = selectSquatVariant(cal.micro);
+  const rdl = selectRDLVariant(cal.micro);
+  const jumpSquat = selectJumpSquatVariant(cal.micro);
+  const snatch = selectSnatchVariant(cal.micro);
+  const clean = selectCleanVariant(cal.micro);
+  const curl = selectCurlVariant(cal.micro);
+  const remo = selectRemoVariant(cal.micro);
+  const deltoides = selectDeltoidesVariant(cal.micro);
+  
+  return [
+    {plano:"Cuádriceps (Potencia I) ⚡", nombre:squat.nombre, enfasis:squat.enfasis, series:squat.series, pct:cal.sqBw, base:"squat"},
+    {plano:"Cuádriceps (Jump Squat) ⚡", nombre:jumpSquat.nombre, enfasis:jumpSquat.enfasis, series:jumpSquat.series, pct:0.70, base:"fixed"},
+    {plano:"Isquios (Potencia I) ⚡", nombre:rdl.nombre, enfasis:rdl.enfasis, series:rdl.series, pct:cal.sqBw*0.70, base:"squat"},
+    {plano:"Isquios (Good Morning) ⚡", nombre:"Good Morning Explosivo", enfasis:"Potencia cadena posterior integrada", series:cal.micro >= 6 ? "3 × 3-4 [EXPLOSIVO]" : "3 × 6 reps", pct:0.70, base:"squat"},
+    {plano:"Halterofilia Potencia I: Snatch ⭐", nombre:snatch.nombre, enfasis:snatch.enfasis, series:snatch.series, pct:cal.hBw, base:"halter"},
+    {plano:"Halterofilia Potencia II: Clean+Press ⭐", nombre:clean.nombre, enfasis:clean.enfasis, series:clean.series, pct:0.75, base:"halter"},
+    {plano:"Bíceps (Potencia I) - Braceo", nombre:curl.nombre, enfasis:curl.enfasis, series:curl.series, pct:0.70, base:"fixed"},
+    {plano:"Bíceps (Potencia II - Alterno)", nombre:"Curl Mancuerna Alterno Explosivo", enfasis:"Asimetría braceo", series:cal.micro >= 6 ? "3 × 4-6 reps/brazo [EXPLOSIVO]" : "3 × 10 reps", pct:0.70, base:"fixed"},
+    {plano:"Espalda (Potencia I - Remo) ⚡", nombre:remo.nombre, enfasis:remo.enfasis, series:remo.series, pct:0.75, base:"fixed"},
+    {plano:"Espalda (Potencia II - Face Pull)", nombre:"Face Pull Explosivo", enfasis:"Velocidad máxima, estabilidad escapular", series:cal.micro >= 6 ? "3 × 8-10 [EXPLOSIVO]" : "4 × 12 reps", pct:0.70, base:"fixed"},
+    {plano:"Deltoides (Potencia I - Press) ⚡", nombre:deltoides.nombre, enfasis:deltoides.enfasis, series:deltoides.series, pct:0.70, base:"fixed"},
+    {plano:"Deltoides (Potencia II - Laterales)", nombre:"Elevaciones Laterales Explosivas", enfasis:"Velocidad máxima movilidad", series:cal.micro >= 6 ? "3 × 6-8 @ 65% [EXPLOSIVO]" : "4 × 12 reps", pct:0.65, base:"fixed"},
   ];
-  const c = Math.min(Math.max(pct,0.40),0.90);
-  let v = table[table.length-1].v;
-  for(let i=0;i<table.length-1;i++){
-    if(c>=table[i].p && c<=table[i+1].p){
-      const t=(c-table[i].p)/(table[i+1].p-table[i].p);
-      v = table[i].v + t*(table[i+1].v-table[i].v);
-      break;
-    }
-  }
-  const vMin = Math.round((v-0.05)*100)/100;
-  const vMax = Math.round((v+0.05)*100)/100;
-  let zone, color;
-  if(v>=0.85){zone="Velocidad-Potencia"; color="#22C55E";}
-  else if(v>=0.65){zone="Fuerza-Velocidad"; color="#3B82F6";}
-  else if(v>=0.45){zone="Fuerza-Potencia"; color="#F2B705";}
-  else {zone="Fuerza Máxima"; color="#E2452C";}
-  return {vMin, vMax, zone, color};
-}
-const VELOCITY_LEGEND = [
-  {zone:"Fuerza Máxima", color:"#E2452C", range:"< 0.45 m/s"},
-  {zone:"Fuerza-Potencia", color:"#F2B705", range:"0.45 – 0.65 m/s"},
-  {zone:"Fuerza-Velocidad", color:"#3B82F6", range:"0.65 – 0.85 m/s"},
-  {zone:"Velocidad-Potencia", color:"#22C55E", range:"> 0.85 m/s"},
-];
-function velocityLegendHTML(){
-  return `<div class="vel-legend">${VELOCITY_LEGEND.map(z=>
-    `<div class="vel-legend-item"><span class="vel-legend-dot" style="background:${z.color}"></span>${z.zone} · ${z.range}</div>`
-  ).join("")}</div>`;
-}
-function tempoFor(ex){
-  const n = ex.nombre.toLowerCase();
-  if(n.includes("plank") || n.includes("isometr") || n.includes("vacuum")) return "Tensión constante (isometría), sin componente de velocidad";
-  if(n.includes("monster walk") || n.includes("face pull") || n.includes("pallof") || n.includes("elevaciones") || n.includes("curl")) return "Tempo 2-0-2-0 controlado";
-  if(ex.base==="fixed" && ex.pct==null) return "Técnica controlada y fluida, enfoque en control postural";
-  if(n.includes("arrancada") || n.includes("cargada") || n.includes("contraste") || n.includes("push press") || n.includes("high pull") || n.includes("lanzamientos")) return "Máxima velocidad intencional (fase concéntrica explosiva)";
-  if(ex.base==="squat" || ex.base==="bench"){
-    if(ex.pct!=null && ex.pct>=0.80) return "Excéntrico controlado (2-3s), concéntrico explosivo";
-    return "Concéntrico intencionalmente rápido, excéntrico controlado";
-  }
-  return "Ejecución técnica controlada";
-}
-function velocityCellHTML(ex){
-  const tempo = tempoFor(ex);
-  let velHTML = "";
-  if(ex.base!=="fixed" && ex.pct!=null){
-    const z = velocityZone(ex.pct);
-    velHTML = `<div class="vel-pill" style="background:${z.color}22;color:${z.color}">${z.vMin}–${z.vMax} m/s · ${z.zone}</div>`;
-  }
-  return `<div class="tempo-note">${tempo}</div>${velHTML}`;
-}
-const currentMicroFromDate = (d)=>{
-  const iso = d.toISOString().slice(0,10);
-  const found = CALENDAR.find(c=> iso>=c.start && iso<=c.end);
-  if(found) return {micro:found.micro, status:"activo"};
-  if(iso < CALENDAR[0].start) return {micro:1, status:"pretemporada"};
-  return {micro:12, status:"finalizado"};
-};
-const trainingDayFromWeekday = (w)=>{ 
-  if(w===1) return "monday"; 
-  if(w===2) return "tuesday"; 
-  if(w===3) return "wednesday"; 
-  if(w===4) return "thursday"; 
-  if(w===5) return "friday"; 
-  return null; 
-};
-
-const hasStorage = ()=> typeof window!=="undefined" && window.storage && typeof window.storage.get==="function";
-async function stGet(key){
-  if(!hasStorage()) return null;
-  try{ const r = await window.storage.get(key); return r ? r.value : null; }catch(e){ return null; }
-}
-async function stSet(key,val){
-  if(!hasStorage()) return false;
-  try{ await window.storage.set(key,val); return true; }catch(e){ return false; }
 }
 
-const PRESET_ROSTER = [
-  {id:1, name:"Habib Alexander Martínez Pérez", age:18, sex:"M", event:"200m - 400m", bw:54, squatKg:90, squatReps:7, benchKg:40, halterKg:40, halterReps:6, benchReps:7},
-  {id:2, name:"Joan López", age:15, sex:"M", event:"100m", bw:65, squatKg:98, squatReps:6, benchKg:40, halterKg:44, halterReps:6, benchReps:7},
-  {id:3, name:"Aldo Sainz", age:23, sex:"M", event:"400m", bw:78, squatKg:105, squatReps:5, benchKg:50, halterKg:47, halterReps:6, benchReps:12},
-  {id:4, name:"David Rodríguez", age:16, sex:"M", event:"Salto Longitud", bw:55, squatKg:60, squatReps:7, benchKg:35, halterKg:27, halterReps:6, benchReps:6},
-  {id:5, name:"Mia Solís Torres", age:18, sex:"M", event:"200m - 400m", bw:50, squatKg:91, squatReps:6, benchKg:35, halterKg:41, halterReps:6, benchReps:5},
-  {id:6, name:"Valentina Carrillo", age:15, sex:"F", event:"100m - 200m", bw:53, squatKg:70, squatReps:6, benchKg:35, halterKg:32, halterReps:6, benchReps:5},
-  {id:7, name:"Ailen Cabildo", age:17, sex:"F", event:"200m - 400m", bw:57, squatKg:55, squatReps:6, benchKg:30, halterKg:25, halterReps:6, benchReps:4},
-  {id:8, name:"Yamielth Sedano", age:15, sex:"F", event:"800m", bw:50, squatKg:65, squatReps:5, benchKg:30, halterKg:29, halterReps:6, benchReps:4},
-  {id:9, name:"Samira Sedano", age:15, sex:"F", event:"Salto Longitud", bw:46, squatKg:46, squatReps:7, benchKg:25, halterKg:21, halterReps:6, benchReps:4},
-  {id:10, name:"Daniela Quintana", age:15, sex:"F", event:"800m", bw:54, squatKg:65, squatReps:4, benchKg:26, halterKg:29, halterReps:6, benchReps:6},
-  {id:11, name:"Hugo Ornelin", age:15, sex:"M", event:"400m - 4x400m", bw:56, squatKg:80, squatReps:7, benchKg:35, halterKg:36, halterReps:6, benchReps:3},
-  {id:12, name:"Abigail Talavera", age:15, sex:"F", event:"Impulso de Bala", bw:70, squatKg:79, squatReps:4, benchKg:35, halterKg:36, halterReps:6, benchReps:6},
-  {id:13, name:"Daniel Pérez", age:15, sex:"M", event:"200m - 400m", bw:60, squatKg:80, squatReps:6, benchKg:45, halterKg:36, halterReps:6, benchReps:5},
-  {id:14, name:"Valeria de la Cruz", age:15, sex:"F", event:"100m Vallas", bw:52, squatKg:77, squatReps:5, benchKg:30, halterKg:35, halterReps:6, benchReps:3},
-  {id:15, name:"Celeste de la Cruz", age:15, sex:"F", event:"400m Vallas", bw:50, squatKg:72, squatReps:7, benchKg:22, halterKg:32, halterReps:6, benchReps:7},
-  {id:16, name:"Jimena Bustos Muñoz", age:16, sex:"F", event:"100m - 4x100m", bw:48, squatKg:48, squatReps:6, benchKg:15, halterKg:22, halterReps:6, benchReps:6},
-  {id:17, name:"Atleta 17 (falta nombre)", age:21, sex:"M", event:"400m - 4x400m", bw:73.2, squatKg:130, squatReps:7, benchKg:55, halterKg:58, halterReps:6, benchReps:4},
-  {id:18, name:"Atleta 18 (falta nombre)", age:17, sex:"F", event:"100m - 200m", bw:68.3, squatKg:60, squatReps:4, benchKg:48, halterKg:27, halterReps:6, benchReps:4},
-  {id:19, name:"Atleta 19 (falta nombre)", age:22, sex:"M", event:"200m - 400m", bw:56.1, squatKg:126, squatReps:4, benchKg:75, halterKg:57, halterReps:6, benchReps:6},
-  {id:20, name:"Atleta 20 (falta nombre)", age:23, sex:"F", event:"100m Vallas", bw:54.9, squatKg:90, squatReps:6, benchKg:48, halterKg:40, halterReps:6, benchReps:6},
-  {id:21, name:"Atleta 21 (falta nombre)", age:16, sex:"M", event:"400m Vallas", bw:71.9, squatKg:95, squatReps:7, benchKg:59, halterKg:43, halterReps:6, benchReps:5},
-  {id:22, name:"Atleta 22 (falta nombre)", age:21, sex:"F", event:"100m - 4x100m", bw:72.7, squatKg:60, squatReps:4, benchKg:59, halterKg:27, halterReps:6, benchReps:7},
-  {id:23, name:"Atleta 23 (falta nombre)", age:20, sex:"M", event:"400m - 4x400m", bw:58.1, squatKg:112, squatReps:7, benchKg:78, halterKg:50, halterReps:6, benchReps:5},
-  {id:24, name:"Atleta 24 (falta nombre)", age:21, sex:"F", event:"100m - 200m", bw:68.5, squatKg:95, squatReps:5, benchKg:60, halterKg:43, halterReps:6, benchReps:7},
-  {id:25, name:"Atleta 25 (falta nombre)", age:22, sex:"M", event:"200m - 400m", bw:55.7, squatKg:92, squatReps:7, benchKg:97, halterKg:41, halterReps:6, benchReps:4},
-  {id:26, name:"Atleta 26 (falta nombre)", age:21, sex:"F", event:"100m Vallas", bw:66.6, squatKg:83, squatReps:6, benchKg:48, halterKg:37, halterReps:6, benchReps:4},
-  {id:27, name:"Atleta 27 (falta nombre)", age:18, sex:"M", event:"400m Vallas", bw:68.6, squatKg:140, squatReps:5, benchKg:76, halterKg:63, halterReps:6, benchReps:4},
-  {id:28, name:"Atleta 28 (falta nombre)", age:21, sex:"F", event:"100m - 4x100m", bw:60.3, squatKg:91, squatReps:6, benchKg:37, halterKg:41, halterReps:6, benchReps:6},
-  {id:29, name:"Atleta 29 (falta nombre)", age:19, sex:"M", event:"400m - 4x400m", bw:59.7, squatKg:116, squatReps:6, benchKg:80, halterKg:52, halterReps:6, benchReps:4},
-  {id:30, name:"Atleta 30 (falta nombre)", age:17, sex:"F", event:"100m - 200m", bw:80.8, squatKg:87, squatReps:5, benchKg:59, halterKg:39, halterReps:6, benchReps:4},
-];
-const PRESET_DATE = "2026-08-31";
+function TUESDAY(cal) {
+  return [
+    {plano:"Core Anti-Ext I", nombre:"Plancha Frontal Dinámica", enfasis:"Estabilidad máxima", series:"4 × 45-60 seg", pct:null, base:"fixed"},
+    {plano:"Core Anti-Ext II", nombre:"Ab Wheel Rollout", enfasis:"Control excéntrico", series:"3 × 8-12 reps", pct:null, base:"fixed"},
+    {plano:"Core Anti-Rot I", nombre:"Pallof Press", enfasis:"Estabilidad rotacional", series:"4 × 12 reps/lado", pct:null, base:"fixed"},
+    {plano:"Core Anti-Rot II", nombre:"Russian Twist", enfasis:"Rotación controlada", series:"3 × 20 reps total", pct:null, base:"fixed"},
+    {plano:"Sóleo I: Single-Leg Calf ⭐", nombre:selectSoleoVariant(cal.micro).nombre, enfasis:selectSoleoVariant(cal.micro).enfasis, series:selectSoleoVariant(cal.micro).series, pct:selectSoleoVariant(cal.micro).pct, base:"fixed"},
+    {plano:"Sóleo II: Seated Calf ⭐", nombre:"Seated Calf Raises", enfasis:"Máxima carga, rango completo", series:cal.micro >= 6 ? "4 × 6-8 @ 75% [EXPLOSIVO]" : "3 × 12 reps", pct:0.75, base:"fixed"},
+    {plano:"Prevención: Nordic Curls", nombre:"Nordic Hamstring Curls", enfasis:"Prevención isquios", series:"3 × 5-8 reps", pct:null, base:"fixed"},
+    {plano:"Prevención: Copenhagen", nombre:"Copenhagen Plank", enfasis:"Estabilidad aductores", series:"3 × 30 seg/pierna", pct:null, base:"fixed"},
+    {plano:"Estabilidad I", nombre:"Monster Walks", enfasis:"Movilidad cadera", series:"3 × 15 pasos c/lado", pct:null, base:"fixed"},
+    {plano:"Estabilidad II", nombre:"Bird-Dog Cruzado", enfasis:"Control lumbar", series:"4 × 12 reps/lado", pct:null, base:"fixed"},
+  ];
+}
 
-const State = {
-  athletes: [],
-  nextId: 1,
-  tab: "panel",
-  selectedAthleteId: null,
-  microId: 1,
-  showAddForm: false,
-  logMode: false,
-  logDraft: {},
-  historial: {},
-  logsCache: {},
+function WEDNESDAY(cal) {
+  const curl = selectCurlVariant(cal.micro);
+  const triceps = selectTricepsVariant(cal.micro);
+  const remo = selectRemoVariant(cal.micro);
+  const pectoral = selectPectoralVariant(cal.micro);
+  const deltoides = selectDeltoidesVariant(cal.micro);
+  
+  return [
+    {plano:"Bíceps (Potencia I - Braceo) ⚡", nombre:curl.nombre, enfasis:curl.enfasis + " [CICLO FLEXIÓN BRACEO]", series:curl.series, pct:curl.pct, base:"fixed"},
+    {plano:"Bíceps (Potencia II - Alterno) ⚡", nombre:"Curl Mancuerna Alterno " + (cal.micro >= 6 ? "Explosivo" : ""), enfasis:"Asimetría alternancia (simula ciclo corrida)", series:cal.micro >= 6 ? "3 × 4-6 reps/brazo [EXPLOSIVO]" : "3 × 10 reps", pct:0.70, base:"fixed"},
+    {plano:"Bíceps (Potencia III - Cable)", nombre:"Curl Cable Explosivo", enfasis:"Rango constante potencia", series:cal.micro >= 6 ? "3 × 6-8 [EXPLOSIVO]" : "3 × 10 reps", pct:0.70, base:"fixed"},
+    
+    {plano:"Tríceps (Potencia I - Extensión) ⚡", nombre:triceps.nombre, enfasis:triceps.enfasis + (cal.micro >= 6 ? " [EXTENSIÓN RÁPIDA SWING ATRÁS]" : ""), series:triceps.series, pct:triceps.pct, base:"fixed"},
+    {plano:"Tríceps (Potencia II - Fondos) ⚡", nombre:"Fondos Paralelas " + (cal.micro >= 6 ? "Explosivos" : ""), enfasis:"Potencia máxima empuje", series:cal.micro >= 6 ? "3 × 4-6 + carga [EXPLOSIVO]" : "3 × 6-8 reps", pct:0.70, base:"fixed"},
+    {plano:"Tríceps (Potencia III - Rope)", nombre:"Tricep Rope " + (cal.micro >= 6 ? "Explosivo" : ""), enfasis:"Velocidad máxima", series:cal.micro >= 6 ? "3 × 6-8 [EXPLOSIVO]" : "3 × 12 reps", pct:0.70, base:"fixed"},
+    
+    {plano:"Espalda (Potencia I - Remo) ⚡", nombre:remo.nombre, enfasis:remo.enfasis + (cal.micro >= 6 ? " [TRACCIÓN RÁPIDA SWING ATRÁS]" : ""), series:remo.series, pct:remo.pct, base:"fixed"},
+    {plano:"Espalda (Potencia II - Face Pull) ⚡", nombre:"Face Pull con Liga " + (cal.micro >= 6 ? "Explosiva" : ""), enfasis:"Retracción rápida, estabilidad escapular", series:cal.micro >= 6 ? "3 × 8-10 [EXPLOSIVO]" : "4 × 12 reps", pct:0.70, base:"fixed"},
+    {plano:"Espalda (Potencia III - Lat)", nombre:"Lat Pulldown " + (cal.micro >= 6 ? "Explosivo" : ""), enfasis:"Potencia tracción vertical", series:cal.micro >= 6 ? "3 × 4-5 [EXPLOSIVO]" : "3 × 8-10 reps", pct:0.70, base:"fixed"},
+    
+    {plano:"Pecho (Potencia I - Press) ⚡", nombre:pectoral.nombre, enfasis:pectoral.enfasis + (cal.micro >= 6 ? " [EMPUJE RÁPIDO SWING ADELANTE]" : ""), series:pectoral.series, pct:pectoral.pct, base:"bench"},
+    {plano:"Pecho (Potencia II - Flexiones) ⚡", nombre:"Flexiones " + (cal.micro >= 6 ? "Explosivas + Carga" : "Controladas"), enfasis:"Control excéntrico + explosión", series:cal.micro >= 6 ? "3 × 4-6 [EXPLOSIVO]" : "3 × 8-10 reps", pct:0.70, base:"fixed"},
+    {plano:"Pecho (Potencia III - Machine)", nombre:"Machine Chest Press " + (cal.micro >= 6 ? "Explosivo" : ""), enfasis:"Velocidad constante", series:cal.micro >= 6 ? "3 × 6-8 [EXPLOSIVO]" : "3 × 10-12 reps", pct:0.70, base:"fixed"},
+    
+    {plano:"Deltoides (Potencia I - Press) ⚡", nombre:deltoides.nombre, enfasis:deltoides.enfasis + (cal.micro >= 6 ? " [COORDINACIÓN INTEGRADA]" : ""), series:deltoides.series, pct:deltoides.pct, base:"fixed"},
+    {plano:"Deltoides (Potencia II - Laterales) ⚡", nombre:"Elevaciones Laterales " + (cal.micro >= 6 ? "Explosivas" : ""), enfasis:"Velocidad máxima movilidad", series:cal.micro >= 6 ? "3 × 6-8 @ 65% [EXPLOSIVO]" : "4 × 12 reps", pct:0.65, base:"fixed"},
+  ];
+}
+
+function THURSDAY(cal) {
+  return [
+    {plano:"Estabilidad Lateral I", nombre:"Plancha Lateral Dinámica", enfasis:"Control lateral máximo", series:"4 × 45 seg/lado", pct:null, base:"fixed"},
+    {plano:"Estabilidad Lateral II", nombre:"Plancha Lateral + Abducción", enfasis:"Glúteo medio activación", series:"3 × 10 reps/lado", pct:null, base:"fixed"},
+    {plano:"Core Anti-Ext", nombre:"Plancha Frontal Dinámica", enfasis:"Estabilidad máxima", series:"4 × 45-60 seg", pct:null, base:"fixed"},
+    {plano:"Core Anti-Rot", nombre:"Pallof Press", enfasis:"Estabilidad rotacional", series:"3 × 12 reps/lado", pct:null, base:"fixed"},
+    {plano:"Sóleo Potencia I: Jump Calf ⭐", nombre:selectJumpCalfVariant(cal.micro).nombre, enfasis:selectJumpCalfVariant(cal.micro).enfasis, series:selectJumpCalfVariant(cal.micro).series, pct:selectJumpCalfVariant(cal.micro).pct, base:"fixed"},
+    {plano:"Sóleo Potencia II: Drop Walk ⭐", nombre:"Drop Walking", enfasis:cal.micro >= 6 ? "Excéntrico controlado 3-4s, TRABAJO ESPECÍFICO SPRINTERS" : "Técnica introductoria", series:cal.micro >= 6 ? "3 × 40-50 pasos [CRÍTICO]" : "2 × 20-30 pasos", pct:0.80, base:"fixed"},
+    {plano:"Escapular I", nombre:"Plancha Alta Dinámica", enfasis:"Control escapular", series:"4 × 20 toques alternos", pct:null, base:"fixed"},
+    {plano:"Escapular II", nombre:"Band Pull Aparts", enfasis:"Retracción escapular", series:"4 × 15 reps", pct:null, base:"fixed"},
+    {plano:"Movilidad I", nombre:"Dislocaciones de Hombro", enfasis:"Amplitud movimiento", series:"3 × 12 reps", pct:null, base:"fixed"},
+    {plano:"Coordinación", nombre:"Dead Bug Coordenado", enfasis:"Control respiratorio", series:"3 × 10 reps/lado", pct:null, base:"fixed"},
+  ];
+}
+
+function FRIDAY(cal) {
+  const squat = selectSquatVariant(cal.micro);
+  const rdl = selectRDLVariant(cal.micro);
+  const snatch = selectSnatchVariant(cal.micro);
+  const clean = selectCleanVariant(cal.micro);
+  const triceps = selectTricepsVariant(cal.micro);
+  const pectoral = selectPectoralVariant(cal.micro);
+  const deltoides = selectDeltoidesVariant(cal.micro);
+  const cometti = selectComettiVariant(cal.micro);
+  
+  let ex = [
+    {plano:"Cuádriceps (Potencia I)", nombre:squat.nombre, enfasis:squat.enfasis, series:squat.series, pct:cal.sqBw, base:"squat"},
+    {plano:"Cuádriceps (Jump Squat)", nombre:"Jump Squat Explosivo", enfasis:"Máxima altura, potencia integrada", series:cal.micro >= 6 ? "3 × 3-4 [EXPLOSIVO]" : "3 × 4 reps", pct:0.70, base:"fixed"},
+    {plano:"Femorales (Potencia I)", nombre:rdl.nombre, enfasis:rdl.enfasis, series:rdl.series, pct:cal.sqBw*0.70, base:"squat"},
+    {plano:"Femorales (Good Morning)", nombre:"Good Morning Explosivo", enfasis:"Cadena posterior ciclo completo", series:cal.micro >= 6 ? "3 × 3-4 [EXPLOSIVO]" : "3 × 6 reps", pct:0.70, base:"squat"},
+    {plano:"Halterofilia I: Snatch", nombre:snatch.nombre, enfasis:snatch.enfasis, series:snatch.series, pct:cal.hBw, base:"halter"},
+    {plano:"Halterofilia II: Clean+Press", nombre:clean.nombre, enfasis:clean.enfasis, series:clean.series, pct:0.75, base:"halter"},
+    {plano:"Halterofilia III: High Pull", nombre:"High Pull Explosivo", enfasis:"Aceleración máxima", series:cal.micro >= 6 ? "3 × 3-4 @ 70% [EXPLOSIVO]" : "3 × 4-6 reps", pct:0.70, base:"halter"},
+    {plano:"Tríceps (Potencia I)", nombre:triceps.nombre, enfasis:triceps.enfasis, series:triceps.series, pct:triceps.pct, base:"fixed"},
+    {plano:"Tríceps (Potencia II - Fondos)", nombre:"Fondos Paralelas Explosivos", enfasis:"Potencia máxima", series:cal.micro >= 6 ? "3 × 4-5 + carga [EXPLOSIVO]" : "3 × 6-8 reps", pct:0.70, base:"fixed"},
+    {plano:"Pecho (Potencia I)", nombre:pectoral.nombre, enfasis:pectoral.enfasis, series:pectoral.series, pct:pectoral.pct, base:"bench"},
+    {plano:"Pecho (Potencia II - Flexiones)", nombre:"Flexiones Explosivas", enfasis:"Control + explosión", series:cal.micro >= 6 ? "3 × 4-6 [EXPLOSIVO]" : "3 × 8-10 reps", pct:0.70, base:"fixed"},
+    {plano:"Hombro (Potencia I)", nombre:deltoides.nombre, enfasis:deltoides.enfasis, series:deltoides.series, pct:deltoides.pct, base:"fixed"},
+    {plano:"Hombro (Potencia II - Laterales)", nombre:"Elevaciones Laterales Explosivas", enfasis:"Velocidad máxima", series:cal.micro >= 6 ? "3 × 6-8 @ 65% [EXPLOSIVO]" : "4 × 12 reps", pct:0.65, base:"fixed"},
+  ];
+  
+  // AGREGAR COMETTI FRANCÉS SOLO SI MICROS 6-10
+  if(cal.micro >= 6 && cal.micro <= 10) {
+    ex.push({
+      plano:"⭐ COMETTI FRANCÉS (TRANSFERENCIA MÁXIMA) ⭐",
+      nombre:cometti.nombre,
+      enfasis:cometti.enfasis,
+      estructura:cometti.estructura,
+      series:cometti.series,
+      pausa:cometti.pausa,
+      rpe:cometti.rpe,
+      objetivo:cometti.objetivo,
+      isCometti:true
+    });
+  }
+  
+  return ex;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INTERFAZ Y RENDERIZACIÓN
+// ═══════════════════════════════════════════════════════════════════════════
+
+const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+const DAY_FN = [MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY];
+
+let state = {
+  micro: 6,
+  athlete: ROSTER[0],
+  halterKg: 80,
+  squatKg: 140,
+  benchKg: 90,
+  halterReps: 3,
 };
 
-async function initState(){
-  const raw = await stGet("athletes-roster");
-  if(raw){
-    try{
-      const data = JSON.parse(raw);
-      State.athletes = data.athletes || [];
-      State.nextId = data.nextId || (State.athletes.length+1);
-    }catch(e){}
-  }
-  const autoMicro = currentMicroFromDate(new Date());
-  State.microId = autoMicro.micro;
-  if(State.athletes.length) State.selectedAthleteId = State.athletes[0].id;
-  render();
-}
-async function persistRoster(){
-  await stSet("athletes-roster", JSON.stringify({athletes:State.athletes, nextId:State.nextId}));
-}
-
-function setTab(tab){ State.tab = tab; State.showAddForm=false; render(); }
-
-async function addAthlete(fields){
-  const a = {
-    id: State.nextId++,
-    name: fields.name.trim(),
-    age: Number(fields.age)||null,
-    sex: fields.sex,
-    event: fields.event.trim(),
-    bw: Number(fields.bw)||null,
-    squatKg: Number(fields.squatKg)||0,
-    squatReps: Number(fields.squatReps)||1,
-    benchKg: Number(fields.benchKg)||0,
-    benchReps: Number(fields.benchReps)||1,
-    halterKg: Number(fields.halterKg)||0,
-    halterReps: Number(fields.halterReps)||1,
-  };
-  State.athletes.push(a);
-  await persistRoster();
-  const hist = [{date: todayISO(), squatKg:a.squatKg, squatReps:a.squatReps, benchKg:a.benchKg, benchReps:a.benchReps, halterKg:a.halterKg, halterReps:a.halterReps}];
-  State.historial[a.id] = hist;
-  await stSet(`rm-history:${a.id}`, JSON.stringify(hist));
-  State.selectedAthleteId = a.id;
-  State.showAddForm = false;
-  showToast("Atleta registrado");
-  render();
-}
-
-async function deleteAthlete(id, evt){
-  if(evt) evt.stopPropagation();
-  const authorized = await ensurePinAndConfirm("eliminar a este atleta");
-  if(!authorized) return;
-  if(!confirm("¿Eliminar este atleta del roster? Esta acción no se puede deshacer.")) return;
-  State.athletes = State.athletes.filter(a=>a.id!==id);
-  await persistRoster();
-  if(State.selectedAthleteId===id) State.selectedAthleteId = State.athletes[0] ? State.athletes[0].id : null;
-  render();
-}
-
-async function importPresetRoster(){
-  if(State.athletes.length>0){
-    const authorized = await ensurePinAndConfirm("reemplazar el roster actual por los 30 atletas del Excel");
-    if(!authorized) return;
-    if(!confirm(`Esto reemplazará los ${State.athletes.length} atletas actuales por los 30 del archivo Excel. ¿Continuar?`)) return;
-  }
-  State.athletes = PRESET_ROSTER.map(a=>({...a}));
-  State.nextId = 31;
-  await persistRoster();
-  for(const a of State.athletes){
-    const hist = [{date: PRESET_DATE, squatKg:a.squatKg, squatReps:a.squatReps, benchKg:a.benchKg, benchReps:a.benchReps}];
-    State.historial[a.id] = hist;
-    await stSet(`rm-history:${a.id}`, JSON.stringify(hist));
-  }
-  State.selectedAthleteId = State.athletes[0].id;
-  showToast("30 atletas importados");
-  render();
-}
-
-async function getCoachPin(){ return await stGet("coach-pin"); }
-async function ensurePinAndConfirm(actionLabel){
-  const pin = await getCoachPin();
-  if(!pin){
-    const newPin = prompt(`Aún no hay PIN de entrenador configurado.\nCrea un PIN (4 a 6 dígitos) para proteger las eliminaciones de aquí en adelante:`);
-    if(!newPin) return false;
-    if(!/^\d{4,6}$/.test(newPin)){ alert("El PIN debe tener entre 4 y 6 dígitos numéricos."); return false; }
-    await stSet("coach-pin", newPin);
-    showToast("PIN de entrenador configurado");
-    return true;
-  }
-  const entered = prompt(`Ingresa el PIN de entrenador para ${actionLabel}:`);
-  if(entered===null) return false;
-  if(entered!==pin){ alert("PIN incorrecto. No se realizó la acción."); return false; }
-  return true;
-}
-async function changePin(){
-  const pin = await getCoachPin();
-  if(pin){
-    const entered = prompt("Ingresa el PIN actual del entrenador:");
-    if(entered===null) return;
-    if(entered!==pin){ alert("PIN incorrecto."); return; }
-  }
-  const newPin = prompt("Nuevo PIN (4 a 6 dígitos):");
-  if(!newPin) return;
-  if(!/^\d{4,6}$/.test(newPin)){ alert("El PIN debe tener entre 4 y 6 dígitos numéricos."); return; }
-  await stSet("coach-pin", newPin);
-  showToast("PIN actualizado");
-}
-
-function selectAthlete(id){ State.selectedAthleteId = Number(id); State.logMode=false; State.logDraft={}; render(); }
-function goToAthleteToday(id){ State.selectedAthleteId=Number(id); State.tab="hoy"; State.logMode=false; State.logDraft={}; render(); }
-function setMicro(m){ State.microId = m; render(); }
-
-let toastTimer=null;
-function showToast(msg){
-  const el = document.getElementById("toast");
-  if(!el) return;
-  el.textContent = msg; el.style.display="block";
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>{ el.style.display="none"; }, 1800);
-}
-
-async function toggleLogMode(){
-  State.logMode = !State.logMode;
-  if(State.logMode){
-    const a = State.athletes.find(x=>x.id===State.selectedAthleteId);
-    const key = `session-log:${a.id}:${todayISO()}`;
-    const raw = await stGet(key);
-    if(raw){
-      try{
-        const log = JSON.parse(raw);
-        const d = {};
-        log.entries.forEach(e=>{ d[e.nombre]={completado:e.completado, rpe:e.rpe}; });
-        State.logDraft = d;
-      }catch(e){}
-    }
-  }
-  render();
-}
-function updateDraft(nombre, field, value){
-  if(!State.logDraft[nombre]) State.logDraft[nombre]={};
-  State.logDraft[nombre][field]=value;
-}
-async function guardarSesion(exercises, athleteId, day, micro){
-  const entries = exercises.map(ex=>({
-    nombre: ex.nombre,
-    completado: (State.logDraft[ex.nombre]&&State.logDraft[ex.nombre].completado)||"",
-    rpe: (State.logDraft[ex.nombre]&&State.logDraft[ex.nombre].rpe)||"",
-  }));
-  const log = {athleteId, date: todayISO(), day, micro, entries};
-  await stSet(`session-log:${athleteId}:${todayISO()}`, JSON.stringify(log));
-  const idxRaw = await stGet(`log-index:${athleteId}`);
-  let idx = [];
-  try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
-  if(!idx.includes(todayISO())){ idx.push(todayISO()); await stSet(`log-index:${athleteId}`, JSON.stringify(idx)); }
-  showToast("Sesión registrada");
-  render();
-}
-
-async function loadHistorialFor(athleteId){
-  if(State.historial[athleteId]) return State.historial[athleteId];
-  const raw = await stGet(`rm-history:${athleteId}`);
-  let hist = [];
-  try{ hist = raw?JSON.parse(raw):[]; }catch(e){}
-  if(!hist.length){
-    const a = State.athletes.find(x=>x.id===athleteId);
-    if(a) hist = [{date:todayISO(), squatKg:a.squatKg, squatReps:a.squatReps, benchKg:a.benchKg, benchReps:a.benchReps, halterKg:a.halterKg||0, halterReps:a.halterReps||0}];
-  }
-  State.historial[athleteId] = hist;
-  return hist;
-}
-async function loadLogsFor(athleteId){
-  const idxRaw = await stGet(`log-index:${athleteId}`);
-  let idx = [];
-  try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
-  const sorted = [...idx].sort().reverse().slice(0,6);
-  const entries = [];
-  for(const d of sorted){
-    const raw = await stGet(`session-log:${athleteId}:${d}`);
-    if(raw){ try{ entries.push(JSON.parse(raw)); }catch(e){} }
-  }
-  State.logsCache[athleteId] = entries;
-  return entries;
-}
-async function addRMEntry(athleteId, entry){
-  const hist = await loadHistorialFor(athleteId);
-  const updated = [...hist, entry].sort((a,b)=>a.date.localeCompare(b.date));
-  State.historial[athleteId] = updated;
-  await stSet(`rm-history:${athleteId}`, JSON.stringify(updated));
-  showToast("Test guardado");
-  render();
-}
-
-async function exportBackup(){
-  const data = {version:1, exportedAt:new Date().toISOString(), athletes:State.athletes, nextId:State.nextId, historial:{}, logs:{}};
-  for(const a of State.athletes){
-    data.historial[a.id] = await loadHistorialFor(a.id);
-    const idxRaw = await stGet(`log-index:${a.id}`);
-    let idx=[]; try{ idx = idxRaw?JSON.parse(idxRaw):[]; }catch(e){}
-    data.logs[a.id] = {};
-    for(const d of idx){
-      const raw = await stGet(`session-log:${a.id}:${d}`);
-      if(raw){ try{ data.logs[a.id][d] = JSON.parse(raw); }catch(e){} }
-    }
-  }
-  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url; link.download = `respaldo_fuerza_atr_${todayISO()}.json`;
-  document.body.appendChild(link); link.click(); document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-  showToast("Respaldo descargado");
-}
-function triggerImport(){ document.getElementById("import-file").click(); }
-async function handleImportFile(input){
-  const file = input.files[0];
-  if(!file) return;
-  const authorized = await ensurePinAndConfirm("restaurar un respaldo (reemplaza el roster actual)");
-  if(!authorized){ input.value=""; return; }
-  const text = await file.text();
-  let data;
-  try{ data = JSON.parse(text); }catch(e){ alert("Archivo inválido."); input.value=""; return; }
-  if(!confirm("Esto reemplazará el roster y el historial actuales con los del respaldo. ¿Continuar?")){ input.value=""; return; }
-  State.athletes = data.athletes || [];
-  State.nextId = data.nextId || (State.athletes.length+1);
-  await persistRoster();
-  State.historial = {}; State.logsCache = {};
-  for(const idStr of Object.keys(data.historial||{})){
-    State.historial[idStr] = data.historial[idStr];
-    await stSet(`rm-history:${idStr}`, JSON.stringify(data.historial[idStr]));
-  }
-  for(const idStr of Object.keys(data.logs||{})){
-    const days = Object.keys(data.logs[idStr]);
-    await stSet(`log-index:${idStr}`, JSON.stringify(days));
-    for(const d of days){
-      await stSet(`session-log:${idStr}:${d}`, JSON.stringify(data.logs[idStr][d]));
-    }
-  }
-  input.value = "";
-  showToast("Respaldo restaurado");
-  render();
-}
-
-function athleteOptionsHTML(selectedId){
-  return State.athletes.map(a=>`<option value="${a.id}" ${a.id===selectedId?"selected":""}>${a.id}. ${esc(a.name)}</option>`).join("");
-}
-function exerciseTableHTML(exercises, athlete, logMode){
-  const rows = exercises.map(ex=>{
-    const d = State.logDraft[ex.nombre]||{};
-    return `<tr>
-      <td data-label="Ejercicio"><div class="ex-name">${esc(ex.nombre)}</div><div class="ex-plano">${esc(ex.plano)}${ex.note?` · ${esc(ex.note)}`:""}</div>${ex.enfasis?`<div class="ex-enfasis">📌 ${esc(ex.enfasis)}</div>`:""}</td>
-      <td data-label="Series" class="mono">${esc(ex.series)}</td>
-      <td data-label="% 1RM" class="mono">${ex.pct!=null?Math.round(ex.pct*100)+"%":"—"}</td>
-      <td data-label="Carga"><span class="load-pill">${loadFor(ex,athlete)}</span></td>
-      <td data-label="Ritmo / Velocidad">${velocityCellHTML(ex)}</td>
-      <td data-label="Pausa" class="mono" style="color:var(--muted)">${ex.pausa}</td>
-      ${logMode ? `<td data-label="Realizado / RPE"><div class="log-cell">
-          <input type="text" placeholder="ej. 4x8" style="width:70px" value="${esc(d.completado||"")}"
-            oninput="updateDraft('${esc(ex.nombre).replace(/'/g,"\\'")}','completado',this.value)"/>
-          <select class="rpe-input" onchange="updateDraft('${esc(ex.nombre).replace(/'/g,"\\'")}','rpe',this.value)">
-            <option value="">RPE</option>
-            ${[6,6.5,7,7.5,8,8.5,9,9.5,10].map(v=>`<option value="${v}" ${String(d.rpe)===String(v)?"selected":""}>${v}</option>`).join("")}
-          </select>
-        </div></td>` : ""}
-    </tr>`;
-  }).join("");
-  return `<table><thead><tr>
-      <th>Ejercicio</th><th>Series</th><th>% 1RM</th><th>Carga</th><th>Ritmo / Velocidad</th><th>Pausa</th>${logMode?"<th>Realizado / RPE</th>":""}
-    </tr></thead><tbody>${rows}</tbody></table>`;
-}
-function miniChartSVG(points, color){
-  if(points.length<2) return `<div style="font-size:11.5px;color:var(--muted)">Se necesitan al menos 2 registros para graficar.</div>`;
-  const W=560,H=140,pad=28;
-  const ys = points.map(p=>p.y);
-  const minY = Math.min(...ys)*0.95, maxY = Math.max(...ys)*1.05;
-  const xI = i => pad + (i/(points.length-1))*(W-2*pad);
-  const yV = v => H-pad - ((v-minY)/((maxY-minY)||1))*(H-2*pad);
-  const path = points.map((p,i)=>`${i===0?"M":"L"} ${xI(i)} ${yV(p.y)}`).join(" ");
-  const circles = points.map((p,i)=>`<circle cx="${xI(i)}" cy="${yV(p.y)}" r="3.5" fill="${color}"/>`).join("");
-  const labels = points.map((p,i)=>`<text x="${xI(i)}" y="${H-8}" font-size="9" fill="var(--muted)" text-anchor="middle" font-family="Courier New">${p.dateLabel}</text>`).join("");
-  const last = points[points.length-1];
-  return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}">
-    <line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="var(--line)" stroke-width="1"/>
-    <path d="${path}" fill="none" stroke="${color}" stroke-width="2.5"/>
-    ${circles}${labels}
-    <text x="${xI(points.length-1)}" y="${yV(last.y)-10}" font-size="11" fill="${color}" text-anchor="end" font-family="Courier New" font-weight="700">${last.y} kg</text>
-  </svg>`;
-}
-
-function renderPanel(){
-  const autoMicro = currentMicroFromDate(new Date());
-  const cal = CALENDAR.find(c=>c.micro===autoMicro.micro);
-  const color = PHASE_COLOR[cal.faseCode];
-
-  const formHTML = State.showAddForm ? `
-    <div class="athlete-form">
-      <div class="field"><label>Nombre</label><input type="text" class="wide" id="f-name" placeholder="Nombre completo"/></div>
-      <div class="field"><label>Edad</label><input type="number" id="f-age" style="width:70px"/></div>
-      <div class="field"><label>Sexo</label>
-        <select id="f-sex"><option value="M">M</option><option value="F">F</option></select>
+function render() {
+  const cal = CALENDAR[state.micro - 1];
+  const ath = state.athlete;
+  
+  let html = `
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">⚡</div>
+        <div>
+          <div class="brand-title">Panel de Fuerza ATR</div>
+          <div class="brand-sub">Atletismo Nayarit — Velocistas 100m</div>
+        </div>
       </div>
-      <div class="field"><label>Prueba</label><input type="text" class="wide" id="f-event" placeholder="100m - 200m"/></div>
-      <div class="field"><label>Peso (kg)</label><input type="number" id="f-bw" style="width:80px"/></div>
-      <div class="field"><label>Sent. kg</label><input type="number" id="f-squatkg"/></div>
-      <div class="field"><label>Sent. reps</label><input type="number" id="f-squatreps" style="width:70px"/></div>
-      <div class="field"><label>Banca kg</label><input type="number" id="f-benchkg"/></div>
-      <div class="field"><label>Banca reps</label><input type="number" id="f-benchreps" style="width:70px"/></div>
-      <div class="field"><label>Power Clean kg</label><input type="number" id="f-halterkg"/></div>
-      <div class="field"><label>Power Clean reps</label><input type="number" id="f-halterreps" style="width:70px"/></div>
-      <button class="btn" onclick="submitAddForm()">Registrar Atleta</button>
-      <button class="btn secondary" onclick="State.showAddForm=false;render();">Cancelar</button>
-    </div>` : "";
-
-  const grid = State.athletes.length===0
-    ? `<div class="lane-card" style="cursor:default;text-align:center;padding:36px 16px;">
-         <div class="empty-msg" style="padding:0;">Aún no hay atletas registrados.<br/>Agrega el primero para empezar a planificar.</div>
-       </div>`
-    : `<div class="grid">${State.athletes.map(a=>{
-        const cAthlete = color;
-        return `<div class="lane-card" onclick="goToAthleteToday(${a.id})">
-          <button class="del-btn" onclick="deleteAthlete(${a.id}, event)">×</button>
-          <div class="lane-stripe" style="background:${cAthlete}"></div>
-          <div class="lane-row">
-            <div class="bib" style="color:${cAthlete}">${a.id}</div>
-            <div>
-              <div class="lane-name">${esc(a.name)}</div>
-              <div class="lane-event">${esc(a.event||"—")}${a.age?` · ${a.age} años`:""}${a.sex?` · ${a.sex}`:""}</div>
-            </div>
-          </div>
-          <div class="rm-row">
-            <div class="rm-item">Sent. <b>${epley(a.squatKg,a.squatReps)} kg</b></div>
-            <div class="rm-item">Banca <b>${epley(a.benchKg,a.benchReps)} kg</b></div>
-          </div>
-          <div class="lane-meta">
-            <span class="phase-tag" style="background:${cAthlete}22;color:${cAthlete}">Micro ${autoMicro.micro} · ${PHASE_LABEL[cal.faseCode]}</span>
-          </div>
-        </div>`;
-      }).join("")}</div>`;
-
-  return `
+    </div>
+    
     <div class="section-head">
-      <div class="section-title">Panel de Equipo</div>
-      <div class="section-note">${State.athletes.length} atleta${State.athletes.length===1?"":"s"} registrado${State.athletes.length===1?"":"s"} · sin límite</div>
+      <div class="section-title">Microciclo Selector</div>
     </div>
-    <div style="font-size:11.5px;color:var(--ok);margin-bottom:14px;">● Guardado automático activo — los datos persisten entre sesiones.</div>
-    <div style="margin-bottom:14px; display:flex; gap:8px; flex-wrap:wrap;">
-      <button class="btn" onclick="State.showAddForm=!State.showAddForm;render();">${State.showAddForm?"Cerrar formulario":"+ Agregar Atleta"}</button>
-      <button class="btn secondary" style="margin-left:8px" onclick="importPresetRoster()">Importar 30 Atletas (Excel)</button>
-      <button class="btn secondary" onclick="exportBackup()">⬇ Exportar respaldo</button>
-      <button class="btn secondary" onclick="triggerImport()">⬆ Restaurar respaldo</button>
-    </div>
-    ${formHTML}
-    ${grid}
-  `;
-}
-
-function renderHoy(){
-  if(State.athletes.length===0) return `<div class="day-block"><div class="empty-msg">Registra al menos un atleta en <b>Panel de Equipo</b> para usar esta sección.<br/><br/><button class="btn big" onclick="setTab('panel')">Ir a Panel de Equipo</button></div></div>`;
-  if(!State.selectedAthleteId) State.selectedAthleteId = State.athletes[0].id;
-  const athlete = State.athletes.find(a=>a.id===State.selectedAthleteId);
-  const today = new Date();
-  const weekday = today.getDay();
-  const trainingDay = trainingDayFromWeekday(weekday);
-  const autoMicro = currentMicroFromDate(today);
-  const cal = CALENDAR.find(c=>c.micro===autoMicro.micro);
-  const color = PHASE_COLOR[cal.faseCode];
-  
-  let exercises = null;
-  if(trainingDay==="monday") exercises = MONDAY(cal);
-  else if(trainingDay==="tuesday") exercises = TUESDAY(cal);
-  else if(trainingDay==="wednesday") exercises = WEDNESDAY(cal);
-  else if(trainingDay==="thursday") exercises = THURSDAY(cal);
-  else if(trainingDay==="friday") exercises = FRIDAY(cal);
-
-  const dateStr = today.toLocaleDateString('es-MX', {weekday:'long', day:'numeric', month:'long'});
-  const statusMsg = autoMicro.status==="pretemporada" ? `Pretemporada — el macrociclo inicia el ${fmtDate(CALENDAR[0].start)}`
-    : autoMicro.status==="finalizado" ? "Macrociclo finalizado — última fase mostrada como referencia"
-    : `Micro ${autoMicro.micro} en curso`;
-
-  const tableAndSave = exercises ? `
-    <div class="day-block">
-      <div class="day-head"><span>${DAY_LABEL[trainingDay]}</span><span class="mono" style="font-weight:400;color:var(--muted);font-size:11px">${esc(athlete.name)}</span></div>
-      ${exerciseTableHTML(exercises, athlete, State.logMode)}
-      ${State.logMode ? `<div class="save-bar"><button class="btn" onclick='guardarSesion(${JSON.stringify(exercises).replace(/'/g,"&#39;")}, ${athlete.id}, "${trainingDay}", ${cal.micro})'>Guardar sesión</button></div>` : ""}
-    </div>` : `<div class="day-block"><div class="rest-msg">Hoy no corresponde sesión programada en el ciclo Lun–Vie.<br/>Usa el Selector de Microciclo para revisar cualquier día de la semana.</div></div>`;
-
-  return `
-    <div class="today-hero">
-      <div class="today-date mono">${dateStr.toUpperCase()}</div>
-      <div class="today-day">${trainingDay?DAY_LABEL[trainingDay].split("—")[0]:"Día de descanso / fin de semana"}</div>
-      <div style="font-size:12.5px;color:var(--muted);margin-top:4px">${statusMsg}</div>
-      <div class="today-phase"><span class="phase-tag" style="background:${color}22;color:${color}">Micro ${cal.micro} · ${PHASE_LABEL[cal.faseCode]} · ${cal.tipo}</span></div>
-    </div>
-    <div class="picker-row">
-      <select onchange="selectAthlete(this.value)">${athleteOptionsHTML(athlete.id)}</select>
-      ${exercises ? `<button class="btn ${State.logMode?"secondary":""}" onclick="toggleLogMode()">${State.logMode?"Ocultar registro":"Registrar sesión"}</button>` : ""}
-    </div>
-    ${exercises ? velocityLegendHTML() : ""}
-    ${tableAndSave}
-  `;
-}
-
-function renderSelector(){
-  if(State.athletes.length===0) return `<div class="day-block"><div class="empty-msg">Registra al menos un atleta en <b>Panel de Equipo</b> para usar esta sección.<br/><br/><button class="btn big" onclick="setTab('panel')">Ir a Panel de Equipo</button></div></div>`;
-  if(!State.selectedAthleteId) State.selectedAthleteId = State.athletes[0].id;
-  const athlete = State.athletes.find(a=>a.id===State.selectedAthleteId);
-  const cal = CALENDAR.find(c=>c.micro===State.microId);
-  const color = PHASE_COLOR[cal.faseCode];
-  const dots = CALENDAR.map(c=>`<div class="micro-dot ${c.micro===State.microId?"active":""}" style="color:${PHASE_COLOR[c.faseCode]};background:${c.micro===State.microId?PHASE_COLOR[c.faseCode]:""}" onclick="setMicro(${c.micro})">${c.micro}</div>`).join("");
-  
-  const days = ["monday","tuesday","wednesday","thursday","friday"].map(day=>{
-    let exs = [];
-    if(day==="monday") exs = MONDAY(cal);
-    else if(day==="tuesday") exs = TUESDAY(cal);
-    else if(day==="wednesday") exs = WEDNESDAY(cal);
-    else if(day==="thursday") exs = THURSDAY(cal);
-    else if(day==="friday") exs = FRIDAY(cal);
-    return `<div class="day-block"><div class="day-head"><span>${DAY_LABEL[day]}</span></div>${exerciseTableHTML(exs, athlete, false)}</div>`;
-  }).join("");
-
-  return `
-    <div class="selector-bar">
-      <div><label>Atleta</label><select onchange="selectAthlete(this.value)">${athleteOptionsHTML(athlete.id)}</select></div>
-      <div style="flex:1;min-width:220px"><label>Microciclo (1–12)</label><div class="micro-strip">${dots}</div></div>
-    </div>
+    
     <div class="cal-info">
-      <div class="cal-item"><div class="cal-label">Fase ATR</div><div class="cal-value" style="color:${color}">${cal.fase}</div></div>
-      <div class="cal-item"><div class="cal-label">Tipo Microciclo</div><div class="cal-value" style="font-size:12px">${cal.tipo}</div></div>
-      <div class="cal-item"><div class="cal-label">Fechas</div><div class="cal-value mono" style="font-size:12px">${fmtDate(cal.start)} – ${fmtDate(cal.end)}</div></div>
-      <div class="cal-item"><div class="cal-label">% 1RM Sent. / Banca</div><div class="cal-value">${Math.round(cal.pctSquat*100)}% / ${Math.round(cal.pctBench*100)}%</div></div>
-      <div class="cal-item"><div class="cal-label">Volumen</div><div class="cal-value" style="font-size:12px">${cal.volumen}</div></div>
-      <div class="cal-item"><div class="cal-label">Pérdida Velocidad</div><div class="cal-value" style="font-size:12px">${cal.perdidaVel}</div></div>
-    </div>
-    <div style="font-size:12px;color:var(--muted);margin:-6px 0 18px">${cal.enfoque}</div>
-    ${velocityLegendHTML()}
-    ${days}
-  `;
-}
-
-async function renderHistorial(){
-  if(State.athletes.length===0) return `<div class="day-block"><div class="empty-msg">Registra al menos un atleta en <b>Panel de Equipo</b> para usar esta sección.<br/><br/><button class="btn big" onclick="setTab('panel')">Ir a Panel de Equipo</button></div></div>`;
-  if(!State.selectedAthleteId) State.selectedAthleteId = State.athletes[0].id;
-  const athlete = State.athletes.find(a=>a.id===State.selectedAthleteId);
-  const hist = await loadHistorialFor(athlete.id);
-  const logs = await loadLogsFor(athlete.id);
-
-  const squatPoints = hist.map(h=>({y:epley(h.squatKg,h.squatReps), dateLabel:fmtDate(h.date).slice(0,5)}));
-  const benchPoints = hist.map(h=>({y:epley(h.benchKg,h.benchReps), dateLabel:fmtDate(h.date).slice(0,5)}));
-
-  const rows = [...hist].reverse().map(h=>`<tr>
-    <td data-label="Fecha" class="mono">${fmtDate(h.date)}</td>
-    <td data-label="Sentadilla" class="mono">${h.squatKg}kg × ${h.squatReps}</td>
-    <td data-label="1RM Sent."><span class="load-pill">${epley(h.squatKg,h.squatReps)} kg</span></td>
-    <td data-label="Banca" class="mono">${h.benchKg}kg × ${h.benchReps}</td>
-    <td data-label="1RM Banca"><span class="load-pill">${epley(h.benchKg,h.benchReps)} kg</span></td>
-    <td data-label="Power Clean" class="mono">${h.halterKg&&h.halterReps?`${h.halterKg}kg × ${h.halterReps}`:"—"}</td>
-    <td data-label="1RM Clean"><span class="load-pill">${h.halterKg&&h.halterReps?epley(h.halterKg,h.halterReps)+" kg":"—"}</span></td>
-  </tr>`).join("");
-
-  const logsHTML = logs.length===0
-    ? `<div style="font-size:12px;color:var(--muted)">Sin registros de ejecución todavía. Regístralos desde "Rutina Hoy".</div>`
-    : `<div class="log-list">${logs.map(l=>{
-        const rpes = l.entries.map(e=>Number(e.rpe)).filter(v=>!isNaN(v));
-        const avg = rpes.length ? (rpes.reduce((a,b)=>a+b,0)/rpes.length).toFixed(1) : "—";
-        return `<div class="log-entry"><span>${fmtDate(l.date)} · ${(DAY_LABEL[l.day]||"").split("—")[0].trim()}</span><span class="mono" style="color:var(--muted)">${l.entries.length} ejercicios · RPE prom. ${avg}</span></div>`;
-      }).join("")}</div>`;
-
-  return `
-    <div class="section-head"><div class="section-title">Historial de 1RM</div><div class="section-note">Progresión por Epley · Registro de sesiones</div></div>
-    <div class="picker-row"><select onchange="selectAthlete(this.value)">${athleteOptionsHTML(athlete.id)}</select></div>
-    <div class="chart-wrap">
-      <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Sentadilla Profunda</div>
-      ${miniChartSVG(squatPoints,"var(--acum)")}
-      <div style="font-size:12px;color:var(--muted);margin:14px 0 4px">Press de Banca</div>
-      ${miniChartSVG(benchPoints,"var(--real)")}
-    </div>
-    <div class="rm-form">
-      <div class="field"><label>Fecha</label><input type="date" id="rm-date" value="${todayISO()}"/></div>
-      <div class="field"><label>Sent. kg</label><input type="number" id="rm-squatkg"/></div>
-      <div class="field"><label>Sent. reps</label><input type="number" id="rm-squatreps" style="width:70px"/></div>
-      <div class="field"><label>Banca kg</label><input type="number" id="rm-benchkg"/></div>
-      <div class="field"><label>Banca reps</label><input type="number" id="rm-benchreps" style="width:70px"/></div>
-      <div class="field"><label>Power Clean kg</label><input type="number" id="rm-halterkg"/></div>
-      <div class="field"><label>Power Clean reps</label><input type="number" id="rm-halterreps" style="width:70px"/></div>
-      <button class="btn" onclick="submitRMEntry(${athlete.id})">Agregar Test</button>
-    </div>
-    <div class="section-head"><div class="section-title" style="font-size:13px">Registros de Test (${hist.length})</div></div>
-    <table style="margin-bottom:22px"><thead><tr><th>Fecha</th><th>Sentadilla</th><th>1RM Sent.</th><th>Banca</th><th>1RM Banca</th><th>Power Clean</th><th>1RM Clean</th></tr></thead><tbody>${rows}</tbody></table>
-    <div class="section-head"><div class="section-title" style="font-size:13px">Últimas Sesiones Registradas</div></div>
-    ${logsHTML}
-  `;
-}
-
-function submitAddForm(){
-  const name = document.getElementById("f-name").value;
-  if(!name.trim()){ alert("El nombre es obligatorio."); return; }
-  const fields = {
-    name, age: document.getElementById("f-age").value, sex: document.getElementById("f-sex").value,
-    event: document.getElementById("f-event").value, bw: document.getElementById("f-bw").value,
-    squatKg: document.getElementById("f-squatkg").value, squatReps: document.getElementById("f-squatreps").value || 1,
-    benchKg: document.getElementById("f-benchkg").value, benchReps: document.getElementById("f-benchreps").value || 1,
-    halterKg: document.getElementById("f-halterkg").value, halterReps: document.getElementById("f-halterreps").value || 1,
-  };
-  addAthlete(fields);
-}
-function submitRMEntry(athleteId){
-  const squatKg = Number(document.getElementById("rm-squatkg").value);
-  const squatReps = Number(document.getElementById("rm-squatreps").value);
-  const benchKg = Number(document.getElementById("rm-benchkg").value);
-  const benchReps = Number(document.getElementById("rm-benchreps").value);
-  const halterKg = Number(document.getElementById("rm-halterkg").value);
-  const halterReps = Number(document.getElementById("rm-halterreps").value);
-  const date = document.getElementById("rm-date").value || todayISO();
-  if(!squatKg||!squatReps||!benchKg||!benchReps){ alert("Completa al menos los campos de Sentadilla y Banca."); return; }
-  addRMEntry(athleteId, {date, squatKg, squatReps, benchKg, benchReps, halterKg: halterKg||0, halterReps: halterReps||0});
-}
-
-async function render(){
-  const root = document.getElementById("root");
-  let body = "";
-  if(State.tab==="panel") body = renderPanel();
-  else if(State.tab==="hoy") body = renderHoy();
-  else if(State.tab==="selector") body = renderSelector();
-  else if(State.tab==="historial") body = await renderHistorial();
-
-  root.innerHTML = `
-    <div class="app">
-      <div class="topbar">
-        <div class="brand">
-          <div class="brand-mark display">AN</div>
-          <div><div class="brand-title">Panel de Fuerza ATR</div><div class="brand-sub">Atletismo Nayarit · Bahía de Banderas</div></div>
-        </div>
-        <div class="tabs">
-          <button class="tab ${State.tab==='panel'?'active':''}" onclick="setTab('panel')">Panel Equipo</button>
-          <button class="tab ${State.tab==='hoy'?'active':''}" onclick="setTab('hoy')">Rutina Hoy</button>
-          <button class="tab ${State.tab==='selector'?'active':''}" onclick="setTab('selector')">Selector Microciclo</button>
-          <button class="tab ${State.tab==='historial'?'active':''}" onclick="setTab('historial')">Historial RM</button>
-          <button class="tab" onclick="changePin()" title="Configurar PIN de entrenador">🔒 PIN</button>
-        </div>
+      <div class="cal-item">
+        <div class="cal-label">Microciclo</div>
+        <div class="cal-value">${state.micro}</div>
       </div>
-      ${body}
-      <div class="footer-note">
-        1RM calculado por fórmula Epley: 1RM = kg × (1 + 0.0333 × reps). Cargas del microciclo activo tomadas del calendario ATR (7 sep – 29 nov 2026).
-        Programación semanal ampliada de Lunes a Viernes con bloques específicos de Core y Estabilidad Lumbopélvica para martes y jueves.
-        Ritmo y velocidad de ejecución basados en las zonas carga-velocidad de González-Badillo / Sánchez-Medina.
+      <div class="cal-item">
+        <div class="cal-label">Fase</div>
+        <div class="cal-value">${cal.fase}</div>
+      </div>
+      <div class="cal-item">
+        <div class="cal-label">Énfasis</div>
+        <div class="cal-value" style="font-size:13px;">${cal.title}</div>
+      </div>
+      <div class="cal-item">
+        <div class="cal-label">Fechas</div>
+        <div class="cal-value">${cal.fechas}</div>
       </div>
     </div>
-    <div id="toast" class="toast" style="display:none;"></div>
+    
+    <div class="picker-row">
+      <div class="field" style="flex:1;min-width:140px;">
+        <label>Selecciona Microciclo</label>
+        <select onchange="state.micro=parseInt(this.value); render();">
   `;
+  
+  for(let m = 1; m <= 12; m++) {
+    html += `<option value="${m}" ${m === state.micro ? 'selected' : ''}>Micro ${m} — ${CALENDAR[m-1].title}</option>`;
+  }
+  
+  html += `
+        </select>
+      </div>
+      <div class="field" style="flex:1;min-width:100px;">
+        <label>1RM Power Clean (kg)</label>
+        <input type="number" value="${state.halterKg}" onchange="state.halterKg=parseInt(this.value); render();" />
+      </div>
+      <div class="field" style="flex:1;min-width:100px;">
+        <label>1RM Squat (kg)</label>
+        <input type="number" value="${state.squatKg}" onchange="state.squatKg=parseInt(this.value); render();" />
+      </div>
+      <div class="field" style="flex:1;min-width:100px;">
+        <label>1RM Bench (kg)</label>
+        <input type="number" value="${state.benchKg}" onchange="state.benchKg=parseInt(this.value); render();" />
+      </div>
+    </div>
+    
+    <div class="footer-note">
+      <strong>Reestructura Micros 6-12:</strong> Énfasis en POTENCIA y TRANSFERENCIA directa a sprint 100m.
+      Lunes: Potencia inferior + halterofilia (14-16 ejer) | Martes: Core + Sóleo (10 ejer) | 
+      <strong>Miércoles: BRACEO DEL CORREDOR (12-13 ejer)</strong> | 
+      Jueves: Estabilidad + Sóleo (12 ejer) | Viernes: Integración + Cometti (15 ejer).
+      ⭐ Cometti Francés solo Micros 6-10.
+    </div>
+  `;
+  
+  // RENDERIZAR DÍAS
+  for(let d = 0; d < 5; d++) {
+    const ex = DAY_FN[d]({...cal, pctSquat: cal.sqBw, pctBench: cal.bnBw, pctHalter: cal.hBw, sqBw: cal.sqBw, bnBw: cal.bnBw, hBw: cal.hBw});
+    
+    html += `<div class="day-block">
+      <div class="day-head">${DAYS[d]} (${ex.length} ejercicios)</div>
+      <table>
+        <thead>
+          <tr><th>Ejercicio</th><th>Series</th><th>Carga</th><th>Notas</th></tr>
+        </thead>
+        <tbody>
+    `;
+    
+    ex.forEach(e => {
+      if(e.isCometti) {
+        // COMETTI FRANCÉS - Bloque especial
+        html += `
+          <tr style="background:#3A2A1A;border:2px solid #E2B86A;">
+            <td colspan="4">
+              <div class="cometti-block">
+                <div class="cometti-title">${e.nombre}</div>
+                <div class="cometti-step"><strong>Estructura:</strong> ${e.estructura}</div>
+                <div class="cometti-step"><strong>Series:</strong> ${e.series}</div>
+                <div class="cometti-step"><strong>Descanso:</strong> ${e.pausa}</div>
+                <div class="cometti-step"><strong>RPE:</strong> ${e.rpe}</div>
+                <div class="cometti-step"><strong>Objetivo:</strong> ${e.objetivo}</div>
+              </div>
+            </td>
+          </tr>
+        `;
+      } else {
+        const carga = loadFor(e, state);
+        html += `
+          <tr>
+            <td>
+              <div class="ex-name">${e.nombre}</div>
+              <div class="ex-plano">${e.plano}</div>
+              ${e.enfasis ? `<div class="ex-enfasis">${e.enfasis}</div>` : ''}
+            </td>
+            <td>${e.series || '—'}</td>
+            <td>
+              ${e.pct ? `<span class="load-pill">${Math.round(e.pct*100)}%</span>` : ''}
+              ${e.base && carga !== '—' ? ` <span class="load-pill">${carga} kg</span>` : ''}
+            </td>
+            <td style="font-size:10px;color:var(--muted);">${e.pausa ? `Desc: ${e.pausa}` : '—'}</td>
+          </tr>
+        `;
+      }
+    });
+    
+    html += `
+        </tbody>
+      </table>
+    </div>
+    `;
+  }
+  
+  html += `</div>`;
+  document.getElementById('root').innerHTML = html;
 }
 
-initState();
+// INICIAL
+render();
 </script>
-<input type="file" id="import-file" accept="application/json" style="display:none" onchange="handleImportFile(this)"/>
 </body>
 </html>
