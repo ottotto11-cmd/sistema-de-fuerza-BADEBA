@@ -43,6 +43,7 @@
   .cometti-block{background:linear-gradient(135deg, #3A2A1A, #2A2015);border:2px solid #D4A574;border-radius:10px;padding:14px;margin:14px 0;color:#FFE;font-family:monospace;font-size:11px;}
   .cometti-title{font-weight:700;font-size:11px;color:#FFE;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:6px;}
   .cometti-step{margin:3px 0;line-height:1.4;}
+  .kg-line{margin-top:4px;font-family:monospace;font-size:11px;color:#7FD1A8;}
   .badge-micro{display:inline-block;background:rgba(212,165,116,0.15);color:#D4A574;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase;}
 
   @media (max-width:640px){
@@ -90,6 +91,7 @@ let state = {
   halterKg: 80,
   squatKg: 140,
   benchKg: 90,
+  accKg: 40,
 };
 
 function loadFor(base, pct) {
@@ -98,6 +100,38 @@ function loadFor(base, pct) {
   if(base === "bench") return Math.round(state.benchKg * pct);
   if(base === "halter") return Math.round(state.halterKg * pct);
   return "—";
+}
+
+// Determina contra qué 1RM se calcula cada ejercicio
+function refBase(e){
+  if(e.nombre.includes("Jump Squat")) return "squat";
+  if(/Curl|Tricep|Tríceps|Fondos|Elevaciones|Remo|Face Pull|Lat Pulldown|Press Militar/.test(e.nombre)) return "acc";
+  return e.base;
+}
+
+// Kg por serie = % × 1RM de referencia (null si no aplica, ej. sóleo, core)
+function kgFor(e){
+  const b = refBase(e);
+  if(!e.pct || b === "fixed") return null;
+  if(b === "squat") return Math.round(state.squatKg * e.pct);
+  if(b === "bench") return Math.round(state.benchKg * e.pct);
+  if(b === "halter") return Math.round(state.halterKg * e.pct);
+  if(b === "acc") return Math.round(state.accKg * e.pct);
+  return null;
+}
+
+// Texto de kg por serie + volumen total (solo si las reps son un número fijo)
+function seriesKgHTML(e){
+  const kg = kgFor(e);
+  if(kg === null) return "";
+  let txt = `<div class="kg-line">→ <strong>${kg} kg</strong> por serie`;
+  const m = (e.series || "").match(/^(\d+)\s*×\s*(\d+)(?![\d-])/);
+  if(m){
+    const sets = parseInt(m[1]), reps = parseInt(m[2]);
+    const vol = sets * reps * kg;
+    txt += ` · vol. ${vol.toLocaleString('es-MX')} kg`;
+  }
+  return txt + `</div>`;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -187,6 +221,8 @@ function WEDNESDAY(cal) {
     {nombre:"Remo Barra Explosivo", plano:"Espalda I", enfasis:"Tracción rápida", series:"3 × 4-5 @ 70%", pct:0.70, base:"fixed"},
     {nombre:"Face Pull", plano:"Espalda II", enfasis:"Escapular", series:"3 × 10-12 @ 65%", pct:0.65, base:"fixed"},
     {nombre:"Lat Pulldown", plano:"Espalda III", enfasis:"Tracción", series:"3 × 6-8 @ 70%", pct:0.70, base:"fixed"},
+    {nombre:"Hip Thrust con Barra", plano:"Glúteo I", enfasis:"Extensión de cadera", series:"4 × 6-8 @ 70%", pct:0.70, base:"squat"},
+    {nombre:"Abducción de Cadera en Polea", plano:"Glúteo II", enfasis:"Glúteo medio", series:"3 × 12-15", base:"fixed"},
   ];
 }
 
@@ -242,6 +278,8 @@ function FRIDAY(cal) {
     {nombre:"Flexiones Explosivas", plano:"Pecho II", enfasis:"Control+velocidad", series:"3 × 6-8", pct:0.70, base:"fixed"},
     {nombre:"Press Militar Explosivo", plano:"Hombro I", enfasis:"Coordinación", series:"3 × 5-6 @ 65%", pct:0.65, base:"fixed"},
     {nombre:"Elevaciones Laterales", plano:"Hombro II", enfasis:"Estabilidad", series:"3 × 8-10 @ 60%", pct:0.60, base:"fixed"},
+    {nombre:"Hip Thrust con Barra", plano:"Glúteo I", enfasis:"Potencia de cadera", series:"3 × 6 @ 65%", pct:0.65, base:"squat"},
+    {nombre:"Patada de Glúteo en Polea", plano:"Glúteo II", enfasis:"Extensión rápida", series:"3 × 8 c/lado", base:"fixed"},
   ];
 }
 
@@ -308,6 +346,10 @@ function render() {
         <label>1RM Bench (kg)</label>
         <input type="number" value="${state.benchKg}" onchange="state.benchKg=parseInt(this.value); render();" />
       </div>
+      <div class="field" style="flex:1;min-width:100px;">
+        <label>1RM Accesorios (kg)</label>
+        <input type="number" value="${state.accKg}" onchange="state.accKg=parseInt(this.value); render();" />
+      </div>
     </div>
     
     <div class="footer-note">
@@ -344,10 +386,7 @@ function render() {
           </tr>
         `;
       } else {
-        let carga = "—";
-        if(e.base === "squat") carga = loadFor("squat", e.pct);
-        else if(e.base === "bench") carga = loadFor("bench", e.pct);
-        else if(e.base === "halter") carga = loadFor("halter", e.pct);
+        const kg = kgFor(e);
         
         html += `
           <tr>
@@ -356,10 +395,13 @@ function render() {
               <div class="ex-plano">${e.plano}</div>
               ${e.enfasis ? `<div class="ex-enfasis">${e.enfasis}</div>` : ''}
             </td>
-            <td>${e.series || '—'}</td>
+            <td>
+              ${e.series || '—'}
+              ${seriesKgHTML(e)}
+            </td>
             <td>
               ${e.pct ? `<span class="load-pill">${Math.round(e.pct*100)}%</span>` : ''}
-              ${carga !== '—' ? `<span class="load-pill">${carga} kg</span>` : ''}
+              ${kg !== null ? `<span class="load-pill">${kg} kg</span>` : ''}
             </td>
           </tr>
         `;
